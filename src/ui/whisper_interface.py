@@ -245,9 +245,20 @@ class SavedTranscriptionReview:
         self.master.geometry("900x700")
         self.master.minsize(700, 500)
 
+        # Configure master grid to have a content row and a fixed controls row
+        self.master.grid_rowconfigure(0, weight=1)
+        self.master.grid_rowconfigure(1, weight=0)
+        self.master.grid_columnconfigure(0, weight=1)
+
+        # --- Main Content Frame (everything except audio controls) ---
+        content_container = Frame(self.master, bg='#ffffff')
+        content_container.grid(row=0, column=0, sticky='nsew')
+        content_container.grid_columnconfigure(0, weight=1)
+        content_container.grid_rowconfigure(1, weight=1) # Allow text area to expand
+
         # Header
-        header = Frame(self.master, bg='#f8f9fa')
-        header.pack(fill='x', pady=(0, 10))
+        header = Frame(content_container, bg='#f8f9fa')
+        header.grid(row=0, column=0, sticky='ew')
         if self.back_callback:
             Button(header, text="← Back", command=self.back_callback,
                    font=("Segoe UI", 11, "bold"), bg='#95a5a6', fg='white',
@@ -256,24 +267,32 @@ class SavedTranscriptionReview:
               bg='#f8f9fa', fg='#2c3e50').pack(side='left', padx=20)
 
         # Main text area
-        main_frame = Frame(self.master, bg='#ffffff')
-        main_frame.pack(expand=True, fill='both', padx=30, pady=(0, 10))
+        main_frame = Frame(content_container, bg='#ffffff')
+        main_frame.grid(row=1, column=0, sticky='nsew', padx=30, pady=(10, 10))
+        main_frame.grid_columnconfigure(0, weight=1)
+        main_frame.grid_rowconfigure(1, weight=1)
+
         Label(main_frame, text="Transcription Text", font=("Segoe UI", 13, "bold"),
-              bg='#ffffff', fg='#2c3e50').pack(anchor='w', pady=(10, 5))
+              bg='#ffffff', fg='#2c3e50').grid(row=0, column=0, sticky='w', pady=(0, 5))
+        
         text_frame = Frame(main_frame, bg='#ffffff')
-        text_frame.pack(expand=True, fill='both')
+        text_frame.grid(row=1, column=0, sticky='nsew')
+        text_frame.grid_columnconfigure(0, weight=1)
+        text_frame.grid_rowconfigure(0, weight=1)
+
         self.text_widget = Text(text_frame, font=("Segoe UI", 12), wrap='word',
                                bg='#fafafa', fg='#212529', relief='flat', bd=0,
                                selectbackground='#0078d4', selectforeground='white', padx=20, pady=15)
         scrollbar = Scrollbar(text_frame, orient='vertical', command=self.text_widget.yview)
         self.text_widget.configure(yscrollcommand=scrollbar.set)
-        self.text_widget.pack(side='left', fill='both', expand=True)
-        scrollbar.pack(side='right', fill='y')
+        
+        self.text_widget.grid(row=0, column=0, sticky='nsew')
+        scrollbar.grid(row=0, column=1, sticky='ns')
         self.parse_and_display_srt()
 
-        # Audio controls at bottom, aligned with text area
+        # Audio controls at bottom, in the master's second row
         self.audio_controls_frame = Frame(self.master, bg='#f8f9fa')
-        self.audio_controls_frame.pack(side='bottom', fill='x', padx=30, pady=10)
+        self.audio_controls_frame.grid(row=1, column=0, sticky='ew', padx=30, pady=10)
         self.setup_audio_controls()
 
     def parse_and_display_srt(self):
@@ -308,7 +327,10 @@ class SavedTranscriptionReview:
     def setup_audio_controls(self):
         for widget in self.audio_controls_frame.winfo_children():
             widget.destroy()
-        
+
+        # Configure grid for the main audio controls frame
+        self.audio_controls_frame.grid_columnconfigure(0, weight=1)
+
         if self.vlc_available and self.mp3_path and os.path.exists(self.mp3_path):
             try:
                 self.vlc_instance = self.vlc.Instance()
@@ -321,7 +343,7 @@ class SavedTranscriptionReview:
         if self.vlc_available and self.mp3_path and os.path.exists(self.mp3_path):
             # --- Playback controls row ---
             playback_frame = Frame(self.audio_controls_frame, bg='#f8f9fa')
-            playback_frame.pack(fill='x', pady=(0, 10), expand=False)
+            playback_frame.grid(row=0, column=0, sticky='ew', pady=(0, 5))
             
             self.play_btn = Button(playback_frame, text="▶ Play", command=self.play_audio,
                                    font=("Segoe UI", 11, "bold"), bg='#27ae60', fg='white', relief='flat', bd=0)
@@ -338,58 +360,45 @@ class SavedTranscriptionReview:
             Button(playback_frame, text="🐇 +5%", command=lambda: self.change_speed(0.05), font=("Segoe UI", 11), bg='#f9f9fa', fg='#2c3e50', relief='flat', bd=0).pack(side='left', padx=2)
             
             # --- Progress bar row (directly below controls) ---
-            progress_row = Frame(self.audio_controls_frame, bg='lime', highlightbackground='magenta', highlightthickness=8)
-            progress_row.pack(fill='x', pady=(0, 0), padx=0, expand=False)
-            progress_row.configure(height=80)  # Force height
-            
             from tkinter import DoubleVar
-            Label(progress_row, text='PROGRESS BAR DEBUG AREA (TOP)', bg='yellow', fg='black', font=('Arial', 16, 'bold')).pack(side='top', fill='x')
-            
-            # Create progress bar with explicit size and mouse wheel support
             self.audio_progress = DoubleVar()
-            self.audio_progress_bar = ttk.Scale(progress_row, variable=self.audio_progress, 
-                                              length=800, from_=0, to=100, orient='horizontal', 
-                                              command=self.slider_seek_update)
-            self.audio_progress_bar.pack(pady=15, ipady=5)  # Force vertical space
-            self.audio_progress_bar.configure(width=800)  # Force width
-            
+
+            # Add a custom style for a thicker progress bar
+            style = ttk.Style(self.audio_controls_frame)
+            # The 'sliderthickness' option makes the slider itself thicker.
+            style.configure("Thick.Horizontal.TScale", sliderthickness=25)
+
+            self.audio_progress_bar = ttk.Scale(
+                self.audio_controls_frame,
+                variable=self.audio_progress,
+                from_=0,
+                to=100,
+                orient='horizontal',
+                command=self.slider_seek_update,
+                style="Thick.Horizontal.TScale" # Apply the custom style
+            )
+            self.audio_progress_bar.grid(row=1, column=0, sticky='ew', padx=5, pady=(5, 5))
+            self.audio_progress_bar.bind('<ButtonRelease-1>', self.slider_seek_commit)
+            self.audio_progress_bar.focus_set()
+
             # Add mouse wheel scrolling support
             def on_scroll(event):
                 if hasattr(self, 'audio_progress'):
                     current = self.audio_progress.get()
+                    # Increase sensitivity for better user experience
                     delta = 2 if event.delta > 0 else -2
                     new_value = max(0, min(100, current + delta))
                     self.audio_progress.set(new_value)
-                    self.slider_seek_commit()
-            
-            self.audio_progress_bar.bind('<MouseWheel>', on_scroll)  # Windows
-            self.audio_progress_bar.bind('<Button-4>', lambda e: on_scroll(type('', (), {'delta': 120})))  # Linux scroll up
-            self.audio_progress_bar.bind('<Button-5>', lambda e: on_scroll(type('', (), {'delta': -120})))  # Linux scroll down
-            
-            Label(progress_row, text='PROGRESS BAR DEBUG AREA (BOTTOM)', bg='yellow', fg='black', font=('Arial', 16, 'bold')).pack(side='bottom', fill='x')
-            
-            # Print geometry info after layout
-            def print_bar_geom():
-                try:
-                    pb = self.audio_progress_bar
-                    pf = playback_frame
-                    pb.update_idletasks()
-                    pf.update_idletasks()
-                    print('RADICAL DEBUG: playback_frame width:', pf.winfo_width(), 'height:', pf.winfo_height())
-                    print('RADICAL DEBUG: progress_row width:', progress_row.winfo_width(), 'height:', progress_row.winfo_height())
-                    print('RADICAL DEBUG: progress_bar width:', pb.winfo_width(), 'height:', pb.winfo_height())
-                except Exception as e:
-                    print('RADICAL DEBUG: Exception in print_bar_geom:', e)
-            for delay in (100, 300, 600, 1200):
-                self.master.after(delay, print_bar_geom)
+                    self.slider_seek_commit() # Commit immediately on scroll
+            self.audio_progress_bar.bind('<MouseWheel>', on_scroll)
+            # For Linux
+            self.audio_progress_bar.bind('<Button-4>', lambda e: on_scroll(type('', (), {'delta': 120})))
+            self.audio_progress_bar.bind('<Button-5>', lambda e: on_scroll(type('', (), {'delta': -120})))
+
             self.update_audio_progress()
         else:
             Label(self.audio_controls_frame, text="No audio file available or VLC not installed.",
                   font=("Segoe UI", 11), bg='#f9f9fa', fg='#dc3545').pack(pady=10)
-
-    def _resize_progress_bar(self):
-        # No-op for radical debug
-        pass
 
     def play_audio(self):
         if hasattr(self, 'vlc_player'):
