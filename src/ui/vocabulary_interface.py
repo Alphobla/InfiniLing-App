@@ -1,7 +1,9 @@
 from tkinter import Tk, Frame, Button, Label, filedialog, messagebox, ttk, Entry, Checkbutton, BooleanVar, IntVar, Text, Scrollbar, DoubleVar
+import tkinter.messagebox as msgbox
 from vocabulary.main_orchestrator import VocabularyApp
 import os
 import threading
+import numpy as np
 
 # Try to import VLC for audio playback
 try:
@@ -426,11 +428,13 @@ Cette histoire simple montre pourquoi il est important de bien parler français.
 Quand nous disons "Excusez-moi" ou "Pardon", nous montrons du respect.
 Où que nous allions, ces mots nous aident. Maintenant, vous savez comment utiliser ces expressions!"""
 
-            # Create a dummy audio path (you could put a real test audio file here)
-            # If you want to test audio controls, put a test.mp3 file in the data folder
+            # Use one of the existing audio files for testing
             data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data')
-            test_audio_file = os.path.join(data_dir, 'test.mp3')
+            audio_dir = os.path.join(data_dir, 'transcriptions_and_audio')
+            test_audio_file = os.path.join(audio_dir, 'Le public mène la révolution médiatique - 20 juin 2025.mp3')
             test_audio_path = test_audio_file if os.path.exists(test_audio_file) else ""
+            print(f"DEBUG: Test audio path: {test_audio_path}")
+            print(f"DEBUG: Audio file exists: {os.path.exists(test_audio_path) if test_audio_path else False}")
             
             # Simulate processing delay for realism
             self.generate_button.config(state='disabled', text="🧪 Testing...")
@@ -508,6 +512,11 @@ class ReviewInterface:
         self.audio_speed = 0.9
         self.audio_length = 1
         self._slider_dragging = False
+        
+        # Debug audio path
+        print(f"DEBUG: ReviewInterface audio_path: {self.audio_path}")
+        print(f"DEBUG: Audio file exists: {os.path.exists(self.audio_path) if self.audio_path else False}")
+        print(f"DEBUG: VLC available: {self.vlc_available}")
         
         # Sync with Git at the start of review session
         if self.vocab_app and hasattr(self.vocab_app, 'git_manager'):
@@ -908,108 +917,90 @@ class ReviewInterface:
         print(f"DEBUG: Currently marked difficult: {list(self.marked_difficult)}")
 
     def setup_audio_controls(self):
-        """Setup professional audio controls"""
         for widget in self.audio_controls_frame.winfo_children():
             widget.destroy()
 
-        # Always show audio controls area
-        audio_frame = ttk.LabelFrame(self.audio_controls_frame, text="🎵 Audio Controls", padding="15")
-        audio_frame.pack(fill='x', padx=10, pady=5)
+        # Configure grid for the main audio controls frame
+        self.audio_controls_frame.grid_columnconfigure(0, weight=1)
+        
+        # Debug output to identify the issue
+        print(f"DEBUG: setup_audio_controls called")
+        print(f"DEBUG: self.vlc_available = {self.vlc_available}")
+        print(f"DEBUG: self.audio_path = {self.audio_path}")
+        print(f"DEBUG: audio_path exists = {os.path.exists(self.audio_path) if self.audio_path else False}")
 
         if self.vlc_available and self.audio_path and os.path.exists(self.audio_path):
-            # Top row - Main playback controls
-            controls_row = ttk.Frame(audio_frame)
-            controls_row.pack(fill='x', pady=(0, 10))
+            try:
+                print(f"DEBUG: Attempting to initialize VLC with audio path: {self.audio_path}")
+                self.vlc_instance = vlc.Instance()
+                self.vlc_player = self.vlc_instance.media_player_new()
+                media = self.vlc_instance.media_new(self.audio_path)
+                self.vlc_player.set_media(media)
+                print(f"DEBUG: VLC initialization successful")
+            except Exception as e:
+                print(f"DEBUG: VLC initialization failed: {e}")
+                self.vlc_available = False
+        else:
+            print(f"DEBUG: VLC conditions not met: vlc_available={self.vlc_available}, audio_path={bool(self.audio_path)}, exists={os.path.exists(self.audio_path) if self.audio_path else False}")
+        
+        if self.vlc_available and self.audio_path and os.path.exists(self.audio_path):
+            # --- Playback controls row ---
+            playback_frame = Frame(self.audio_controls_frame, bg='#f8f9fa')
+            playback_frame.grid(row=0, column=0, sticky='ew', pady=(0, 5))
             
-            # Playback controls (centered)
-            playback_frame = ttk.Frame(controls_row)
-            playback_frame.pack(expand=True)
-            
-            self.play_btn = ttk.Button(playback_frame, text="▶ Play", 
-                                      command=self.play_audio, style='Accent.TButton')
+            self.play_btn = Button(playback_frame, text="▶ Play", command=self.play_audio,
+                                   font=("Segoe UI", 11, "bold"), bg='#27ae60', fg='white', relief='flat', bd=0)
             self.play_btn.pack(side='left', padx=5)
-            
-            self.pause_btn = ttk.Button(playback_frame, text="⏸ Pause", 
-                                       command=self.pause_audio, style='Modern.TButton')
+            self.pause_btn = Button(playback_frame, text="⏸ Pause", command=self.pause_audio,
+                                    font=("Segoe UI", 11), bg='#f9f9fa', fg='#2c3e50', relief='flat', bd=0)
             self.pause_btn.pack(side='left', padx=5)
-            
-            self.stop_btn = ttk.Button(playback_frame, text="⏹ Stop", 
-                                      command=self.stop_audio, style='Modern.TButton')
+            self.stop_btn = Button(playback_frame, text="⏹ Stop", command=self.stop_audio,
+                                   font=("Segoe UI", 11), bg='#f9f9fa', fg='#2c3e50', relief='flat', bd=0)
             self.stop_btn.pack(side='left', padx=5)
+            Button(playback_frame, text="⏪ -4s", command=lambda: self.jump_audio(-4), font=("Segoe UI", 11), bg='#f9f9fa', fg='#2c3e50', relief='flat', bd=0).pack(side='left', padx=5)
+            Button(playback_frame, text="+4s ⏩", command=lambda: self.jump_audio(4), font=("Segoe UI", 11), bg='#f9f9fa', fg='#2c3e50', relief='flat', bd=0).pack(side='left', padx=5)
+            Button(playback_frame, text="🐌 -5%", command=lambda: self.change_speed(-0.05), font=("Segoe UI", 11), bg='#f9f9fa', fg='#2c3e50', relief='flat', bd=0).pack(side='left', padx=2)
+            Button(playback_frame, text="🐇 +5%", command=lambda: self.change_speed(0.05), font=("Segoe UI", 11), bg='#f9f9fa', fg='#2c3e50', relief='flat', bd=0).pack(side='left', padx=2)
             
-            # Separator
-            ttk.Separator(playback_frame, orient='vertical').pack(side='left', fill='y', padx=15)
-            
-            # Jump controls
-            self.jump_back_btn = ttk.Button(playback_frame, text="⏪ -4s", 
-                                           command=lambda: self.jump_audio(-4), style='Modern.TButton')
-            self.jump_back_btn.pack(side='left', padx=5)
-            
-            self.jump_forward_btn = ttk.Button(playback_frame, text="+4s ⏩", 
-                                              command=lambda: self.jump_audio(4), style='Modern.TButton')
-            self.jump_forward_btn.pack(side='left', padx=5)
-            
-            # Separator
-            ttk.Separator(playback_frame, orient='vertical').pack(side='left', fill='y', padx=15)
-            
-            # Speed controls
-            self.slower_btn = ttk.Button(playback_frame, text="🐌 -5%", 
-                                        command=lambda: self.change_speed(-0.05), style='Modern.TButton')
-            self.slower_btn.pack(side='left', padx=2)
-            
-            self.faster_btn = ttk.Button(playback_frame, text="🐇 +5%", 
-                                        command=lambda: self.change_speed(0.05), style='Modern.TButton')
-            self.faster_btn.pack(side='left', padx=2)
-            
-            # Bottom row - Progress bar
-            progress_row = ttk.Frame(audio_frame)
-            progress_row.pack(fill='x')
-            
+            # --- Progress bar row (directly below controls) ---
             self.audio_progress = DoubleVar()
-            self.audio_progress_bar = ttk.Scale(progress_row, 
-                                              variable=self.audio_progress, 
-                                              length=500, 
-                                              from_=0, 
-                                              to=100, 
-                                              orient='horizontal', 
-                                              command=self.slider_seek_update)
-            self.audio_progress_bar.pack(side='left', fill='x', expand=True, padx=(0, 10))
+
+            # Add a custom style for a thicker progress bar
+            style = ttk.Style(self.audio_controls_frame)
+            # The 'sliderthickness' option makes the slider itself thicker.
+            style.configure("Thick.Horizontal.TScale", sliderthickness=25)
+
+            self.audio_progress_bar = ttk.Scale(
+                self.audio_controls_frame,
+                variable=self.audio_progress,
+                from_=0,
+                to=100,
+                orient='horizontal',
+                command=self.slider_seek_update,
+                style="Thick.Horizontal.TScale" # Apply the custom style
+            )
+            self.audio_progress_bar.grid(row=1, column=0, sticky='ew', padx=5, pady=(5, 5))
             self.audio_progress_bar.bind('<ButtonRelease-1>', self.slider_seek_commit)
-            
-            # Initialize and start progress updates
+            self.audio_progress_bar.focus_set()
+
+            # Add mouse wheel scrolling support
+            def on_scroll(event):
+                if hasattr(self, 'audio_progress'):
+                    current = self.audio_progress.get()
+                    # Increase sensitivity for better user experience
+                    delta = 2 if event.delta > 0 else -2
+                    new_value = max(0, min(100, current + delta))
+                    self.audio_progress.set(new_value)
+                    self.slider_seek_commit() # Commit immediately on scroll
+            self.audio_progress_bar.bind('<MouseWheel>', on_scroll)
+            # For Linux
+            self.audio_progress_bar.bind('<Button-4>', lambda e: on_scroll(type('', (), {'delta': 120})))
+            self.audio_progress_bar.bind('<Button-5>', lambda e: on_scroll(type('', (), {'delta': -120})))
+
             self.update_audio_progress()
         else:
-            # Show disabled controls if no audio available
-            controls_row = ttk.Frame(audio_frame)
-            controls_row.pack(fill='x', pady=(0, 10))
-            
-            playback_frame = ttk.Frame(controls_row)
-            playback_frame.pack(expand=True)
-            
-            # Disabled buttons
-            ttk.Button(playback_frame, text="▶ Play", state='disabled', style='Accent.TButton').pack(side='left', padx=5)
-            ttk.Button(playback_frame, text="⏸ Pause", state='disabled', style='Modern.TButton').pack(side='left', padx=5)
-            ttk.Button(playback_frame, text="⏹ Stop", state='disabled', style='Modern.TButton').pack(side='left', padx=5)
-            
-            ttk.Separator(playback_frame, orient='vertical').pack(side='left', fill='y', padx=15)
-            
-            ttk.Button(playback_frame, text="⏪ -4s", state='disabled', style='Modern.TButton').pack(side='left', padx=5)
-            ttk.Button(playback_frame, text="+4s ⏩", state='disabled', style='Modern.TButton').pack(side='left', padx=5)
-            
-            ttk.Separator(playback_frame, orient='vertical').pack(side='left', fill='y', padx=15)
-            
-            ttk.Button(playback_frame, text="🐌 -5%", state='disabled', style='Modern.TButton').pack(side='left', padx=2)
-            ttk.Button(playback_frame, text="🐇 +5%", state='disabled', style='Modern.TButton').pack(side='left', padx=2)
-            
-            # Message
-            if not self.audio_path:
-                message = "No audio file available"
-            elif not VLC_AVAILABLE:
-                message = "VLC not available - install VLC media player for audio support"
-            else:
-                message = "Audio file not found"
-            
-            ttk.Label(audio_frame, text=message, style='Body.TLabel').pack(pady=10)
+            Label(self.audio_controls_frame, text="No audio file available or VLC not installed.",
+                  font=("Segoe UI", 11), bg='#f9f9fa', fg='#dc3545').pack(pady=10)
 
     # Audio control methods
     def play_audio(self):
@@ -1174,7 +1165,6 @@ class ReviewInterface:
             import matplotlib.pyplot as plt
             from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
             from matplotlib.figure import Figure
-            import numpy as np
             
             # Prepare data for all words from JSON
             word_data = []
@@ -1342,7 +1332,6 @@ class ReviewInterface:
             print("🚪 Exiting without saving progress...")
             
             # Show confirmation dialog
-            import tkinter.messagebox as msgbox
             result = msgbox.askyesno(
                 "Exit Without Saving", 
                 "Are you sure you want to exit without saving your review progress?\n\n"
