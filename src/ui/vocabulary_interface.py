@@ -361,18 +361,29 @@ class VocabularyInterface:
         try:
             story = result.get('story', '')
             audio_path = result.get('audio_path', '')
+            selected_words = result.get('selected_words', [])
             
             if story:
                 self.status_label.config(text="✅ Last text loaded successfully (offline mode)")
                 
-                # Create empty word data for offline mode (no specific vocabulary tracking)
-                offline_words = [
-                    {'word': f'Word{i+1}', 'translation': f'Translation{i+1}', 'pronunciation': ''}
-                    for i in range(10)  # Create 10 placeholder words for review
-                ]
+                # Use saved vocabulary words if available, otherwise create placeholders
+                if selected_words:
+                    # Convert tuples to dictionaries for compatibility with review interface
+                    review_words = [
+                        {'word': word, 'translation': translation, 'pronunciation': pronunciation}
+                        for word, translation, pronunciation in selected_words
+                    ]
+                    print(f"📚 Using {len(review_words)} saved vocabulary words for review")
+                else:
+                    # Fallback to placeholder words if no saved words found
+                    review_words = [
+                        {'word': f'Word{i+1}', 'translation': f'Translation{i+1}', 'pronunciation': ''}
+                        for i in range(10)  # Create 10 placeholder words for review
+                    ]
+                    print("⚠️ No saved vocabulary words found, using placeholders")
                 
                 # Start review interface with loaded content
-                self.show_review_interface(offline_words, story, audio_path)
+                self.show_review_interface(review_words, story, audio_path)
             else:
                 self.status_label.config(text="❌ No saved text found. Generate new content first.")
             

@@ -7,6 +7,7 @@ Coordinates all the components for a complete vocabulary learning session.
 
 import os
 import tempfile
+import json
 from typing import List, Tuple, Optional
 from .git_database_manager import GitManager, DatabaseManager, VocabularyImporter
 from .vocabulary_selector import VocabularySelector
@@ -174,6 +175,9 @@ class VocabularyApp:
                         if progress_callback:
                             progress_callback(f"⚠️ Could not save text file: {e}")
                 
+                # Save the selected vocabulary words for vocabulary review
+                self._save_selected_words(selected_words, progress_callback)
+                
             except Exception as e:
                 if progress_callback:
                     progress_callback(f"❌ Error generating story: {e}")
@@ -201,6 +205,64 @@ class VocabularyApp:
             "session_word_updates": session_word_updates
         }
     
+    def _save_selected_words(self, selected_words: List[Tuple[str, str, str]], progress_callback=None):
+        """Save the selected vocabulary words to a JSON file for later use."""
+        try:
+            words_path = os.path.join(tempfile.gettempdir(), "infiniling_words.json")
+            
+            # Convert tuples to dictionaries for JSON serialization
+            words_data = []
+            for word, translation, pronunciation in selected_words:
+                words_data.append({
+                    "word": word,
+                    "translation": translation,
+                    "pronunciation": pronunciation or ""
+                })
+            
+            # Save to JSON file
+            with open(words_path, 'w', encoding='utf-8') as f:
+                json.dump(words_data, f, indent=2, ensure_ascii=False)
+            
+            if progress_callback:
+                progress_callback(f"💾 Saved {len(selected_words)} vocabulary words")
+            
+        except Exception as e:
+            if progress_callback:
+                progress_callback(f"⚠️ Could not save vocabulary words: {e}")
+            print(f"Error saving vocabulary words: {e}")
+
+    def _load_saved_words(self, progress_callback=None) -> List[Tuple[str, str, str]]:
+        """Load the saved vocabulary words from JSON file."""
+        try:
+            words_path = os.path.join(tempfile.gettempdir(), "infiniling_words.json")
+            
+            if not os.path.exists(words_path):
+                if progress_callback:
+                    progress_callback("⚠️ No saved vocabulary words found")
+                return []
+            
+            with open(words_path, 'r', encoding='utf-8') as f:
+                words_data = json.load(f)
+            
+            # Convert dictionaries back to tuples
+            selected_words = []
+            for word_info in words_data:
+                word = word_info.get("word", "")
+                translation = word_info.get("translation", "")
+                pronunciation = word_info.get("pronunciation", "")
+                selected_words.append((word, translation, pronunciation))
+            
+            if progress_callback:
+                progress_callback(f"📚 Loaded {len(selected_words)} vocabulary words")
+            
+            return selected_words
+            
+        except Exception as e:
+            if progress_callback:
+                progress_callback(f"⚠️ Error loading vocabulary words: {e}")
+            print(f"Error loading vocabulary words: {e}")
+            return []
+
     def load_last_session(self, progress_callback=None) -> dict:
         """
         Load the last generated text and audio files.
@@ -242,8 +304,11 @@ class VocabularyApp:
             if progress_callback:
                 progress_callback("✅ Last audio found")
         
+        # Load saved vocabulary words
+        saved_words = self._load_saved_words(progress_callback)
+        
         return {
-            "selected_words": [],  # We don't save word selection for last session
+            "selected_words": saved_words,  # Load saved vocabulary words for review
             "story": generated_text,
             "audio_path": audio_path
         }
