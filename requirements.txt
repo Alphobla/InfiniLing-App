@@ -1,12 +1,8 @@
 openai-whisper
 openai
 mutagen
-flask
 python-dotenv
-requests
 pandas
 numpy
-jsonschema
 python-vlc
-pygame
 matplotlib

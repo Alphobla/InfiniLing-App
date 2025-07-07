@@ -7,7 +7,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
-    from ui.main_menu import MainMenu
+    from shared.menu import MainMenu
 except ImportError as e:
     print(f"Import error: {e}")
     print("Make sure you're running this from the correct directory")

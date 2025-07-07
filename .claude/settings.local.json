@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv:*)",
+      "Bash(cd:*)",
+      "Bash(cd:*)",
+      "Bash(./venv/Scripts/python.exe:*)",
+      "mcp__ide__getDiagnostics"
+    ],
+    "deny": []
+  }
+}
