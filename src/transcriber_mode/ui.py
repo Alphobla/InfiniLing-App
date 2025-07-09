@@ -4,15 +4,16 @@ import threading
 from .transcriber import Transcriber
 import re
 import shutil
-from ..shared.reader_ui import ReaderUI
+from src.shared.reader_ui import ReaderUI
+from src.shared.styles import center_top_window, Colors
 
 class WhisperInterface:
     def __init__(self, master, back_callback=None):
         self.master = master
         self.back_callback = back_callback
-        self.master.title("🎤 InfiniLing - Whisper Mode")
-        self.master.geometry("700x600")
-        self.master.configure(bg='#f8f9fa')
+        self.master.title("🎤 InfiniLing - Transcription Mode")
+        center_top_window(self.master, width=500, height=500)
+        self.master.configure(bg=Colors.BACKGROUND)
 
         # State management
         self.audio_file_path = None
@@ -37,30 +38,39 @@ class WhisperInterface:
             widget.destroy()
             
         # Main container
-        main_frame = Frame(self.master, bg='#f9f9fa')
+        main_frame = Frame(self.master, bg=Colors.BACKGROUND)
         main_frame.pack(expand=True, fill='both', padx=20, pady=20)
 
         # Header with back button
-        header_frame = Frame(main_frame, bg='#f9f9fa')
+        header_frame = Frame(main_frame, bg=Colors.BACKGROUND)
         header_frame.pack(fill='x', pady=(0, 15))
+        header_frame.grid_columnconfigure(0, weight=0)  # Back-Button
+        header_frame.grid_columnconfigure(1, weight=1)  # Titel (zentriert)
+        header_frame.grid_columnconfigure(2, weight=0)  # Platzhalter
 
         if self.back_callback:
-            back_button = Button(header_frame, text="← Menu", 
-                               command=self.back_callback,
-                               font=("Segoe UI", 10, "bold"),
-                               bg='#95a5a6', fg='white',
-                               activebackground='#7f8c8d',
-                               relief='flat', bd=0, pady=5, padx=15)
-            back_button.pack(side='left')
+            back_button = Button(
+                header_frame, text="← Menu",
+                command=self.back_callback,
+                font=("Segoe UI", 10, "bold"),
+                bg=Colors.BUTTON_SECONDARY, fg=Colors.TEXT_LIGHT,
+                activebackground=Colors.BUTTON_SECONDARY,
+                relief='flat', bd=0, pady=5, padx=15,
+            )
+            back_button.grid(row=0, column=0, sticky='w')
 
-        # Title
-        title_label = Label(main_frame, text="🎤 Audio Transcription", 
-                           font=("Segoe UI", 20, "bold"), 
-                           bg='#f9f9fa', fg='#2c3e50')
-        title_label.pack(pady=(0, 20))
+        title_label = Label(
+            header_frame, text="🎤 Transcribr",
+            font=("Segoe UI", 20, "bold"),
+            bg=Colors.BACKGROUND, fg=Colors.DARK_GRAY
+        )
+        title_label.grid(row=0, column=1, sticky='n')
+        # Unsichtbarer Platzhalter rechts
+        right_spacer = Label(header_frame,  text="", bg=Colors.BACKGROUND)
+        right_spacer.grid(row=0, column=2, sticky='e', padx=(50, 10))
 
         # Dynamic content area
-        self.content_frame = Frame(main_frame, bg='#f9f9fa')
+        self.content_frame = Frame(main_frame, bg=Colors.BACKGROUND)
         self.content_frame.pack(fill='both', expand=True)
         
         # Build UI based on current state
@@ -123,7 +133,7 @@ class WhisperInterface:
             print(f"Creating transcriber with model: {model_size}")  # Debug log
             
             # Show more detailed status during model loading
-            self.master.after(0, lambda: self.update_progress_status(f"Downloading/Loading {model_size} model - please wait..."))
+            self.master.after(0, lambda: self.update_progress_status(f"Loading {model_size} model ..."))
             
             transcriber = Transcriber(model_size=model_size)
             self.current_transcriber = transcriber  # Store for SRT creation
@@ -205,10 +215,6 @@ class WhisperInterface:
             self.progress_bar.update_idletasks()
             self.master.update_idletasks()  # Also update the master window
 
-    def save_transcription_files(self, transcription):
-        """Save audio and transcription files to data directory (legacy method - now handled in transcribe_audio_background)"""
-        # This method is now handled directly in transcribe_audio_background for better error handling
-        pass
 
     def save_as_srt(self, transcription, filepath):
         """Save transcription as SRT file with timestamps"""
@@ -247,16 +253,6 @@ class WhisperInterface:
         # Show error message
         messagebox.showerror("Error", f"Transcription failed:\n{error_message}")
 
-    # Keep the old transcribe_audio method for backward compatibility
-    def transcribe_audio(self):
-        """Legacy method - redirects to new workflow"""
-        self.start_transcription()
-
-    # Legacy save method - not used in new workflow
-    def save_transcription(self):
-        """Legacy save method - transcriptions are now auto-saved"""
-        messagebox.showinfo("Info", "Transcriptions are automatically saved to the data folder.")
-
     def populate_saved_transcriptions(self):
         """Scan the transcriptions_and_audio folder and create a tile for each MP3/SRT pair."""
         import glob
@@ -281,11 +277,13 @@ class WhisperInterface:
                 except Exception:
                     title = os.path.basename(base)
                 # Create tile/button
-                btn = Button(self.saved_tiles_frame, text=title, font=("Segoe UI", 11, "bold"),
-                             bg='#ffffff', fg='#2c3e50', relief='flat', bd=1, padx=10, pady=10,
-                             anchor='w', justify='left',  # Align text to the left
-                             activebackground='#f8f9fa',
-                             command=lambda m=mp3_path, s=srt_path: self.load_saved_transcription(m, s))
+                btn = Button(
+                    self.saved_tiles_frame, text=title, font=("Segoe UI", 11),
+                    bg=Colors.SURFACE, fg=Colors.DARK_GRAY, relief='flat', bd=1, padx=10, pady=5,
+                    anchor='w', justify='left',  # Align text to the left
+                    activebackground=Colors.LIGHT_GRAY,
+                    command=lambda m=mp3_path, s=srt_path: self.load_saved_transcription(m, s)
+                )
                 btn.pack(side='top', padx=8, pady=8, fill='x', expand=False)
 
     def load_saved_transcription(self, mp3_path, srt_path):
@@ -313,34 +311,36 @@ class WhisperInterface:
     def build_initial_ui(self):
         """Build UI for initial state (no file selected)"""
         # Buttons row
-        buttons_frame = Frame(self.content_frame, bg='#f9f9fa')
-        buttons_frame.pack(fill='x', pady=(0, 20))
-        buttons_frame.grid_columnconfigure(0, weight=1)
-        buttons_frame.grid_columnconfigure(1, weight=1)
+        buttons_frame = Frame(self.content_frame, bg=Colors.BACKGROUND)
+        buttons_frame.pack( pady=(0, 20), anchor='center')
+        buttons_frame.grid_rowconfigure(0, minsize=150)  # Force row height
+        buttons_frame.grid_columnconfigure(0, minsize=150)
+        buttons_frame.grid_columnconfigure(1, minsize=150)
 
         self.browse_button = Button(
             buttons_frame,
-            text="Browse New Audio File",
+            text="Browse \nAudio File",
             command=self.select_audio_file,
-            font=("Segoe UI", 13, "bold"),
-            bg='#3498db', fg='white',
-            activebackground='#2980b9',
+            font=("Segoe UI", 12, "bold"),
+            bg=Colors.BUTTON_PAUSE, 
+            fg=Colors.SURFACE,
+            activebackground=Colors.BUTTON_PAUSE_HOVER,
             relief='flat', bd=0,
-            height=4
         )
         self.browse_button.grid(row=0, column=0, sticky='nsew', padx=(0, 8))
 
         self.transcribe_button = Button(
             buttons_frame,
-            text="Start Transcription",
+            text="Start \nTranscription",
             command=self.start_transcription,
-            font=("Segoe UI", 13, "bold"),
-            bg='#27ae60', fg='#95a5a6',  # Beautiful green background, grey text to show disabled
-            activebackground='#219a52',
+            font=("Segoe UI", 12, "bold"),
+            bg=Colors.BUTTON_PAUSE,
+            fg=Colors.MEDIUM_GRAY,  # Beautiful green background, grey text to show disabled
+            activebackground=Colors.BUTTON_SPEED_HOVER,
             relief='flat', bd=0,
-            height=4,
-            state='disabled'
+            state='disabled',
         )
+        # Force button size to 150x150 pixels
         self.transcribe_button.grid(row=0, column=1, sticky='nsew', padx=(8, 0))
 
         # Saved transcriptions area
@@ -349,7 +349,7 @@ class WhisperInterface:
     def build_file_selected_ui(self):
         """Build UI for file selected state"""
         # Buttons row
-        buttons_frame = Frame(self.content_frame, bg='#f9f9fa')
+        buttons_frame = Frame(self.content_frame, bg=Colors.BACKGROUND)
         buttons_frame.pack(fill='x', pady=(0, 20))
         buttons_frame.grid_columnconfigure(0, weight=1)
         buttons_frame.grid_columnconfigure(1, weight=1)
@@ -393,12 +393,14 @@ class WhisperInterface:
     def build_transcribing_ui(self):
         """Build UI for transcribing state (progress bar)"""
         # Progress frame
-        self.progress_frame = Frame(self.content_frame, bg='#ffffff', relief='raised', bd=1)
+        self.progress_frame = Frame(self.content_frame, bg=Colors.SURFACE, relief='raised', bd=1)
         self.progress_frame.pack(fill='x', pady=(0, 20), padx=10)
         
-        Label(self.progress_frame, text="🎯 Transcribing Audio...", 
-              font=("Segoe UI", 16, "bold"), 
-              bg='#ffffff', fg='#2c3e50').pack(pady=(20, 10))
+        Label(
+            self.progress_frame, text="🎯 Transcribing Audio...",
+            font=("Segoe UI", 16, "bold"),
+            bg=Colors.SURFACE, fg=Colors.DARK_GRAY
+        ).pack(pady=(20, 10))
 
         # Progress bar
         self.progress_bar = ttk.Progressbar(
@@ -416,7 +418,7 @@ class WhisperInterface:
             self.progress_frame,
             text="Initializing transcriber...",
             font=("Segoe UI", 11),
-            bg='#ffffff', fg='#6c757d'
+            bg=Colors.SURFACE, fg=Colors.MEDIUM_GRAY
         )
         self.progress_status.pack(pady=(0, 10))
         
@@ -426,8 +428,8 @@ class WhisperInterface:
             text="Cancel Transcription",
             command=self.cancel_transcription,
             font=("Segoe UI", 11),
-            bg='#dc3545', fg='white',
-            activebackground='#c82333',
+            bg=Colors.DANGER, fg=Colors.TEXT_LIGHT,
+            activebackground=Colors.BUTTON_STOP_HOVER,
             relief='flat', bd=0, pady=5, padx=15
         )
         cancel_button.pack(pady=(0, 20))
@@ -437,30 +439,30 @@ class WhisperInterface:
     
     def build_model_selection(self):
         """Build model selection frame"""
-        self.model_frame = Frame(self.content_frame, bg='#ffffff', relief='raised', bd=1)
+        self.model_frame = Frame(self.content_frame, bg=Colors.SURFACE, relief='raised', bd=1)
         self.model_frame.pack(fill='both', expand=True, pady=(0, 10), padx=10)
         
         Label(self.model_frame, text="Choose Transcription Model", 
               font=("Segoe UI", 14, "bold"), 
-              bg='#ffffff', fg='#2c3e50').pack(pady=(20, 15))
+              bg=Colors.SURFACE, fg=Colors.DARK_GRAY).pack(pady=(20, 15))
 
         # Get audio file duration for time estimates
         audio_duration = self.get_audio_duration()
         
         # Model options with estimated processing times
         models = [
-            ("tiny", "Fastest, least accurate", 0.3),      # ~30% of audio length
-            ("base", "Good balance of speed and accuracy", 0.5),  # ~50% of audio length  
-            ("small", "Better accuracy, slower", 0.8),     # ~80% of audio length
-            ("medium", "High accuracy, slow", 1.2),        # ~120% of audio length
-            ("large", "Highest accuracy, very slow", 2.0)  # ~200% of audio length
+            ("Blitz guess", 0.3),      # ~30% of audio length
+            ("Hurried estimate", 0.5),  # ~50% of audio length  
+            ("Measured notion", 0.8),     # ~80% of audio length
+            ("Careful take", 1.2),        # ~120% of audio length
+            ("Deliberate precision", 2.0)  # ~200% of audio length
         ]
         
-        model_container = Frame(self.model_frame, bg='#ffffff')
+        model_container = Frame(self.model_frame, bg=Colors.SURFACE)
         model_container.pack(expand=True, fill='both', padx=30, pady=(0, 20))
         
         for model, description, time_factor in models:
-            model_row = Frame(model_container, bg='#ffffff')
+            model_row = Frame(model_container, bg=Colors.SURFACE)
             model_row.pack(fill='x', pady=8)
             
             # Calculate estimated time
@@ -472,26 +474,28 @@ class WhisperInterface:
                 variable=self.selected_model,
                 value=model,
                 font=("Segoe UI", 11),
-                bg='#ffffff',
-                fg='#2c3e50',
-                activebackground='#ffffff',
-                selectcolor='#ffffff'
+                bg=Colors.SURFACE,
+                fg=Colors.DARK_GRAY,
+                activebackground=Colors.SURFACE,
+                selectcolor=Colors.SURFACE
             )
             radio.pack(anchor='w')
     
     def build_saved_transcriptions(self):
         """Build saved transcriptions area"""
-        self.saved_frame = Frame(self.content_frame, bg='#ffffff', relief='raised', bd=1)
+        self.saved_frame = Frame(self.content_frame, bg=Colors.SURFACE, relief='raised', bd=1)
         self.saved_frame.pack(fill='both', expand=True, pady=(0, 10), padx=10)
         
-        Label(self.saved_frame, text="Or choose saved transcriptions", 
-              font=("Segoe UI", 12, "bold"), 
-              bg='#ffffff', fg='#2c3e50').pack(pady=(15, 5), anchor='w', padx=10)
+        Label(
+            self.saved_frame, text="Or choose saved transcriptions:",
+            font=("Segoe UI", 12, "bold"),
+            bg=Colors.SURFACE, fg=Colors.DARK_GRAY
+        ).pack(pady=(15, 5), anchor='w', padx=16)
 
         # Scrollable area for tiles
-        canvas = Canvas(self.saved_frame, bg='#ffffff', highlightthickness=0)
+        canvas = Canvas(self.saved_frame, bg=Colors.SURFACE, highlightthickness=0)
         scrollbar = Scrollbar(self.saved_frame, orient='vertical', command=canvas.yview)
-        self.saved_tiles_frame = Frame(canvas, bg='#ffffff')
+        self.saved_tiles_frame = Frame(canvas, bg=Colors.SURFACE)
         self.saved_tiles_frame.bind(
             "<Configure>",
             lambda e: canvas.configure(scrollregion=canvas.bbox("all"))

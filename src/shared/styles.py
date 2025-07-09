@@ -356,3 +356,10 @@ def get_frame_style(frame_type='content'):
         'header': 'Header.TFrame'
     }
     return styles.get(frame_type, 'Content.TFrame')
+
+def center_top_window(root, width=600, height=450):
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width // 2) - (width // 2)
+    y = (screen_height // 6)
+    root.geometry(f"{width}x{height}+{x}+{y}")
