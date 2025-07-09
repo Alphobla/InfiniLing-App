@@ -2,6 +2,5 @@
 .env.*
 .vscode
 venv/
-data/
 **/__pycache__/
 venv_wsl/
