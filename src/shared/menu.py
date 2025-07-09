@@ -1,6 +1,8 @@
 from tkinter import Tk, Frame, Button, Label, messagebox, ttk
-from transcriber.ui import WhisperInterface
-from gentexter.ui import VocabularyInterface
+from src.transcriber_mode.ui import WhisperInterface
+from src.gentexter_mode.ui import VocabularyInterface
+from src.shared.styles import Spacing, Colors
+
 
 class MainMenu:
     def __init__(self, master):
@@ -35,43 +37,43 @@ class MainMenu:
     def create_widgets(self):
         # Main container
         main_frame = Frame(self.master, bg='#f0f0f0')
-        main_frame.pack(expand=True, fill='both', padx=30, pady=30)
+        main_frame.pack(expand=True, fill='both', padx=Spacing.XL, pady=Spacing.XL)
 
         # Title
         title_label = Label(main_frame, text="🌍 InfiniLing", 
                            font=("Segoe UI", 24, "bold"), 
                            bg='#f0f0f0', fg='#2c3e50')
-        title_label.pack(pady=(0, 40))
+        title_label.pack(pady=(0, Spacing.XL))
 
         # Button container - horizontal layout
         button_frame = Frame(main_frame, bg='#f0f0f0')
         button_frame.pack(expand=True)
 
         # Whisper Mode Button
-        whisper_frame = Frame(button_frame, bg='#3498db', relief='raised', bd=2)
+        whisper_frame = Frame(button_frame, bg=Colors.BUTTON_PAUSE_HOVER, relief='raised', bd=2)
         whisper_frame.pack(side='left', padx=15, pady=10)
         whisper_frame.pack_propagate(False)
         whisper_frame.configure(width=150, height=150)
         
-        whisper_button = Button(whisper_frame, text="🎤\nWhisper\nMode", 
+        whisper_button = Button(whisper_frame, text="🎤\nTranscriber\nMode", 
                                command=self.open_whisper_mode,
                                font=("Segoe UI", 12, "bold"),
-                               bg='#3498db', fg='white', 
-                               activebackground='#2980b9', activeforeground='white',
+                               bg=Colors.BUTTON_PAUSE, fg='white', 
+                               activebackground=Colors.BUTTON_PAUSE_HOVER, activeforeground='white',
                                relief='flat', bd=0)
         whisper_button.pack(fill='both', expand=True)
 
         # Wordstory Mode Button
-        wordstory_frame = Frame(button_frame, bg='#e74c3c', relief='raised', bd=2)
+        wordstory_frame = Frame(button_frame, bg=Colors.BUTTON_SPEED_HOVER, relief='raised', bd=2)
         wordstory_frame.pack(side='left', padx=15, pady=10)
         wordstory_frame.pack_propagate(False)
         wordstory_frame.configure(width=150, height=150)
         
-        wordstory_button = Button(wordstory_frame, text="📚\nWordstory\nMode", 
+        wordstory_button = Button(wordstory_frame, text="📚\nGentexter\nMode", 
                                  command=self.open_wordstory_mode,
                                  font=("Segoe UI", 12, "bold"),
-                                 bg='#e74c3c', fg='white',
-                                 activebackground='#c0392b', activeforeground='white',
+                                 bg=Colors.BUTTON_SPEED, fg='white',
+                                 activebackground=Colors.BUTTON_SPEED_HOVER, activeforeground='white',
                                  relief='flat', bd=0)
         wordstory_button.pack(fill='both', expand=True)
 
