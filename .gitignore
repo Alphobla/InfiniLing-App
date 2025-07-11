@@ -7,3 +7,7 @@ venv_wsl/
 .claude/
 build/
 dist/
+node_modules/
+package-lock.json
+package.json
+.claude/
