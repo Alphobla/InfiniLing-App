@@ -41,8 +41,7 @@ class MainMenu:
         button_frame.pack(expand=True)
 
         # Whisper Mode Button
-        whisper_frame = Frame(button_frame, bg=Colors.BUTTON_PAUSE_HOVER, 
-                              relief='raised', bd=2)
+        whisper_frame = Frame(button_frame, bg=Colors.BUTTON_PAUSE_HOVER)
         whisper_frame.pack(side='left', padx=15, pady=10)
         whisper_frame.pack_propagate(False)
         whisper_frame.configure(width=150, height=150)
@@ -55,11 +54,11 @@ class MainMenu:
                                fg='white', 
                                activebackground=Colors.BUTTON_PAUSE_HOVER, 
                                activeforeground='white',
-                               relief='flat', bd=0)
+                               relief='raised', bd=2)
         whisper_button.pack(fill='both', expand=True)
 
         # Wordstory Mode Button
-        wordstory_frame = Frame(button_frame, bg=Colors.BUTTON_SPEED_HOVER, relief='raised', bd=2)
+        wordstory_frame = Frame(button_frame, bg=Colors.BUTTON_SPEED_HOVER)
         wordstory_frame.pack(side='left', padx=15, pady=10)
         wordstory_frame.pack_propagate(False)
         wordstory_frame.configure(width=150, height=150)
@@ -71,7 +70,7 @@ class MainMenu:
                                   bg=Colors.BUTTON_STOP, fg='white',
                                   activebackground=Colors.BUTTON_STOP_HOVER, 
                                   activeforeground='white',
-                                  relief='flat', bd=0)
+                                  relief='raised', bd=2)
         wordstory_button.pack(fill='both', expand=True)
 
         # Footer

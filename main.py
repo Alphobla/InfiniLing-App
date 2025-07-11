@@ -11,6 +11,7 @@ except ImportError as e:
 def main():
     """Main application entry point"""
     root = tk.Tk()
+    root.iconbitmap("data/icon.ico")
     
     try:
         main_menu = MainMenu(root)

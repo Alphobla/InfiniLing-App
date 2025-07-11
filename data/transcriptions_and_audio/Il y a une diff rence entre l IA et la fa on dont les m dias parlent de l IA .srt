@@ -1,0 +1,1460 @@
+1
+00:00:00,000 --> 00:00:03,200
+Tout un monde, Eric Guevarafret.
+
+2
+00:00:03,200 --> 00:00:07,360
+Cette séquence illustre notre époque.
+
+3
+00:00:07,360 --> 00:00:09,439
+Il y a un pouvoir insoupçonné de l'écoute.
+
+4
+00:00:09,439 --> 00:00:11,439
+Pour moi c'était tout un monde.
+
+5
+00:00:11,439 --> 00:00:16,519
+Bonjour invité exceptionnel, l'homme qui dirige la stratégie technologique du groupe Amazon.
+
+6
+00:00:16,519 --> 00:00:21,559
+Responsabilité des grandes entreprises de la tech, consommation d'énergie, rôle de l'humain
+
+7
+00:00:21,559 --> 00:00:26,199
+et utilisation de l'intelligence artificielle dans les crises humanitaires, interview.
+
+8
+00:00:26,199 --> 00:00:30,000
+Et à propos d'humanitaires, qu'en est-il du risque de famine à Gaza ?
+
+9
+00:00:32,799 --> 00:00:36,280
+On retourne dans le monde de l'intelligence artificielle après l'analyse critiquière
+
+10
+00:00:36,280 --> 00:00:37,799
+de la professeure Emily Bander.
+
+11
+00:00:37,799 --> 00:00:41,799
+Ce matin, une autre personnalité de cet univers, Werner Vogels,
+
+12
+00:00:41,799 --> 00:00:45,200
+l'homme qui dirige la stratégie technologique du groupe Amazon.
+
+13
+00:00:45,200 --> 00:00:49,439
+C'est l'occasion de savoir comment lui se positionne sur l'intelligence artificielle,
+
+14
+00:00:49,439 --> 00:00:52,560
+sur le risque de dépendance à des grands groupes comme le sien.
+
+15
+00:00:52,600 --> 00:00:57,240
+Il est de passage à Genève au sommet AI for Good, l'intelligence artificielle pour le bien,
+
+16
+00:00:57,240 --> 00:01:01,440
+co-organisée par l'ONU et la Confédération, dans lequel différents acteurs présentent
+
+17
+00:01:01,440 --> 00:01:05,040
+des façons d'utiliser l'IA pour relever les grands déchis globaux,
+
+18
+00:01:05,040 --> 00:01:06,640
+notamment dans le domaine humanitaire.
+
+19
+00:01:06,640 --> 00:01:11,599
+Et justement, Werner Vogels, qui supervise tout le business du stockage des données chez Amazon,
+
+20
+00:01:11,599 --> 00:01:15,800
+donnait une conférence sur l'importance de la cartographie pour traiter les crises humanitaires.
+
+21
+00:01:15,800 --> 00:01:19,680
+Je lui ai demandé pourquoi il avait choisi l'exemple du Rwanda.
+
+22
+00:01:22,560 --> 00:01:28,600
+Nous nous promenons tous avec des cartes géographiques dans notre téléphone,
+
+23
+00:01:28,600 --> 00:01:31,960
+mais elles sont conçues pour un usage commercial, pas humanitaire.
+
+24
+00:01:31,960 --> 00:01:36,960
+Et la plupart des régions du monde qui ne sont pas commercialement intéressantes
+
+25
+00:01:36,960 --> 00:01:38,599
+ne sont pas cartographiées.
+
+26
+00:01:38,599 --> 00:01:43,840
+Donc au Rwanda, par exemple, on utilise des données cartographiques très précises
+
+27
+00:01:43,840 --> 00:01:45,920
+pour atteindre des objectifs sanitaires.
+
+28
+00:01:45,920 --> 00:01:49,960
+Dans la plupart des pays d'Afrique subsaharienne,
+
+29
+00:01:50,359 --> 00:01:54,159
+la santé maternelle est un enjeu majeur puisqu'il s'agit de s'assurer
+
+30
+00:01:54,159 --> 00:01:57,839
+que les femmes reçoivent les soins nécessaires en temps voulu.
+
+31
+00:01:57,839 --> 00:02:01,519
+Au Rwanda, c'est possible parce qu'ils ont créé un environnement cartographique
+
+32
+00:02:01,519 --> 00:02:06,159
+avec l'emplacement exact de tous les centres de santé disponibles.
+
+33
+00:02:06,159 --> 00:02:09,759
+Leur objectif, c'est qu'aucune femme ne doivent marcher plus d'une heure
+
+34
+00:02:09,759 --> 00:02:11,479
+pour recevoir des soins.
+
+35
+00:02:11,479 --> 00:02:14,799
+Pour ça, il faut savoir où elles marchent et quel chemin elles empruntent.
+
+36
+00:02:14,799 --> 00:02:17,400
+Il ne suffit pas d'avoir une carte avec les grandes routes.
+
+37
+00:02:17,439 --> 00:02:21,319
+Il faut disposer de cartes détaillées de chaque petit chemin emprunté par les femmes
+
+38
+00:02:21,319 --> 00:02:23,439
+pour rejoindre un centre de santé.
+
+39
+00:02:23,439 --> 00:02:27,280
+Avec ces informations, le gouvernement rwandais peut placer les centres de santé
+
+40
+00:02:27,280 --> 00:02:30,800
+de telle sorte qu'ils soient accessibles en temps voulu à une femme en détresse.
+
+41
+00:02:36,640 --> 00:02:39,960
+Donc ce que vous dites, c'est que les cartes avec les données qui sont derrière
+
+42
+00:02:39,960 --> 00:02:43,280
+nous permettent de voir des choses qu'on ne verrait pas autrement ?
+
+43
+00:02:44,280 --> 00:02:45,800
+Exactement.
+
+44
+00:02:45,800 --> 00:02:49,319
+Une grande partie de ce monde et de ses habitants ne sont pas cartographiés.
+
+45
+00:02:49,319 --> 00:02:51,719
+Nous ne savons pas où ils se trouvent.
+
+46
+00:02:53,719 --> 00:02:56,759
+Un autre exemple, c'est celui d'un endroit appelé Makoko,
+
+47
+00:02:56,759 --> 00:03:00,560
+où les maisons sont construites sur pilotis dans la lagune de Lagos, au Nigeria.
+
+48
+00:03:00,560 --> 00:03:03,759
+Si vous regardez toutes les cartes géographiques commerciales de l'endroit,
+
+49
+00:03:03,759 --> 00:03:06,719
+vous ne verrez qu'un lagoon.
+
+50
+00:03:06,719 --> 00:03:09,039
+Les maisons ne sont pas représentées.
+
+51
+00:03:09,039 --> 00:03:13,039
+300 000 personnes y vivent, mais elles n'ont accès à aucun service essentiel
+
+52
+00:03:13,280 --> 00:03:16,400
+parce qu'elles ne sont pas cartographiées, elles sont invisibles.
+
+53
+00:03:16,400 --> 00:03:19,159
+Dans le cadre d'un projet en collaboration avec l'équipe humanitaire
+
+54
+00:03:19,159 --> 00:03:22,840
+de l'organisation Open Street Map, ils ont commencé à utiliser des drones
+
+55
+00:03:22,840 --> 00:03:25,959
+pour cartographier cet environnement et ces 300 000 personnes
+
+56
+00:03:25,959 --> 00:03:28,840
+qui vivent dans une culture unique.
+
+57
+00:03:28,840 --> 00:03:31,799
+Quand elles deviennent disponibles, ces données, ces cartes détaillées
+
+58
+00:03:31,799 --> 00:03:34,000
+permettent de commencer à discuter avec le gouvernement
+
+59
+00:03:34,000 --> 00:03:35,919
+parce que les habitants deviennent visibles.
+
+60
+00:03:35,919 --> 00:03:40,120
+Le fait d'être cartographié permet aussi d'être vu par les institutions officielles.
+
+61
+00:03:40,120 --> 00:03:42,360
+Donc là, il y a une manière de réduire les inégalités
+
+62
+00:03:42,360 --> 00:03:45,640
+parce qu'évidemment, il y a des régions du monde qui sont très bien cartographiées,
+
+63
+00:03:45,640 --> 00:03:48,120
+d'autres qui ne le sont pas du tout ou très mal.
+
+64
+00:03:48,120 --> 00:03:50,120
+Il y a un décalage là.
+
+65
+00:03:50,120 --> 00:03:52,680
+Les endroits sont généralement cartographiés
+
+66
+00:03:52,680 --> 00:03:56,120
+selon ce qui est à disposition pour nous en tant que consommateurs.
+
+67
+00:03:56,120 --> 00:03:58,840
+Donc bien sûr, les zones sont cartographiées
+
+68
+00:03:58,840 --> 00:04:01,879
+en fonction de leur intérêt pour les consommateurs.
+
+69
+00:04:01,879 --> 00:04:04,920
+Mais prenez par exemple en Asie du Sud-Est,
+
+70
+00:04:04,920 --> 00:04:07,640
+une entreprise comme Grab qui fait de la livraison de nourriture,
+
+71
+00:04:08,359 --> 00:04:11,159
+qui transporte des gens sur des vélos
+
+72
+00:04:11,159 --> 00:04:14,519
+et qui va dans les plus petits endroits possible à Jakarta ou à Kuala Lumpur.
+
+73
+00:04:14,519 --> 00:04:17,800
+La plupart de ces zones ne sont pas cartographiées.
+
+74
+00:04:17,800 --> 00:04:22,519
+Il n'y a pas de carte,
+
+75
+00:04:22,519 --> 00:04:26,519
+mais en traçant les conducteurs, on sait exactement où ils vont.
+
+76
+00:04:26,519 --> 00:04:30,839
+Sur cette base, ils ont créé ce que l'on appelle des Grab Maps,
+
+77
+00:04:30,839 --> 00:04:34,360
+des cartes très détaillées de zones qui n'étaient pas cartographiées auparavant
+
+78
+00:04:34,360 --> 00:04:37,560
+parce qu'elles n'étaient pas intéressantes d'un point de vue commercial.
+
+79
+00:04:37,800 --> 00:04:43,800
+Il est donc essentiel de disposer de ce type de données précises.
+
+80
+00:04:43,800 --> 00:04:47,959
+Une grande partie de ces données fines sont disponibles
+
+81
+00:04:47,959 --> 00:04:50,439
+grâce aux efforts de la communauté,
+
+82
+00:04:50,439 --> 00:04:54,439
+plus que grâce à l'intervention de grandes organisations.
+
+83
+00:04:54,439 --> 00:04:58,439
+Les cartes ont différents niveaux de lecture.
+
+84
+00:04:58,439 --> 00:05:02,439
+Il y a bien sûr la terre qui ne change pas pendant des décennies.
+
+85
+00:05:02,439 --> 00:05:06,439
+Nous disposons ensuite d'une couche représentant les routes
+
+86
+00:05:06,519 --> 00:05:10,519
+qui sont à 10 ans ou tous les 10 ans.
+
+87
+00:05:10,519 --> 00:05:14,519
+Ensuite, nous avons des éléments qui changent avec les saisons,
+
+88
+00:05:14,519 --> 00:05:18,519
+en fonction des niveaux d'eau ou des conditions météo.
+
+89
+00:05:18,519 --> 00:05:22,519
+Et puis enfin, il y a la couche du temps réel,
+
+90
+00:05:22,519 --> 00:05:26,519
+les choses qui se passent en ce moment même.
+
+91
+00:05:26,519 --> 00:05:30,519
+Pensez à la catastrophe survenue dans le Texas il y a quelques jours.
+
+92
+00:05:30,519 --> 00:05:34,519
+La montée des eaux a lieu en continu et une image satellite prisière
+
+93
+00:05:34,599 --> 00:05:38,599
+les cartes détaillées et à jour sont donc essentielles à tout effort humanitaire.
+
+94
+00:05:40,599 --> 00:05:44,599
+Comment s'assurer que les populations dont vous nous parlez là
+
+95
+00:05:44,599 --> 00:05:48,599
+gardent quelque part le contrôle qu'elles ne deviennent pas dépendantes
+
+96
+00:05:48,599 --> 00:05:52,599
+de grands groupes comme le vôtre qui viennent et qui proposent toutes ces solutions ?
+
+97
+00:05:52,599 --> 00:05:56,599
+Nous nous sommes engagés par exemple à collaborer avec l'équipe humanitaire
+
+98
+00:05:56,599 --> 00:06:00,599
+d'OpenStreetMap pour veiller à ce que leurs données soient toujours accessibles à tous.
+
+99
+00:06:00,680 --> 00:06:04,680
+Bien sûr, Amazon est une grande entreprise occidentale
+
+100
+00:06:04,680 --> 00:06:08,680
+mais nous pensons que notre taille et notre succès vont de pair avec une grande responsabilité.
+
+101
+00:06:08,680 --> 00:06:12,680
+Il est donc également de notre responsabilité de permettre à ces organisations
+
+102
+00:06:12,680 --> 00:06:16,680
+qui agissent pour le bien commun, pour ces communautés, d'avoir accès à ces données.
+
+103
+00:06:16,680 --> 00:06:20,680
+Nous hébergeons déjà 300 pétahoctètes
+
+104
+00:06:20,680 --> 00:06:24,680
+de données sur nos serveurs AWS
+
+105
+00:06:24,680 --> 00:06:28,680
+qui sont librement accessibles à tous.
+
+106
+00:06:28,759 --> 00:06:32,759
+Vous n'avez pas besoin de payer des frais de stockage ou des frais de mise en réseau.
+
+107
+00:06:32,759 --> 00:06:36,759
+Nous voulons simplement nous assurer que les organisations qui veulent faire le bien
+
+108
+00:06:36,759 --> 00:06:40,759
+aient accès à ces données. Ces choses là sont essentielles, sans carte précise,
+
+109
+00:06:40,759 --> 00:06:44,759
+nous n'avons aucune idée de ce qui se passe.
+
+110
+00:06:44,759 --> 00:06:48,759
+Un problème grandissant évidemment avec l'intelligence artificielle, c'est sa consommation d'énergie.
+
+111
+00:06:48,759 --> 00:06:52,759
+Vous avez parlé des pétahoctets de données qui sont actuellement stockées.
+
+112
+00:06:52,759 --> 00:06:56,759
+Consommation énorme d'énergie, consommation énorme d'eau évidemment.
+
+113
+00:06:56,839 --> 00:07:00,839
+On a une question de la rééligence artificielle responsable tant qu'on n'a pas réglé ce problème là.
+
+114
+00:07:00,839 --> 00:07:04,839
+J'aimerais d'abord dire que l'infrastructure d'Amazon fonctionne à 100%
+
+115
+00:07:04,839 --> 00:07:08,839
+avec des énergies renouvelables depuis 2023.
+
+116
+00:07:08,839 --> 00:07:12,839
+Nous sommes déjà le plus grand acheteur d'énergie renouvelable du monde.
+
+117
+00:07:12,839 --> 00:07:16,839
+Nous avons plus de 600 projets en cours pour lesquels nous avons construit des centrales éoliennes,
+
+118
+00:07:16,839 --> 00:07:20,839
+solaires et géothermiques, afin de nous assurer que nous avons accès à des énergies renouvelables.
+
+119
+00:07:20,839 --> 00:07:24,839
+Nous pouvons mettre en oeuvre cette numérisation croissante avec les énergies renouvelables.
+
+120
+00:07:24,919 --> 00:07:28,919
+Nous pouvons mettre en oeuvre cette numérisation croissante avec l'IA ou d'autres technologies
+
+121
+00:07:28,919 --> 00:07:32,919
+seulement si nous ne détruisons pas la planète en même temps.
+
+122
+00:07:36,919 --> 00:07:40,919
+C'est pourquoi nous menons toutes sortes d'efforts.
+
+123
+00:07:40,919 --> 00:07:44,919
+J'ai parlé du 100% énergie renouvelable, mais nous avons beaucoup innové
+
+124
+00:07:44,919 --> 00:07:48,919
+pour que notre utilisation de l'eau soit positive et pas négative.
+
+125
+00:07:48,919 --> 00:07:52,919
+Je viens de visiter l'un de nos centres de données dans la banlieue de Dublin
+
+126
+00:07:53,000 --> 00:07:57,000
+où l'eau chaude du centre de données est utilisée pour chauffer les appartements qui l'entourent.
+
+127
+00:08:03,000 --> 00:08:07,000
+Nous développons nos propres puces électroniques
+
+128
+00:08:07,000 --> 00:08:11,000
+qui sont environ 30% plus efficaces sur le plan énergétique
+
+129
+00:08:11,000 --> 00:08:15,000
+que les autres puces disponibles sur le marché.
+
+130
+00:08:15,079 --> 00:08:19,079
+Nous sommes vraiment focalisés sur le fait
+
+131
+00:08:19,079 --> 00:08:23,079
+d'être aussi conscients que possible pour que nos centres de données
+
+132
+00:08:23,079 --> 00:08:27,079
+aient un bilan d'utilisation de l'énergie et de l'eau qui soit positif.
+
+133
+00:08:31,079 --> 00:08:35,080
+Est-ce qu'on devrait encourager aussi peut-être à se restreindre
+
+134
+00:08:35,080 --> 00:08:39,080
+ou est-ce que l'efficience, les gains d'efficacité permettent de toujours faire plus finalement ?
+
+135
+00:08:39,080 --> 00:08:43,080
+Le paradoxe de Jevons est bien connu.
+
+136
+00:08:43,160 --> 00:08:47,160
+Il dit que si on améliore l'efficacité d'une activité,
+
+137
+00:08:47,160 --> 00:08:51,160
+on va utiliser les ressources économisées pour en faire plus.
+
+138
+00:08:51,160 --> 00:08:55,160
+Je pense que tout le monde doit être conscient de l'énergie qu'il utilise
+
+139
+00:08:55,160 --> 00:08:59,160
+même pour des choses simples.
+
+140
+00:08:59,160 --> 00:09:03,160
+Est-ce que vous avez vraiment besoin de transférer cette image sur votre page web ?
+
+141
+00:09:07,160 --> 00:09:11,160
+Je pense que tous les architectes de réseau
+
+142
+00:09:11,240 --> 00:09:15,240
+et tous les directeurs informatiques des entreprises doivent être conscients
+
+143
+00:09:15,240 --> 00:09:19,240
+de la quantité de données et de la capacité des réseaux,
+
+144
+00:09:19,240 --> 00:09:23,240
+de la capacité des centres de données qu'ils utilisent pour mener leurs innovations.
+
+145
+00:09:23,240 --> 00:09:27,240
+Bien sûr, les entreprises veulent aller vite,
+
+146
+00:09:27,240 --> 00:09:31,240
+mais chez AWS, la division cloud computing d'Amazon,
+
+147
+00:09:31,240 --> 00:09:35,240
+le coût est égal à la quantité de ressources utilisées.
+
+148
+00:09:35,240 --> 00:09:39,240
+Donc le coût est déjà un bon indicateur de la quantité de ressources utilisées.
+
+149
+00:09:39,320 --> 00:09:43,320
+La réduction des coûts impliquera l'utilisation de moindres ressources
+
+150
+00:09:43,320 --> 00:09:47,320
+et ira dans la direction d'une bonne ou d'une meilleure gestion de la planète.
+
+151
+00:09:47,320 --> 00:09:51,320
+Différents spécialistes de l'intelligence artificielle disent
+
+152
+00:09:51,320 --> 00:09:55,320
+que l'intelligence artificielle n'existe pas.
+
+153
+00:09:55,320 --> 00:09:59,320
+Les gens ne comprennent pas ce que c'est, mais c'est du marketing,
+
+154
+00:09:59,320 --> 00:10:03,320
+on devrait plutôt parler d'automatisation.
+
+155
+00:10:03,320 --> 00:10:07,320
+Il y a certainement une partie de l'intelligence artificielle
+
+156
+00:10:07,400 --> 00:10:11,400
+N'oubliez pas que même si nous parlons de l'intelligence artificielle en général,
+
+157
+00:10:11,400 --> 00:10:15,400
+nous parlons aujourd'hui de la technologie qui a été développée au cours de l'année et demi
+
+158
+00:10:15,400 --> 00:10:19,400
+ou des deux dernières années et qui s'est retrouvée immédiatement entre les mains des consommateurs
+
+159
+00:10:19,400 --> 00:10:23,400
+sans qu'ils aient été informés de ses capacités.
+
+160
+00:10:23,400 --> 00:10:27,400
+Mais l'IA, l'expression elle-même, a été inventée dans les années 50.
+
+161
+00:10:27,400 --> 00:10:31,400
+Si vous êtes client de la boutique en ligne d'Amazon, vous utilisez l'IA depuis 20 ans.
+
+162
+00:10:31,400 --> 00:10:35,400
+Recommandations, similarités,
+
+163
+00:10:35,480 --> 00:10:39,480
+les clients qui ont acheté X ont aussi acheté Y,
+
+164
+00:10:39,480 --> 00:10:43,480
+protection contre la fraude, chaîne d'approvisionnement, livraison des marchandises,
+
+165
+00:10:43,480 --> 00:10:47,480
+ou placer les marchandises.
+
+166
+00:10:47,480 --> 00:10:51,480
+Pour tout ça, on utilise l'IA depuis 20 ans déjà,
+
+167
+00:10:51,480 --> 00:10:55,480
+c'est juste que c'était invisible pour le consommateur.
+
+168
+00:10:55,480 --> 00:10:59,480
+Ce n'est que récemment que nous avons commencé à parler de l'intelligence artificielle générative.
+
+169
+00:10:59,480 --> 00:11:03,480
+Ses capacités sont toujours en développement.
+
+170
+00:11:03,560 --> 00:11:07,560
+Il y a aussi des capacités encore jeunes qui permettra de réaliser des gains d'efficacité,
+
+171
+00:11:07,560 --> 00:11:11,560
+qui permettra aux entreprises d'innover dans certaines directions.
+
+172
+00:11:11,560 --> 00:11:15,560
+Mais l'application à grande échelle de ce type d'IA n'en est qu'à ses débuts.
+
+173
+00:11:15,560 --> 00:11:19,560
+Les autres types d'IA, la bonne vieille IA,
+
+174
+00:11:19,560 --> 00:11:23,560
+elle est déjà utilisée dans le monde entier.
+
+175
+00:11:27,560 --> 00:11:31,560
+Comment vous vous décririez vous-même ?
+
+176
+00:11:31,639 --> 00:11:33,639
+Vous savez qu'elle fait peur à beaucoup de gens,
+
+177
+00:11:33,639 --> 00:11:35,639
+mais est-ce que vous êtes un enthousiaste absolu,
+
+178
+00:11:35,639 --> 00:11:37,639
+est-ce que vous êtes un enthousiaste prudent, un sceptique ?
+
+179
+00:11:37,639 --> 00:11:41,639
+Non, ça je ne pense pas. Comment vous vous décrivez vous-même ?
+
+180
+00:11:43,639 --> 00:11:47,639
+Il y a une différence entre l'IA et la façon dont les médias parlent de l'IA.
+
+181
+00:11:47,639 --> 00:11:49,639
+En réalité l'IA n'est qu'une technologie,
+
+182
+00:11:49,639 --> 00:11:53,639
+et ce que nous faisons avec elle dépend des humains qui l'utilisent.
+
+183
+00:11:57,639 --> 00:11:59,639
+L'IA vous aide à prévoir, mais ce sont les humains qui prennent les décisions.
+
+184
+00:11:59,720 --> 00:12:01,720
+Prenez par exemple la boutique Amazon,
+
+185
+00:12:01,720 --> 00:12:03,720
+nous avons l'expérience des milliards de commandes qui ont été passées,
+
+186
+00:12:03,720 --> 00:12:05,720
+nous savons exactement lesquelles de ces commandes étaient frauduleuses,
+
+187
+00:12:05,720 --> 00:12:07,720
+nous pouvons donc construire un modèle à partir de ces données.
+
+188
+00:12:07,720 --> 00:12:09,720
+Quand une nouvelle commande arrive,
+
+189
+00:12:09,720 --> 00:12:11,720
+elle passe à travers ce modèle qui lui attribue une note
+
+190
+00:12:11,720 --> 00:12:13,720
+et donc la probabilité qu'il s'agisse d'une commande frauduleuse.
+
+191
+00:12:13,720 --> 00:12:15,720
+S'il y a un doute, la commande n'est pas automatiquement rejetée,
+
+192
+00:12:15,720 --> 00:12:17,720
+mais elle est transmise à un être humain pour qu'il l'examine.
+
+193
+00:12:17,720 --> 00:12:19,720
+Les humains n'ont pas été sortis de la boucle,
+
+194
+00:12:19,720 --> 00:12:21,720
+l'IA prédit, les humains décident.
+
+195
+00:12:21,800 --> 00:12:25,800
+Bernard Vogels qui est le responsable de la stratégie technologique du groupe Amazon.
+
+196
+00:12:33,800 --> 00:12:35,800
+Les habitants de la bande de Gaza sont-ils menacés de familles ?
+
+197
+00:12:35,800 --> 00:12:37,800
+Depuis dix semaines, pas un sac de farine,
+
+198
+00:12:37,800 --> 00:12:39,800
+pas une brique de lait ne sont entrés à Gaza.
+
+199
+00:12:39,800 --> 00:12:41,800
+Ceux qui ne meurent pas défrablent de toute façon, ils meurent de faim.
+
+200
+00:12:41,800 --> 00:12:45,800
+Ces derniers jours, de nombreuses victimes sont tombées à proximité des centres de soins de la ville.
+
+201
+00:12:45,800 --> 00:12:47,800
+Les humains ont été mis en place à la bouteille,
+
+202
+00:12:47,800 --> 00:12:49,800
+les humains ont été mis en place à la bouteille,
+
+203
+00:12:49,879 --> 00:12:53,879
+ils ont tombé à proximité des centres de distribution d'aide alimentaire
+
+204
+00:12:53,879 --> 00:12:55,879
+de la Fondation soutenue par les États-Unis et par Israël.
+
+205
+00:12:55,879 --> 00:12:57,879
+Ils veulent que ce soit toujours ce cas-là,
+
+206
+00:12:57,879 --> 00:12:59,879
+ils veulent toujours que ce soit des millions de personnes
+
+207
+00:12:59,879 --> 00:13:01,879
+qui veulent avancer le plus vite possible
+
+208
+00:13:01,879 --> 00:13:03,879
+pour que le premier arrivé et le premier servi
+
+209
+00:13:03,879 --> 00:13:05,879
+et justement pour les tuer avec du sang froid.
+
+210
+00:13:09,879 --> 00:13:13,879
+Deux rencontres en 24 heures mais toujours pas de cessez le feu à Gaza.
+
+211
+00:13:13,879 --> 00:13:15,879
+Le Premier Ministre israélien Benjamin Netanyahou
+
+212
+00:13:15,879 --> 00:13:17,879
+actuellement en visite à Washington
+
+213
+00:13:17,960 --> 00:13:19,960
+a revu hier le président américain Donald Trump.
+
+214
+00:13:19,960 --> 00:13:21,960
+Pendant ce temps des pourparlers indirects se tiennent au Qatar
+
+215
+00:13:21,960 --> 00:13:23,960
+mais les médiateurs qatarais ont prévenu qu'il faudrait encore du temps.
+
+216
+00:13:23,960 --> 00:13:27,960
+Pendant ce temps aussi les attaques de l'armée israélienne se poursuivent
+
+217
+00:13:27,960 --> 00:13:29,960
+et la situation humanitaire s'aggrave.
+
+218
+00:13:29,960 --> 00:13:31,960
+Il y a un an déjà des experts indépendants mandatés par l'ONU
+
+219
+00:13:31,960 --> 00:13:33,960
+alertaient sur un risque de famine.
+
+220
+00:13:33,960 --> 00:13:37,960
+Alerte renouvelée ou renforcée on pourrait dire en mai dernier
+
+221
+00:13:37,960 --> 00:13:39,960
+par plusieurs organisations humanitaires.
+
+222
+00:13:39,960 --> 00:13:41,960
+Bonjour Ines Moubashir.
+
+223
+00:13:41,960 --> 00:13:43,960
+Bonjour Eric.
+
+224
+00:13:43,960 --> 00:13:45,960
+Est-ce qu'aujourd on peut parler de famine à Gaza ?
+
+225
+00:13:46,040 --> 00:13:48,040
+Alors techniquement on ne peut pas parler de famine à Gaza
+
+226
+00:13:48,040 --> 00:13:50,040
+mais plutôt de risque de famine.
+
+227
+00:13:50,040 --> 00:13:52,040
+Ce sont les termes des Nations Unies
+
+228
+00:13:52,040 --> 00:13:54,040
+car pour déclarer qu'un territoire est en famine
+
+229
+00:13:54,040 --> 00:13:56,040
+les agences de l'ONU définissent des critères.
+
+230
+00:13:56,040 --> 00:13:58,040
+L'un d'eux c'est le taux de mortalité quotidien
+
+231
+00:13:58,040 --> 00:14:00,040
+lié directement à la fin.
+
+232
+00:14:00,040 --> 00:14:02,040
+Ce taux doit être de 2 adultes ou de 4 enfants
+
+233
+00:14:02,040 --> 00:14:04,040
+sur une population de 10 000 habitants.
+
+234
+00:14:04,040 --> 00:14:06,040
+Il existe également une échelle
+
+235
+00:14:06,040 --> 00:14:08,040
+qui classe un pays en fonction de 5 phases de gravité.
+
+236
+00:14:08,040 --> 00:14:10,040
+Plus de la moitié de la population gazaouille
+
+237
+00:14:10,040 --> 00:14:12,040
+se situe dans la 4ème phase
+
+238
+00:14:12,040 --> 00:14:14,040
+selon la dernière élection du président du pays.
+
+239
+00:14:14,120 --> 00:14:16,120
+Mais à Gaza difficile de déterminer
+
+240
+00:14:16,120 --> 00:14:18,120
+le nombre de décès directement liés à la malnutrition
+
+241
+00:14:18,120 --> 00:14:20,120
+c'est ce que nous explique Antoine Renard
+
+242
+00:14:20,120 --> 00:14:22,120
+directeur du programme alimentaire mondial en Palestine.
+
+243
+00:14:22,120 --> 00:14:24,120
+Pour réussir à avoir un suivi médical
+
+244
+00:14:24,120 --> 00:14:26,120
+statistique qui permet de savoir
+
+245
+00:14:26,120 --> 00:14:28,120
+le nombre de personnes qui décèdent directement
+
+246
+00:14:28,120 --> 00:14:30,120
+à des questions alimentaires
+
+247
+00:14:30,120 --> 00:14:32,120
+c'est pratiquement impossible
+
+248
+00:14:32,120 --> 00:14:34,120
+de le faire actuellement à Gaza
+
+249
+00:14:34,120 --> 00:14:36,120
+parce que la plupart des hôpitaux
+
+250
+00:14:36,120 --> 00:14:38,120
+continuent à recevoir des décès
+
+251
+00:14:38,120 --> 00:14:40,120
+directement liés à la malnutrition.
+
+252
+00:14:40,120 --> 00:14:42,120
+C'est un problème qui est très important
+
+253
+00:14:42,200 --> 00:14:44,200
+parce que les hôpitaux continuent à recevoir
+
+254
+00:14:44,200 --> 00:14:46,200
+de la population qui est touchée par les bombardements
+
+255
+00:14:46,200 --> 00:14:48,200
+qui est touchée par les tirs
+
+256
+00:14:48,200 --> 00:14:50,200
+pour justement des populations
+
+257
+00:14:50,200 --> 00:14:52,200
+qui cherchent à accéder simplement à des produits alimentaires.
+
+258
+00:14:52,200 --> 00:14:54,200
+Et cette incertitude
+
+259
+00:14:54,200 --> 00:14:56,200
+fait partie des particularités
+
+260
+00:14:56,200 --> 00:14:58,200
+du risque de famine à Gaza.
+
+261
+00:14:58,200 --> 00:15:00,200
+Vous avez maintenant 85%
+
+262
+00:15:00,200 --> 00:15:02,200
+du territoire
+
+263
+00:15:02,200 --> 00:15:04,200
+dans la bande de Gaza
+
+264
+00:15:04,200 --> 00:15:06,200
+qui sont des zones d'évacuation
+
+265
+00:15:06,200 --> 00:15:08,200
+qui sont des zones de buffer zone
+
+266
+00:15:08,200 --> 00:15:10,200
+et même le peu de terre
+
+267
+00:15:10,280 --> 00:15:12,280
+potentiellement produire
+
+268
+00:15:12,280 --> 00:15:14,280
+vous vous retrouvez avec beaucoup de zones
+
+269
+00:15:14,280 --> 00:15:16,280
+qui ont été bombardées.
+
+270
+00:15:16,280 --> 00:15:18,280
+Donc c'est ça qui fait que c'est assez unique
+
+271
+00:15:18,280 --> 00:15:20,280
+dans le sens où vous avez
+
+272
+00:15:20,280 --> 00:15:22,280
+vraiment une population complètement dépendante
+
+273
+00:15:22,280 --> 00:15:24,280
+et en plus pratiquement aucun moyen
+
+274
+00:15:24,280 --> 00:15:26,280
+de production dans la bande de Gaza.
+
+275
+00:15:26,280 --> 00:15:28,280
+Est-ce qu'il y a d'autres raisons pour expliquer
+
+276
+00:15:28,280 --> 00:15:30,280
+cette famine imminente aujourd'hui ?
+
+277
+00:15:30,280 --> 00:15:32,280
+Il y a d'abord le prix exorbitant
+
+278
+00:15:32,280 --> 00:15:34,280
+des denrées alimentaires
+
+279
+00:15:34,280 --> 00:15:36,280
+et le fait que plus aucune denrée commerciale
+
+280
+00:15:36,280 --> 00:15:38,280
+ne peut entrer sur le territoire.
+
+281
+00:15:38,360 --> 00:15:40,360
+Une aide et une insécurité alimentaire
+
+282
+00:15:40,360 --> 00:15:42,360
+orchestrée par Israël,
+
+283
+00:15:42,360 --> 00:15:44,360
+c'est ce qu'explique Amand Basrol,
+
+284
+00:15:44,360 --> 00:15:46,360
+responsable des opérations d'urgence en Palestine
+
+285
+00:15:46,360 --> 00:15:48,360
+pour Médecins sans frontières,
+
+286
+00:15:48,360 --> 00:15:50,360
+car le blocus empêche l'entrée d'aide indépendante
+
+287
+00:15:50,360 --> 00:15:52,360
+depuis le 2 mars.
+
+288
+00:15:52,360 --> 00:15:54,360
+Avant, il y avait 400 centres de distribution
+
+289
+00:15:54,360 --> 00:15:56,360
+pour pouvoir fournir à l'ensemble
+
+290
+00:15:56,360 --> 00:15:58,360
+de la population, qui est de plus de 2 millions
+
+291
+00:15:58,360 --> 00:16:00,360
+d'habitants à Gaza.
+
+292
+00:16:00,360 --> 00:16:02,360
+Aujourd'hui, il n'y a pas de moyen de transport à Gaza.
+
+293
+00:16:02,360 --> 00:16:04,360
+Dans les conditions actuelles,
+
+294
+00:16:04,360 --> 00:16:06,360
+les gens doivent faire des dizaines de kilomètres
+
+295
+00:16:06,440 --> 00:16:08,440
+dans la chaleur, alors qu'en plus,
+
+296
+00:16:08,440 --> 00:16:10,440
+ils sont sous-nourris
+
+297
+00:16:10,440 --> 00:16:12,440
+pour pouvoir aller chercher de l'aide.
+
+298
+00:16:12,440 --> 00:16:14,440
+Et donc, on voit bien,
+
+299
+00:16:14,440 --> 00:16:16,440
+sur les centres de distribution,
+
+300
+00:16:16,440 --> 00:16:18,440
+ce sont les hommes qui se déplacent
+
+301
+00:16:18,440 --> 00:16:20,440
+et donc, on voit que les plus vulnérables
+
+302
+00:16:20,440 --> 00:16:22,440
+n'ont pas accès à l'aide,
+
+303
+00:16:22,440 --> 00:16:24,440
+comme ils se devraient quand on est
+
+304
+00:16:24,440 --> 00:16:26,440
+dans un système d'aide humanitaire.
+
+305
+00:16:26,440 --> 00:16:28,440
+Aujourd'hui, seuls 4 centres mis en place par Israël
+
+306
+00:16:28,440 --> 00:16:30,440
+et les Etats-Unis sont présents,
+
+307
+00:16:30,440 --> 00:16:32,440
+tous au sud de Gaza.
+
+308
+00:16:32,440 --> 00:16:34,440
+Ceci ne permettrait de desservir
+
+309
+00:16:34,520 --> 00:16:36,520
+à la population, selon Amand Basrol,
+
+310
+00:16:36,520 --> 00:16:38,520
+c'est seulement la moitié de la population.
+
+311
+00:16:38,520 --> 00:16:40,520
+Les acteurs humanitaires considèrent que
+
+312
+00:16:40,520 --> 00:16:42,520
+c'est largement insuffisant et en plus de ça,
+
+313
+00:16:42,520 --> 00:16:44,520
+la Gaza Humanitarian Foundation,
+
+314
+00:16:44,520 --> 00:16:46,520
+la fondation derrière ces centres, est controversée.
+
+315
+00:16:46,520 --> 00:16:48,520
+Oui, Inès, qu'est-ce qui se passe autour de cette fondation ?
+
+316
+00:16:48,520 --> 00:16:50,520
+Alors, la distribution d'aide
+
+317
+00:16:50,520 --> 00:16:52,520
+se transforme régulièrement en attaque
+
+318
+00:16:52,520 --> 00:16:54,520
+contre des civils,
+
+319
+00:16:54,520 --> 00:16:56,520
+c'est ce que révèlent les témoignages
+
+320
+00:16:56,520 --> 00:16:58,520
+de soldats israéliens publiés par le quotidien israélien
+
+321
+00:16:58,520 --> 00:17:00,520
+Haaretz et repris par le Temps la semaine dernière.
+
+322
+00:17:00,520 --> 00:17:02,520
+Des allugations réfutées par Israël,
+
+323
+00:17:02,600 --> 00:17:04,599
+mais l'ONU estime, elle, que 400 personnes
+
+324
+00:17:04,599 --> 00:17:06,599
+ont été tuées près de ces centres d'aide.
+
+325
+00:17:06,599 --> 00:17:08,599
+Les collègues d'Amand Basrol
+
+326
+00:17:08,599 --> 00:17:10,599
+et elles-mêmes vont sur les terrains,
+
+327
+00:17:10,599 --> 00:17:12,599
+ils entendent les récits des Palestiniens.
+
+328
+00:17:12,599 --> 00:17:14,599
+On a un centre de santé qui est à proximité,
+
+329
+00:17:14,599 --> 00:17:16,599
+qui n'est pas un hôpital,
+
+330
+00:17:16,599 --> 00:17:18,599
+qui est un centre de santé où on reçoit
+
+331
+00:17:18,599 --> 00:17:20,599
+quotidiennement des gens qui ont été
+
+332
+00:17:20,599 --> 00:17:22,599
+ciblés de leur volonté
+
+333
+00:17:22,599 --> 00:17:24,599
+d'avoir accès à de l'aide humanitaire.
+
+334
+00:17:24,599 --> 00:17:26,599
+On reçoit donc tous les jours des blessés
+
+335
+00:17:26,599 --> 00:17:28,599
+et on voit des morts qui passent
+
+336
+00:17:28,599 --> 00:17:30,599
+et ces blessés nous racontent ce qui s'est passé
+
+337
+00:17:30,679 --> 00:17:32,679
+et ce qui se passe, c'est qu'effectivement,
+
+338
+00:17:32,679 --> 00:17:34,679
+ils sont pris pour cible à un moment sans qu'ils sachent pourquoi.
+
+339
+00:17:34,679 --> 00:17:36,679
+À savoir s'ils sont ciblés directement
+
+340
+00:17:36,679 --> 00:17:38,679
+ou ça n'est pas fait exprès
+
+341
+00:17:38,679 --> 00:17:40,679
+et ils tirent à balles réelles
+
+342
+00:17:40,679 --> 00:17:42,679
+et que hélas il y a des blessés, ça on n'est pas capable de le dire.
+
+343
+00:17:42,679 --> 00:17:44,679
+Mais alors, quelle solution Inès ?
+
+344
+00:17:44,679 --> 00:17:46,679
+Est-ce qu'un cessez le feu, ça serait un début ?
+
+345
+00:17:46,679 --> 00:17:48,679
+Pour Amand Basrol de MSF,
+
+346
+00:17:48,679 --> 00:17:50,679
+un cessez le feu les renverrait à peu près
+
+347
+00:17:50,679 --> 00:17:52,679
+à la même situation que lors
+
+348
+00:17:52,679 --> 00:17:54,679
+de la première trêve en janvier dernier.
+
+349
+00:17:54,679 --> 00:17:56,679
+Il permettrait au moins l'entrée d'un peu d'aide.
+
+350
+00:17:56,679 --> 00:17:58,679
+Et sur la base du dernier cessez le feu,
+
+351
+00:17:58,759 --> 00:18:00,759
+en vigueur, Antoine Renard est confiant
+
+352
+00:18:00,759 --> 00:18:02,759
+si une trêve est acceptée,
+
+353
+00:18:02,759 --> 00:18:04,759
+les acteurs humanitaires pourraient changer la donne
+
+354
+00:18:04,759 --> 00:18:06,759
+en tout cas sur la question alimentaire assez rapidement.
+
+355
+00:18:06,759 --> 00:18:08,759
+Malgré tout, les deux humanitaires
+
+356
+00:18:08,759 --> 00:18:10,759
+notent que la situation sur place
+
+357
+00:18:10,759 --> 00:18:12,759
+s'est beaucoup aggravée depuis.
+
+358
+00:18:12,759 --> 00:18:14,759
+Merci pour vos explications Inès Moubachir.
+
+359
+00:18:14,759 --> 00:18:16,759
+C'est la fin de tout un monde que vous pouvez podcaster
+
+360
+00:18:16,759 --> 00:18:18,759
+sur l'application PlayRTS
+
+361
+00:18:18,759 --> 00:18:20,759
+ou là vous avez l'habitude d'écouter vos podcasts
+
+362
+00:18:20,759 --> 00:18:22,759
+ou vous pouvez aussi écouter l'émission direct
+
+363
+00:18:22,759 --> 00:18:24,759
+soit à la radio, soit là encore
+
+364
+00:18:24,759 --> 00:18:26,759
+sur l'application PlayRTS.
+
+365
+00:18:26,759 --> 00:18:28,839
+Tout un monde.
+

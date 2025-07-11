@@ -176,16 +176,14 @@ class AudioControls:
     def update_audio_progress(self):
         """Update the audio progress bar"""
         if hasattr(self, 'vlc_player') and hasattr(self, 'audio_progress') and not self._slider_dragging:
-            if self.vlc_player.is_playing():
-                length = self.vlc_player.get_length()
-                if length > 0:
-                    self.audio_length = length / 1000
-                    current_time = self.vlc_player.get_time() / 1000.0
-                    if current_time >= 0:
-                        progress = (current_time / self.audio_length) * 100
-                        self.audio_progress.set(progress)
-        
-        # Schedule next update
+            length = self.vlc_player.get_length()*10
+            if length > 0:
+                self.audio_length = length / 1000
+                current_time = self.vlc_player.get_time() / 1000.0
+                if current_time >= 0:
+                    progress = (current_time / self.audio_length) * 1000
+                    self.audio_progress.set(progress)
+        # Always schedule the next update, regardless of play state
         if hasattr(self.parent_frame, 'master'):
             self.parent_frame.master.after(200, self.update_audio_progress)
         elif hasattr(self.parent_frame, 'after'):

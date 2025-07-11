@@ -4,6 +4,7 @@ Shared reader UI component for both transcriber and gentexter modules
 from tkinter import Frame, Label, Button
 from .audio_controls import AudioControls
 from .text_display import TranscriptionTextDisplay
+from .styles import center_top_window
 
 class ReaderUI:
     """Shared reader UI with text display and audio controls"""
@@ -30,8 +31,7 @@ class ReaderUI:
         # Configure window
         self.master.title(f"🎤 InfiniLing - {self.title}")
         self.master.configure(bg='#ffffff')
-        self.master.geometry("900x700")
-        self.master.minsize(700, 500)
+        center_top_window(self.master, width=600, height=700)
 
         # Configure master grid to have a content row and a fixed controls row
         self.master.grid_rowconfigure(0, weight=1)

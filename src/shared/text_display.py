@@ -3,6 +3,7 @@ Shared text display component with SRT highlighting for transcription review
 """
 from tkinter import Frame, Label, Text, Scrollbar
 import re
+from .styles import Colors
 
 class TranscriptionTextDisplay:
     """Text display widget with SRT highlighting for transcription review"""
@@ -32,8 +33,8 @@ class TranscriptionTextDisplay:
                                fg='#212529',
                                relief='flat', 
                                borderwidth=0,
-                               selectbackground='#0078d4',
-                               selectforeground='white',
+                               selectbackground=Colors.BUTTON_PAUSE,
+                               selectforeground=Colors.BUTTON_PLAY,
                                padx=20, 
                                pady=15)
         
