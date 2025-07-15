@@ -23,10 +23,14 @@ def main():
     root = tk.Tk()
     
     # Set icon on Windows only
-    if sys.platform.startswith('win'):
-        icon_path = resource_path("data/icon.ico")
-        if os.path.exists(icon_path):
-            root.iconbitmap(icon_path)
+    try:
+        if sys.platform.startswith('win'):
+            icon_path = resource_path("data/icon.ico")
+            if os.path.exists(icon_path):
+                root.iconbitmap(icon_path)
+    except Exception:
+        # Icon setting failed, continue without icon
+        pass
     
     try:
         main_menu = MainMenu(root)

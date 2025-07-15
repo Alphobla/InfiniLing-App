@@ -42,24 +42,24 @@ class VocabularyPanel:
     def setup_ui(self):
         """Setup the vocabulary panel UI."""
         # Main container
-        self.container = Frame(self.parent, bg='#f8f9fa', relief='ridge', bd=1)
-        self.container.pack(fill='both', expand=True, padx=5, pady=5)
+        self.container = Frame(self.parent, bg='#ffffff', bd=5, width=270)
+        self.container.pack(fill='both', expand=False, padx=5, pady=5)
         
         # Header
-        header_frame = Frame(self.container, bg='#e9ecef')
+        header_frame = Frame(self.container, bg='#ffffff')
         header_frame.pack(fill='x', padx=5, pady=5)
         
-        Label(header_frame, text="📚 Vocabulary", 
+        Label(header_frame, text="Vocabulary", 
               font=("Segoe UI", 12, "bold"),
-              bg='#e9ecef', fg='#2c3e50').pack(side='left')
+              bg='#ffffff', fg='#2c3e50').pack(side='left')
         
         # Clear button
         self.clear_btn = Button(header_frame, text="✕", 
                                command=self.clear_translation,
-                               font=("Segoe UI", 10),
+                               font=("Segoe UI", 12),
                                bg='#dc3545', fg='white',
-                               relief='flat', bd=0, pady=2, padx=8)
-        self.clear_btn.pack(side='right')
+                               relief='flat', bd=0, pady=2, padx=10)
+        self.clear_btn.pack(side='right', padx=(100, 5))
         
         # Content area
         self.content_frame = Frame(self.container, bg='#ffffff')
@@ -73,7 +73,7 @@ class VocabularyPanel:
         self.clear_content()
         
         Label(self.content_frame, 
-              text="Double-click a word\nto see translation\nand frequency analysis",
+              text="Double-click a word\nto see translation",
               font=("Segoe UI", 10),
               bg='#ffffff', fg='#6c757d',
               justify='center').pack(expand=True)
@@ -133,30 +133,17 @@ class VocabularyPanel:
         self.clear_content()
         self.current_analysis = analysis
         
-        # Create scrollable content
-        canvas = tk.Canvas(self.content_frame, bg='#ffffff')
-        scrollbar = ttk.Scrollbar(self.content_frame, orient='vertical', command=canvas.yview)
-        scrollable_frame = Frame(canvas, bg='#ffffff')
-        
-        scrollable_frame.bind(
-            "<Configure>",
-            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
-        )
-        
-        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
-        canvas.configure(yscrollcommand=scrollbar.set)
-        
-        # Pack canvas and scrollbar
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+        # Create content frame directly
+        content_frame = Frame(self.content_frame, bg='#ffffff')
+        content_frame.pack(fill='both', expand=True)
         
         # Build content
-        self.build_translation_content(scrollable_frame, analysis)
+        self.build_translation_content(content_frame, analysis)
     
     def build_translation_content(self, parent, analysis: WordAnalysis):
         """Build the translation content layout."""
         # Original word section
-        self.add_section_header(parent, "Original Word")
+        # self.add_section_header(parent, "Original Word")
         
         word_frame = Frame(parent, bg='#ffffff')
         word_frame.pack(fill='x', padx=10, pady=5)
@@ -166,7 +153,7 @@ class VocabularyPanel:
                   font=("Segoe UI", 14, "bold"),
                   bg='#ffffff', fg='#2c3e50').pack(anchor='w')
             
-            Label(word_frame, text=f"→ {analysis.root_word} ({analysis.grammatical_relation})",
+            Label(word_frame, text=f"{analysis.root_word} ({analysis.grammatical_relation})",
                   font=("Segoe UI", 10),
                   bg='#ffffff', fg='#6c757d').pack(anchor='w')
         else:
@@ -175,7 +162,7 @@ class VocabularyPanel:
                   bg='#ffffff', fg='#2c3e50').pack(anchor='w')
         
         # Translation section
-        self.add_section_header(parent, "Translation")
+        # self.add_section_header(parent, "Translation")
         
         trans_frame = Frame(parent, bg='#ffffff')
         trans_frame.pack(fill='x', padx=10, pady=5)
@@ -185,7 +172,7 @@ class VocabularyPanel:
               bg='#ffffff', fg='#007bff').pack(anchor='w')
         
         if analysis.secondary_translation:
-            Label(trans_frame, text=f"Alt: {analysis.secondary_translation}",
+            Label(trans_frame, text=f"alt.: {analysis.secondary_translation}",
                   font=("Segoe UI", 10),
                   bg='#ffffff', fg='#6c757d').pack(anchor='w')
         
@@ -195,7 +182,7 @@ class VocabularyPanel:
                   bg='#ffffff', fg='#6c757d').pack(anchor='w')
         
         # Frequency section with color coding
-        self.add_section_header(parent, "Frequency Analysis")
+        # self.add_section_header(parent, "Frequency Analysis")
         
         freq_frame = Frame(parent, bg='#ffffff')
         freq_frame.pack(fill='x', padx=10, pady=5)
@@ -224,7 +211,7 @@ class VocabularyPanel:
         
         # Part of speech
         if analysis.part_of_speech != "unknown":
-            self.add_section_header(parent, "Grammar")
+            # self.add_section_header(parent, "Grammar")
             
             grammar_frame = Frame(parent, bg='#ffffff')
             grammar_frame.pack(fill='x', padx=10, pady=5)

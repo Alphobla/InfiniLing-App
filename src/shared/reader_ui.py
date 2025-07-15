@@ -45,8 +45,8 @@ class ReaderUI:
         # Main Content Frame (everything except audio controls)
         content_container = Frame(self.master, bg='#ffffff')
         content_container.grid(row=0, column=0, sticky='nsew')
-        content_container.grid_columnconfigure(0, weight=2)  # Text area gets 2/3 width
-        content_container.grid_columnconfigure(1, weight=1)  # Vocabulary panel gets 1/3 width
+        content_container.grid_columnconfigure(0, weight=1)  # Text area gets remaining width
+        content_container.grid_columnconfigure(1, weight=0, minsize=280)  # Vocabulary panel gets fixed width
         content_container.grid_rowconfigure(1, weight=1)
 
         # Header
@@ -77,7 +77,7 @@ class ReaderUI:
     def setup_text_area(self, parent):
         """Setup the main text display area"""
         main_frame = Frame(parent, bg='#ffffff')
-        main_frame.grid(row=1, column=0, sticky='nsew', padx=30, pady=(10, 10))
+        main_frame.grid(row=1, column=0, sticky='nsew', padx=(30,5), pady=(10, 10))
         main_frame.grid_columnconfigure(0, weight=1)
         main_frame.grid_rowconfigure(1, weight=1)
 
@@ -107,8 +107,9 @@ class ReaderUI:
 
     def setup_vocabulary_panel(self, parent):
         """Setup the vocabulary panel on the right side"""
-        vocab_frame = Frame(parent, bg='#ffffff')
-        vocab_frame.grid(row=1, column=1, sticky='nsew', padx=(5, 30), pady=(10, 10))
+        vocab_frame = Frame(parent, bg='#ffffff', width=280)
+        vocab_frame.grid(row=1, column=1, sticky='nws', padx=(5, 30), pady=(10, 10))
+        vocab_frame.grid_propagate(False)  # Prevent frame from shrinking/expanding
         vocab_frame.grid_columnconfigure(0, weight=1)
         vocab_frame.grid_rowconfigure(0, weight=1)
         
