@@ -8,6 +8,7 @@ import threading
 from typing import Optional
 from .gpt_translator import GPTTranslator, WordAnalysis
 from .styles import Colors
+from .database_models import DatabaseManager
 
 
 class VocabularyPanel:
@@ -32,6 +33,13 @@ class VocabularyPanel:
         except ValueError as e:
             self.translator = None
             print(f"Translation disabled: {e}")
+        
+        # Initialize database manager
+        try:
+            self.db_manager = DatabaseManager()
+        except Exception as e:
+            self.db_manager = None
+            print(f"Database not available: {e}")
         
         # Current translation state
         self.current_analysis = None
@@ -219,6 +227,97 @@ class VocabularyPanel:
             Label(grammar_frame, text=f"🏷️ {analysis.part_of_speech}",
                   font=("Segoe UI", 10),
                   bg='#ffffff', fg='#6c757d').pack(anchor='w')
+        
+        # Add to vocabulary button
+        self.add_vocabulary_button(parent, analysis)
+    
+    def add_vocabulary_button(self, parent, analysis: WordAnalysis):
+        """Add 'Add to Vocabulary' button."""
+        if not self.db_manager:
+            return  # Skip if database not available
+        
+        # Button frame
+        button_frame = Frame(parent, bg='#ffffff')
+        button_frame.pack(fill='x', padx=10, pady=10)
+        
+        # Add to vocabulary button
+        self.add_vocab_btn = Button(
+            button_frame,
+            text="📚 Add to Vocabulary",
+            font=("Segoe UI", 10, "bold"),
+            bg='#28a745',
+            fg='white',
+            relief='flat',
+            bd=0,
+            pady=8,
+            padx=20,
+            command=lambda: self.add_to_vocabulary(analysis)
+        )
+        self.add_vocab_btn.pack(fill='x')
+        
+        # Add hover effects
+        self.add_vocab_btn.bind('<Enter>', lambda e: self.add_vocab_btn.config(bg='#218838'))
+        self.add_vocab_btn.bind('<Leave>', lambda e: self.add_vocab_btn.config(bg='#28a745'))
+    
+    def add_to_vocabulary(self, analysis: WordAnalysis):
+        """Add the current word to the vocabulary database."""
+        if not self.db_manager or not analysis:
+            return
+        
+        try:
+            # Add word to database
+            success = self.db_manager.add_word(
+                word=analysis.root_word,
+                translation=analysis.primary_translation,
+                language_from=self.language_from,
+                language_to=self.language_to,
+                pronunciation=getattr(analysis, 'pronunciation', None),
+                part_of_speech=analysis.part_of_speech if analysis.part_of_speech != "unknown" else None,
+                secondary_translation=analysis.secondary_translation,
+                context_translation=analysis.context_translation if analysis.context_translation != analysis.primary_translation else None,
+                frequency_rank=analysis.frequency_info.get('rank') if analysis.frequency_info.get('found') else None,
+                frequency_level=analysis.frequency_info.get('level') if analysis.frequency_info.get('found') else None
+            )
+            
+            if success:
+                # Update button to show success
+                self.add_vocab_btn.config(
+                    text="✅ Added to Vocabulary",
+                    bg='#6c757d',
+                    state='disabled'
+                )
+                
+                # Schedule button reset after 2 seconds
+                self.parent.after(2000, self.reset_add_button)
+                
+                print(f"✅ Added '{analysis.root_word}' to vocabulary database")
+            else:
+                self.show_add_error("Failed to add word to database")
+                
+        except Exception as e:
+            error_msg = f"Error adding to vocabulary: {str(e)}"
+            print(f"❌ {error_msg}")
+            self.show_add_error(error_msg)
+    
+    def reset_add_button(self):
+        """Reset the add to vocabulary button to its original state."""
+        if hasattr(self, 'add_vocab_btn'):
+            self.add_vocab_btn.config(
+                text="📚 Add to Vocabulary",
+                bg='#28a745',
+                state='normal'
+            )
+    
+    def show_add_error(self, error_msg: str):
+        """Show error state for add to vocabulary button."""
+        if hasattr(self, 'add_vocab_btn'):
+            self.add_vocab_btn.config(
+                text="❌ Error",
+                bg='#dc3545'
+            )
+            
+            # Schedule button reset after 2 seconds
+            self.parent.after(2000, self.reset_add_button)
     
     def add_section_header(self, parent, title: str):
         """Add a section header."""
