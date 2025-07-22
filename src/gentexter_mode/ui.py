@@ -1,36 +1,35 @@
-from tkinter import Tk, Frame, Button, Label, filedialog, messagebox, ttk, Entry, Checkbutton, BooleanVar, IntVar, Text, Scrollbar, DoubleVar
+from tkinter import Frame, Button, Label, filedialog, messagebox, ttk, Entry, Checkbutton, Radiobutton, BooleanVar, IntVar, StringVar
 import tkinter.messagebox as msgbox
-from .orchestrator import VocabularyApp
+from .orchestrator_updated import VocabularyApp
 from ..shared.reader_ui import ReaderUI
 from ..shared.styles import apply_modern_theme, Colors, Fonts, Spacing
 from ..shared.style_utils import StyledWidgets, TileStyles, LayoutHelpers, CommonPatterns
 import os
 import threading
-import numpy as np
+from ..shared.styles import center_top_window
 
 class VocabularyInterface:
     def __init__(self, master, back_callback=None):
         self.master = master
         self.back_callback = back_callback
         self.master.title("📚 InfiniLing - Gentexter")
-        self.master.geometry("500x600")
         self.master.configure(bg=Colors.LIGHT_GRAY)
 
         # Initialize the modern vocabulary app backend
-        tracking_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data', 'word_tracking.json')
-        self.vocab_app = VocabularyApp(tracking_file_path)
+        self.vocab_app = VocabularyApp()
         
         # Configuration variables
-        self.use_databank = BooleanVar(value=True)
-        self.import_new_list = BooleanVar(value=False)
-        self.use_test_mode = BooleanVar(value=False)
-        self.use_last_text = BooleanVar(value=False)
-        self.random_sample_size = IntVar(value=40)
-        self.final_selection_size = IntVar(value=20)
-        
+        self.vocab_source = StringVar(value="databank")  # Radio button group: "databank", "test", "last_text"
+        self.import_new_list = BooleanVar(value=False)  # Sub-option for databank
+        self.total_words = IntVar(value=20)
+        self.new_word_ratio = IntVar(value=.25)
+
         self.setup_ui()
 
     def setup_ui(self):
+        # Set window size for gentexter interface
+        center_top_window(self.master, width=500, height=700)
+        
         # Apply modern theme
         apply_modern_theme()
         
@@ -38,17 +37,10 @@ class VocabularyInterface:
         main_frame = Frame(self.master, bg=Colors.LIGHT_GRAY)
         main_frame.pack(expand=True, fill='both', padx=Spacing.LG, pady=Spacing.LG)
 
-        # Header with back button
-        header_frame = Frame(main_frame, bg=Colors.LIGHT_GRAY)
-        header_frame.pack(fill='x', pady=(0, Spacing.MD))
-
-        if self.back_callback:
-            back_button = StyledWidgets.create_back_button(header_frame, self.back_callback, "← Menu")
-            back_button.pack(side='left')
-
-        # Title
-        title_label = StyledWidgets.create_title_label(header_frame, "📚 Wordstory", bg=Colors.LIGHT_GRAY)
-        title_label.pack(fill="x")
+        # Header with back button and title
+        header_frame = CommonPatterns.create_header_with_back_button(
+            main_frame, "📚 Wordstory", self.back_callback
+        )
 
         # Configuration section
         config_frame, config_content = StyledWidgets.create_config_section(main_frame, "Configuration")
@@ -58,82 +50,79 @@ class VocabularyInterface:
         vocab_source_frame = Frame(config_content, bg=Colors.WHITE)
         vocab_source_frame.pack(fill='x', padx=Spacing.LG, pady=(0, Spacing.MD))
 
-        databank_check = Checkbutton(vocab_source_frame, 
+        # Main radio button options
+        databank_radio = Radiobutton(vocab_source_frame, 
                                     text="Use vocabulary databank", 
-                                    variable=self.use_databank,
+                                    variable=self.vocab_source,
+                                    value="databank",
                                     font=Fonts.BODY,
                                     bg=Colors.WHITE, fg=Colors.DARK_GRAY,
                                     activebackground=Colors.WHITE)
-        databank_check.pack(anchor='w', pady=2)
+        databank_radio.pack(anchor='w', pady=2)
 
-        import_check = Checkbutton(vocab_source_frame, 
-                                  text="Import new list to databank", 
+        # Sub-option for databank (indented)
+        import_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
+        import_frame.pack(fill='x', padx=(20, 0), pady=(0, 2))
+        
+        import_check = Checkbutton(import_frame, 
+                                  text="📥 Import new list to databank", 
                                   variable=self.import_new_list,
                                   command=self.on_import_check,
                                   font=Fonts.BODY,
                                   bg=Colors.WHITE, fg=Colors.DARK_GRAY,
                                   activebackground=Colors.WHITE)
-        import_check.pack(anchor='w', pady=2)
+        import_check.pack(anchor='w')
 
-        test_check = Checkbutton(vocab_source_frame, 
+        test_radio = Radiobutton(vocab_source_frame, 
                                 text="🧪 Test mode (use preset data)", 
-                                variable=self.use_test_mode,
+                                variable=self.vocab_source,
+                                value="test",
                                 font=Fonts.BODY,
                                 bg=Colors.WHITE, fg=Colors.WARNING,
                                 activebackground=Colors.WHITE)
-        test_check.pack(anchor='w', pady=2)
+        test_radio.pack(anchor='w', pady=2)
 
-        last_text_check = Checkbutton(vocab_source_frame, 
+        last_text_radio = Radiobutton(vocab_source_frame, 
                                       text="📄 Use last generated text", 
-                                      variable=self.use_last_text,
+                                      variable=self.vocab_source,
+                                      value="last_text",
                                       font=Fonts.BODY,
                                       bg=Colors.WHITE, fg=Colors.INFO,
                                       activebackground=Colors.WHITE)
-        last_text_check.pack(anchor='w', pady=2)
+        last_text_radio.pack(anchor='w', pady=2)
 
         # Batch size configuration
         batch_frame = Frame(config_content, bg=Colors.WHITE)
         batch_frame.pack(fill='x', padx=Spacing.LG, pady=(Spacing.SM, Spacing.LG))
 
-        # Random word batch size
-        random_frame = Frame(batch_frame, bg=Colors.WHITE)
-        random_frame.pack(fill='x', pady=Spacing.XS)
-        
-        Label(random_frame, text="Random word batch size:", 
+        # Total words to learn
+        tot_words_frame = Frame(batch_frame, bg=Colors.WHITE)
+        tot_words_frame.pack(fill='x', pady=Spacing.XS)
+
+        Label(tot_words_frame, text="Total words to learn:", 
               font=Fonts.BODY, 
               bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left')
-        
-        random_entry = Entry(random_frame, textvariable=self.random_sample_size, 
-                           font=Fonts.BODY, width=10, justify='center')
-        random_entry.pack(side='right')
 
-        # Urgent word batch size
-        urgent_frame = Frame(batch_frame, bg=Colors.WHITE)
-        urgent_frame.pack(fill='x', pady=Spacing.XS)
-        
-        Label(urgent_frame, text="Urgent word batch size:", 
+        tot_words_entry = Entry(tot_words_frame, textvariable=self.total_words, 
+                           font=Fonts.BODY, width=10, justify='center')
+        tot_words_entry.pack(side='right')
+
+        # New word ratio
+        new_ratio_frame = Frame(batch_frame, bg=Colors.WHITE)
+        new_ratio_frame.pack(fill='x', pady=Spacing.XS)
+
+        Label(new_ratio_frame, text="New words ratio:", 
               font=Fonts.BODY, 
               bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left')
-        
-        urgent_entry = Entry(urgent_frame, textvariable=self.final_selection_size, 
+
+        new_ratio_entry = Entry(new_ratio_frame, textvariable=self.new_word_ratio, 
                            font=Fonts.BODY, width=10, justify='center')
-        urgent_entry.pack(side='right')
+        new_ratio_entry.pack(side='right')
 
-        # Generate button (using shared utility for large square button )
-        generate_frame = Frame(main_frame, bg=Colors.LIGHT_GRAY)
-        generate_frame.pack(pady=Spacing.XS)
-
-        generate_button_frame = Frame(generate_frame, bg=Colors.SECONDARY, relief='raised', bd=2)
-        generate_button_frame.pack()
-        generate_button_frame.pack_propagate(False)
-        generate_button_frame.configure(width=150, height=150)  
-
-        self.generate_button = Button(generate_button_frame, text="📖\nGenerate\nText", 
-                                     command=self.generate_wordtext,
-                                     font=Fonts.HEADING, bg=Colors.SECONDARY, fg=Colors.WHITE,
-                                     activebackground=Colors.SECONDARY_HOVER, activeforeground=Colors.WHITE,
-                                     relief='flat', bd=0)
-        self.generate_button.pack(fill='both', expand=True)
+        # Generate button (using shared utility for large square button)
+        self.generate_button = CommonPatterns.create_main_action_button(
+            main_frame, "📖\nGenerate\nText", self.generate_wordtext, button_type="large_square"
+        )
 
     def on_import_check(self):
         """Handle import new list checkbox"""
@@ -153,16 +142,32 @@ class VocabularyInterface:
             
             if file_path:
                 try:
-                    # Use the modern backend to import vocabulary
-                    imported_count = self.vocab_app.import_vocabulary_from_file(file_path)
+                    # Use the database manager to import vocabulary
+                    results = self.vocab_app.database_manager.import_vocabulary_from_csv(file_path)
                     
-                    if imported_count > 0:
-                        print(f"✅ Imported {imported_count} new words to databank")
+                    # Display results
+                    print(f"📋 Import Results:")
+                    print(f"  Total rows: {results['total_rows']}")
+                    print(f"  ✅ Imported: {results['imported']}")
+                    print(f"  ⏭️ Skipped: {results['skipped']}")
+                    print(f"  ❌ Errors: {results['errors']}")
+                    
+                    if results['imported'] > 0:
+                        messagebox.showinfo("Import Successful", 
+                                          f"Successfully imported {results['imported']} new words!\n\n"
+                                          f"Total rows: {results['total_rows']}\n"
+                                          f"Skipped (already exist): {results['skipped']}\n"
+                                          f"Errors: {results['errors']}")
                     else:
-                        print("ℹ️ No new words to import (all words already in databank)")
+                        messagebox.showinfo("Import Complete", 
+                                          f"No new words to import.\n\n"
+                                          f"Total rows: {results['total_rows']}\n"
+                                          f"All words already exist in database.")
                     
                 except Exception as e:
-                    print(f"❌ Import failed: {str(e)}")
+                    error_msg = f"Import failed: {str(e)}"
+                    print(f"❌ {error_msg}")
+                    messagebox.showerror("Import Error", error_msg)
                     self.import_new_list.set(False)
             else:
                 # User canceled file selection
@@ -171,78 +176,43 @@ class VocabularyInterface:
     def generate_wordtext(self):
         """Generate wordtext using the modern backend"""
         try:
-            # Pull latest from Git before generating words
-            git_status = None
-            if hasattr(self.vocab_app, 'git_manager'):
-                print("🔄 Pulling latest vocabulary from Git...")
-                git_status = self.vocab_app.git_manager.pull_latest()
-                if git_status:
-                    print("✅ Git pull successful. Using latest vocabulary.")
-                else:
-                    print("⚠️ Git pull failed. Using local vocabulary.")
-            # Check if test mode is enabled
-            if self.use_test_mode.get():
+            # Check selected vocabulary source
+            vocab_source = self.vocab_source.get()
+            
+            if vocab_source == "test":
                 self.run_test_mode()
                 return
-            
-            # Check if use last text mode is enabled
-            if self.use_last_text.get():
+            elif vocab_source == "last_text":
                 self.load_last_text_mode()
                 return
-            
-            # Validate configuration
-            random_size = self.random_sample_size.get()
-            urgent_size = self.final_selection_size.get()
-            
-            if random_size <= 0 or urgent_size <= 0:
-                print("❌ Batch sizes must be positive numbers")
+            elif vocab_source != "databank":
+                print("❌ Please select a vocabulary source")
                 return
             
-            if urgent_size > random_size:
-                print("❌ Urgent batch size cannot be larger than random batch size")
-                return
-                
-            if not self.use_databank.get():
-                print("❌ Please enable 'Use vocabulary databank' option")
-                return
-            
+
             # Disable generate button during processing
             self.generate_button.config(state='disabled', text="Generating...")
             print("🚀 Generating Text...")
             
-            # Define the generation task
+            # Run generation in a separate thread
             def generation_task():
                 try:
                     print("Starting generation task...")
-                    
-                    # Run the complete learning session
                     result = self.vocab_app.run_learning_session(
-                        random_sample_size=random_size,
-                        final_selection_size=urgent_size,
+                        total_words=self.total_words.get(),
+                        new_word_ratio=self.new_word_ratio.get(),
                         language="French",
                         generate_audio=True,
-                        import_from_downloads=False
+                        progress_callback=lambda msg: print(f"📖 {msg}"),
                     )
-                    
                     print(f"Generation task completed with result: {len(result.get('selected_words', []))} words")
-                    
-                    # Process results on main thread
-                    self.master.after(0, lambda res=result: self.on_generation_complete(res))
-                    
+                    self.master.after(0, lambda: self.on_generation_complete(result))
                 except Exception as e:
                     error_msg = f"❌ Generation failed: {str(e)}"
-                    self.master.after(0, lambda msg=error_msg: self.on_generation_error(msg))
-                    
-                finally:
-                    # Re-enable generate button
-                    self.master.after(0, lambda: self.generate_button.config(
-                        state='normal', 
-                        text="📖\nGenerate\nText"
-                    ))
+                    self.master.after(0, lambda: self.on_generation_error(error_msg))
+
             
-            # Run generation in a separate thread
-            generation_thread = threading.Thread(target=generation_task, daemon=True)
-            generation_thread.start()
+            threading.Thread(target=generation_task, daemon=True).start()
             
         except Exception as e:
             print(f"❌ Error starting generation: {str(e)}")
@@ -259,47 +229,26 @@ class VocabularyInterface:
             def load_task():
                 try:
                     print("Loading last session...")
-                    
-                    # Try to pull from Git first (optional, may fail if offline)
-                    if hasattr(self.vocab_app, 'git_manager'):
-                        print("🔄 Attempting Git pull...")
-                        success = self.vocab_app.git_manager.pull_latest()
-                        if success:
-                            print("✅ Successfully synced with Git repository")
-                        else:
-                            print("⚠️ Git pull failed (proceeding with local files)")
-                    
-                    # Load last session data
-                    result = self.vocab_app.load_last_session(
-                        progress_callback=lambda msg: print(f"📂 {msg}")
-                    )
-                    
+                    result = self.vocab_app.load_last_session()
                     print(f"Load task completed with story length: {len(result.get('story', ''))}")
-                    
-                    # Process results on main thread
-                    self.master.after(0, lambda res=result: self.on_load_complete(res))
-                    
+                    self.master.after(0, lambda: self.on_load_complete(result))
                 except Exception as e:
                     error_msg = f"❌ Load failed: {str(e)}"
-                    self.master.after(0, lambda msg=error_msg: self.on_load_error(msg))
-                    
+                    self.master.after(0, lambda: self.on_load_error(error_msg))
                 finally:
-                    # Re-enable generate button (with error handling)
                     def safe_button_reset():
                         try:
                             if hasattr(self, 'generate_button') and self.generate_button.winfo_exists():
-                                self.generate_button.config(state='normal', text="📖\nGenerate\nWordtext")
+                                self.generate_button.config(state='normal', text="📖\nGenerate\nText")
                         except Exception:
-                            pass  # Button might be destroyed if UI switched
+                            pass
                     self.master.after(0, safe_button_reset)
             
-            # Run loading in a separate thread
-            load_thread = threading.Thread(target=load_task, daemon=True)
-            load_thread.start()
+            threading.Thread(target=load_task, daemon=True).start()
             
         except Exception as e:
             print(f"❌ Error starting load: {str(e)}")
-            self.generate_button.config(state='normal', text="📖\nGenerate\nWordtext")
+            self.generate_button.config(state='normal', text="📖\nGenerate\nText")
 
     def on_generation_complete(self, result):
         """Handle successful generation completion"""
@@ -309,7 +258,7 @@ class VocabularyInterface:
             audio_path = result.get('audio_path', '')
             
             if selected_words:
-                if self.use_test_mode.get():
+                if self.vocab_source.get() == "test":
                     print(f"🧪 Test mode complete! {len(selected_words)} words loaded")
                 else:
                     print(f"✅ Generation complete! {len(selected_words)} words selected")
@@ -325,14 +274,14 @@ class VocabularyInterface:
     def on_generation_error(self, error_message):
         """Handle generation errors"""
         print(error_message)
-        self.generate_button.config(state='normal', text="📖\nGenerate\nWordtext")
+        self.generate_button.config(state='normal', text="📖\nGenerate\nText")
 
     def on_load_complete(self, result):
         """Handle successful load completion"""
         try:
-            story = result.get('story', '')
+            story = result.get('text', '')  # orchestrator returns 'text', not 'story'
             audio_path = result.get('audio_path', '')
-            selected_words = result.get('selected_words', [])
+            selected_words = result.get('words', [])  # orchestrator returns 'words', not 'selected_words'
             
             if story:
                 print("✅ Last text loaded successfully (offline mode)")
@@ -364,7 +313,7 @@ class VocabularyInterface:
     def on_load_error(self, error_message):
         """Handle load errors"""
         print(error_message)
-        self.generate_button.config(state='normal', text="📖\nGenerate\nWordtext")
+        self.generate_button.config(state='normal', text="📖\nGenerate\nText")
 
     def run_test_mode(self):
         """Run test mode with preset data for development"""
@@ -397,18 +346,18 @@ class VocabularyInterface:
             
             test_story = """Bonjour! Aujourd'hui, je vais vous raconter une petite histoire. 
 
-Marie se réveille et dit "Bonjour!" à sa famille. Elle demande "Comment allez-vous?" à sa mère. 
-Sa mère répond "Bien, merci beaucoup!"
+            Marie se réveille et dit "Bonjour!" à sa famille. Elle demande "Comment allez-vous?" à sa mère. 
+            Sa mère répond "Bien, merci beaucoup!"
 
-Marie va au marché. Elle demande "Combien coûte cette pomme?" Le vendeur répond "Deux euros, s'il vous plaît."
-Marie dit "Merci!" et achète la pomme.
+            Marie va au marché. Elle demande "Combien coûte cette pomme?" Le vendeur répond "Deux euros, s'il vous plaît."
+            Marie dit "Merci!" et achète la pomme.
 
-Le soir, Marie dit "Au revoir!" à ses amis. Elle rentre chez elle et dit "Bonne nuit!" 
-Demain, elle dira encore "Bonjour!" au monde.
+            Le soir, Marie dit "Au revoir!" à ses amis. Elle rentre chez elle et dit "Bonne nuit!" 
+            Demain, elle dira encore "Bonjour!" au monde.
 
-Cette histoire simple montre pourquoi il est important de bien parler français. 
-Quand nous disons "Excusez-moi" ou "Pardon", nous montrons du respect.
-Où que nous allions, ces mots nous aident. Maintenant, vous savez comment utiliser ces expressions!"""
+            Cette histoire simple montre pourquoi il est important de bien parler français. 
+            Quand nous disons "Excusez-moi" ou "Pardon", nous montrons du respect.
+            Où que nous allions, ces mots nous aident. Maintenant, vous savez comment utiliser ces expressions!"""
 
             # Use one of the existing audio files for testing
             data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data')
@@ -434,7 +383,7 @@ Où que nous allions, ces mots nous aident. Maintenant, vous savez comment utili
             
         except Exception as e:
             print(f"❌ Test mode failed: {str(e)}")
-            self.generate_button.config(state='normal', text="📖\nGenerate\nWordtext")
+            self.generate_button.config(state='normal', text="📖\nGenerate\nText")
     
     def show_review_interface(self, review_data, generated_text, audio_path):
         """Show the in-app review interface"""
@@ -455,6 +404,7 @@ Où que nous allions, ces mots nous aident. Maintenant, vous savez comment utili
             
         except Exception as e:
             print(f"Failed to show review interface: {str(e)}")
+            
             # Restore main interface if review fails
             self.return_from_review()
 
@@ -490,9 +440,6 @@ class ReviewInterface:
         self.marked_difficult = set()
         self.reader_ui = None  # Will hold shared ReaderUI instance
         
-        # Sync with Git at session start
-        self._sync_with_git()
-        
         # Setup window and start with READ view
         self._setup_window()
         self.style_manager = apply_modern_theme()  # Use shared styling system
@@ -508,23 +455,13 @@ class ReviewInterface:
         # Content frame fills the available space
         self.content_frame = ttk.Frame(self.master)
         self.content_frame.pack(fill='both', expand=True)
-
-    def _sync_with_git(self):
-        """Sync with Git at session start"""
-        if self.vocab_app and hasattr(self.vocab_app, 'git_manager'):
-            print("🔄 Syncing with Git repository...")
-            success = self.vocab_app.git_manager.pull_latest()
-            if success:
-                print("✅ Successfully synced with Git repository")
-                if hasattr(self.vocab_app, 'database_manager'):
-                    self.vocab_app.database_manager._refresh_word_stats()
-            else:
-                print("⚠️ Failed to sync with Git (using local data)")
     
     def _setup_window(self):
         """Setup window configuration"""
         # Get the root window (in case master is a frame)
         root = self.master.winfo_toplevel()
+        #check what kind of object root is
+        print(f"DEBUG: root is of type {type(root)}")
         root.title("📚 InfiniLing - Vocabulary Review")
         # Note: Don't change geometry/size as this should adapt to existing window
         root.configure(bg=Colors.WHITE)
@@ -542,7 +479,6 @@ class ReviewInterface:
         # Create wrapper for the reading view
         reading_frame = Frame(self.content_frame, bg=Colors.WHITE)
         reading_frame.pack(fill='both', expand=True)
-        reading_frame=self.master.winfo_toplevel()
 
         
         # Use shared ReaderUI component
@@ -551,7 +487,7 @@ class ReviewInterface:
             title="Reading Practice",
             audio_path=self.audio_path,
             text_content=self.generated_text,
-            back_callback=None  # No back button in this view
+            back_callback=self.back_callback
         )
         
         # Add navigation to tile view by finding and modifying the header
@@ -634,10 +570,7 @@ class ReviewInterface:
             self.tiles.append((tile_data, word))
         
         # Configure grid weights
-        for col in range(cols):
-            grid_frame.grid_columnconfigure(col, weight=1, minsize=220)
-        for row in range(rows):
-            grid_frame.grid_rowconfigure(row, weight=1, minsize=140)
+        LayoutHelpers.configure_grid_weights(grid_frame, cols, rows, min_col_width=220, min_row_height=140)
     
     def _create_single_tile(self, parent, word, translation, pronunciation, row, col):
         """Create a single vocabulary tile using shared styling system"""
@@ -830,7 +763,7 @@ class ReviewInterface:
             ax = fig.add_subplot(111)
             
             # Prepare data for plotting
-            x_pos = np.arange(len(word_data))
+            x_pos = list(range(len(word_data)))
             before_urgencies = [wd['before'] for wd in word_data]
             after_urgencies = [wd['after'] for wd in word_data]
             
@@ -852,8 +785,8 @@ class ReviewInterface:
             
             # Add statistics
             total_reviewed = sum(1 for wd in word_data if wd['reviewed'])
-            avg_before = np.mean(before_urgencies) if before_urgencies else 0
-            avg_after = np.mean(after_urgencies) if after_urgencies else 0
+            avg_before = sum(before_urgencies) / len(before_urgencies) if before_urgencies else 0
+            avg_after = sum(after_urgencies) / len(after_urgencies) if after_urgencies else 0
             
             stats_text = f"Total: {len(word_data)} | Reviewed: {total_reviewed} | Avg urgency: {avg_before:.1f} -> {avg_after:.1f}"
             ax.text(0.02, 0.98, stats_text, transform=ax.transAxes, 
@@ -877,7 +810,7 @@ class ReviewInterface:
 
     # Save and business logic methods
     def save_review_progress(self):
-        """Save the review progress to database and Git"""
+        """Save the review progress to database"""
         try:
             if self.vocab_app and hasattr(self.vocab_app, 'database_manager'):
                 print(f"💾 Saving word progress to database...")
@@ -890,18 +823,6 @@ class ReviewInterface:
                     else:
                         # Mark as understood (not repeated)
                         self.vocab_app.database_manager.add_occurrence(word, translation, repeat=False)
-                
-                # Commit changes to Git after saving word progress
-                if hasattr(self.vocab_app, 'git_manager'):
-                    print("🔄 Committing changes to Git...")
-                    commit_message = f"Update vocabulary progress: {len(self.marked_difficult)} difficult, {len(self.review_data) - len(self.marked_difficult)} easy words"
-                    success = self.vocab_app.git_manager.push_changes(commit_message)
-                    if success:
-                        print("✅ Successfully saved progress and committed to Git")
-                    else:
-                        print("⚠️ Failed to commit to Git (changes saved locally)")
-                else:
-                    print("⚠️ Git manager not available - changes saved locally only")
             else:
                 print("⚠️ Database manager not available")
         except Exception as e:
@@ -955,9 +876,6 @@ class ReviewInterface:
             if self.back_callback:
                 self.back_callback()
 
-    def back_to_menu(self):
-        """Go back to main menu (deprecated - use save_and_menu instead)"""
-        self.save_and_menu()
     
     # Helper methods
     def extract_word_data(self, word_data, idx=None):

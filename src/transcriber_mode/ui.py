@@ -12,7 +12,6 @@ class WhisperInterface:
         self.master = master
         self.back_callback = back_callback
         self.master.title("🎤 InfiniLing - Transcription Mode")
-        center_top_window(self.master, width=500, height=550)
         self.master.configure(bg=Colors.BACKGROUND)
 
         # State management
@@ -38,6 +37,7 @@ class WhisperInterface:
         for widget in self.master.winfo_children():
             widget.destroy()
             
+        center_top_window(self.master, width=500, height=550)
         # Main container
         main_frame = Frame(self.master, bg=Colors.BACKGROUND)
         main_frame.pack(expand=True, fill='both', padx=20, pady=20)

@@ -24,6 +24,10 @@ class ReaderUI:
         # For custom highlighting functionality
         self.highlight_callback = None
         
+        # Set window size once at initialization
+        root = self.master.winfo_toplevel()
+        center_top_window(root, width=850, height=720)
+        
         self.setup_ui()
     
     def setup_ui(self):
@@ -32,10 +36,10 @@ class ReaderUI:
         for widget in self.master.winfo_children():
             widget.destroy()
             
-        # Configure window
-        self.master.title(f"🎤 InfiniLing - {self.title}")
+        root = self.master.winfo_toplevel()
+        root.title(f"🎤 InfiniLing - {self.title}")
+        
         self.master.configure(bg='#ffffff')
-        center_top_window(self.master, width=1000, height=700)
 
         # Configure master grid to have a content row and a fixed controls row
         self.master.grid_rowconfigure(0, weight=1)

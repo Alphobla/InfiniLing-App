@@ -11,6 +11,8 @@ from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 from typing import Optional
 from contextlib import contextmanager
+import csv
+import os
 
 Base = declarative_base()
 
@@ -202,6 +204,74 @@ class DatabaseManager:
             return session.query(VocabularyOccurrenceOld).filter(
                 VocabularyOccurrenceOld.vocabulary_id == vocabulary_id
             ).all()
+    
+    def import_vocabulary_from_csv(self, csv_file_path: str, language_from: str = 'fr', language_to: str = 'de'):
+        """
+        Import vocabulary from a CSV file.
+        
+        Args:
+            csv_file_path: Path to the CSV file
+            language_from: Source language (default: 'fr')
+            language_to: Target language (default: 'de')
+        
+        Returns:
+            dict: Import results with counts
+        """
+        if not os.path.exists(csv_file_path):
+            raise FileNotFoundError(f"CSV file not found: {csv_file_path}")
+        
+        results = {
+            'total_rows': 0,
+            'imported': 0,
+            'skipped': 0,
+            'errors': 0,
+            'error_details': []
+        }
+        
+        with open(csv_file_path, 'r', encoding='utf-8') as file:
+            reader = csv.DictReader(file)
+            
+            for row in reader:
+                results['total_rows'] += 1
+                
+                try:
+                    # Extract word and translation from CSV
+                    word = row.get('source', '').strip()
+                    translation = row.get('target', '').strip()
+                    
+                    # Skip empty rows
+                    if not word or not translation:
+                        results['skipped'] += 1
+                        continue
+                    
+                    # Check if word already exists
+                    with self.session_scope() as session:
+                        existing_word = session.query(Vocabulary).filter(
+                            Vocabulary.word == word,
+                            Vocabulary.translation == translation,
+                            Vocabulary.language_from == language_from,
+                            Vocabulary.language_to == language_to
+                        ).first()
+                        
+                        if existing_word:
+                            results['skipped'] += 1
+                            continue
+                        
+                        # Add new word
+                        vocab = Vocabulary(
+                            word=word,
+                            translation=translation,
+                            language_from=language_from,
+                            language_to=language_to
+                        )
+                        session.add(vocab)
+                        results['imported'] += 1
+                        
+                except Exception as e:
+                    results['errors'] += 1
+                    results['error_details'].append(f"Row {results['total_rows']}: {str(e)}")
+        
+        return results
 
 
 if __name__ == "__main__":

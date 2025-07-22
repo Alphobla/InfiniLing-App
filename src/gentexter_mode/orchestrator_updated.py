@@ -12,8 +12,8 @@ import json
 from typing import List, Tuple, Optional
 from .text_generator import TextGenerator
 from .audio_generator import AudioGenerator
+from .spaced_repetition_selector import SpacedRepetitionSelector
 from ..shared.database_models import DatabaseManager
-from ..shared.spaced_repetition_selector import SpacedRepetitionSelector
 
 
 class VocabularyApp:
@@ -266,7 +266,7 @@ class VocabularyApp:
                 json.dump(words_data, f, ensure_ascii=False, indent=2)
             
             if progress_callback:
-                progress_callback(f"💾 Vocabulary list saved to {words_path}")
+                progress_callback(f"💾 Temporary vocabulary list saved to {words_path}")
                 
         except Exception as e:
             if progress_callback:
