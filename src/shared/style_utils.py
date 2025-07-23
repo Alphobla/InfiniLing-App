@@ -162,8 +162,8 @@ class CommonPatterns:
     """Common UI patterns used across the application"""
     
     @staticmethod
-    def create_header_with_back_button(parent, title, back_command=None):
-        """Create a standard header with optional back button and title"""
+    def create_header_with_navigation(parent, title, back_command=None, forward_command=None, forward_text="Next →"):
+        """Create a standard header with optional back button, title, and forward button"""
         header_frame = StyledWidgets.create_header_frame(parent)
         header_frame.pack(fill='x', pady=(0, Spacing.MD))
         
@@ -174,39 +174,64 @@ class CommonPatterns:
         title_label = StyledWidgets.create_title_label(header_frame, title, bg=Colors.HEADER_BG)
         title_label.pack(side='left', padx=(Spacing.LG, 0))
         
+        if forward_command:
+            forward_btn = Button(header_frame, text=forward_text, command=forward_command,
+                               font=Fonts.BODY_BOLD, bg='#27ae60', fg=Colors.WHITE,
+                               activebackground='#219a52', relief='flat', bd=0, 
+                               pady=Spacing.XS, padx=Spacing.MD)
+            forward_btn.pack(side='right')
+        
         return header_frame
     
     @staticmethod
-    def create_main_action_button(parent, text, command, button_type='accent'):
+    def create_main_action_button(parent, text, command, button_type='accent', bg=None, active_bg=None, center=True):
         """Create a prominent main action button"""
-        # Button container for centering
-        button_container = Frame(parent, bg=Colors.CONTENT_BG)
-        button_container.pack(pady=Spacing.XL)
-        
         # For special large buttons (like generate button)
         if button_type == 'large_square':
-            button_frame = Frame(button_container, bg=Colors.SECONDARY, relief='raised', bd=2)
+            # Use custom colors or defaults
+            button_bg = bg or Colors.SECONDARY
+            button_active_bg = active_bg or Colors.SECONDARY_HOVER
+            
+            # Create container only if centering is needed
+            if center:
+                button_container = Frame(parent, bg=Colors.CONTENT_BG)
+                button_container.pack(pady=Spacing.XL)
+                container_parent = button_container
+            else:
+                container_parent = parent
+            
+            button_frame = Frame(container_parent, bg=button_bg, relief='raised', bd=2)
             button_frame.pack()
             button_frame.pack_propagate(False)
             button_frame.configure(width=180, height=180)
             
             button = Button(button_frame, text=text, command=command,
-                          font=Fonts.SUBHEADING, bg=Colors.SECONDARY, fg=Colors.WHITE,
-                          activebackground=Colors.SECONDARY_HOVER, activeforeground=Colors.WHITE,
-                          relief='flat', bd=0)
+                          font=Fonts.SUBHEADING, bg=button_bg, fg=Colors.WHITE,
+                          activebackground=button_active_bg, activeforeground=Colors.WHITE,
+                          relief='raised', bd=2)
             button.pack(fill='both', expand=True)
+            
+            return button
         else:
+            # Create container only if centering is needed
+            if center:
+                button_container = Frame(parent, bg=Colors.CONTENT_BG)
+                button_container.pack(pady=Spacing.XL)
+                container_parent = button_container
+            else:
+                container_parent = parent
+                
             # Standard TTK button
             style_map = {
                 'accent': 'Accent.TButton',
                 'success': 'Success.TButton',
                 'warning': 'Warning.TButton'
             }
-            button = ttk.Button(button_container, text=text, command=command,
+            button = ttk.Button(container_parent, text=text, command=command,
                               style=style_map.get(button_type, 'Accent.TButton'))
             button.pack()
-        
-        return button
+            
+            return button
     
     @staticmethod
     def create_status_section(parent, initial_text="Ready"):

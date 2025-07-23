@@ -1,6 +1,5 @@
 from tkinter import Frame, Button, Label, filedialog, messagebox, ttk, Entry, Checkbutton, Radiobutton, BooleanVar, IntVar, StringVar
 import tkinter.messagebox as msgbox
-from .orchestrator_updated import VocabularyApp
 from ..shared.reader_ui import ReaderUI
 from ..shared.styles import apply_modern_theme, Colors, Fonts, Spacing
 from ..shared.style_utils import StyledWidgets, TileStyles, LayoutHelpers, CommonPatterns
@@ -8,47 +7,68 @@ import os
 import threading
 from ..shared.styles import center_top_window
 
-class VocabularyInterface:
-    def __init__(self, master, back_callback=None):
-        self.master = master
-        self.back_callback = back_callback
-        self.master.title("📚 InfiniLing - Gentexter")
-        self.master.configure(bg=Colors.LIGHT_GRAY)
-
-        # Initialize the modern vocabulary app backend
-        self.vocab_app = VocabularyApp()
+class GentexterConfig:
+    def __init__(self, master, config=None, vocab_service=None, back_callback=None):
+        """
+        Initialize VocabularyInterface with dependency injection.
         
+        Args:
+            master: Tkinter root window
+            config: ConfigManager instance
+            vocab_service: VocabularyApp service instance
+            back_callback: Callback function to return to main menu
+        """
+        self.master = master
+        self.config = config
+        self.vocab_service = vocab_service
+        self.back_callback = back_callback
+        
+        app_name = self.config.get('app.name', 'InfiniLing')
+        bg_color = self.config.get('ui.colors.background')
+
+        self.master.title(f"📚 {app_name} - Gentexter")
+        self.master.configure(bg=bg_color)
+
+        # Use injected vocabulary service or create fallback
+        self.vocab_app = vocab_service
+        
+        # Initialize configuration variables from config
+        default_words = self.config.get('vocabulary.default_total_words')
+        default_ratio = self.config.get('vocabulary.default_new_word_ratio')
+
         # Configuration variables
         self.vocab_source = StringVar(value="databank")  # Radio button group: "databank", "test", "last_text"
         self.import_new_list = BooleanVar(value=False)  # Sub-option for databank
-        self.total_words = IntVar(value=20)
-        self.new_word_ratio = IntVar(value=.25)
+        self.total_words = IntVar(value=default_words)
+        self.new_word_ratio = IntVar(value=default_ratio)
+        self.selected_language = StringVar(value="fr")  # Language selection
 
         self.setup_ui()
 
     def setup_ui(self):
-        # Set window size for gentexter interface
-        center_top_window(self.master, width=500, height=700)
+        # Set window size for gentexter interface using config
+        window_width, window_height = self.config.get_window_size('gentexter')
+        center_top_window(self.master, width=window_width, height=window_height)
         
         # Apply modern theme
-        apply_modern_theme()
+        # apply_modern_theme()
         
         # Main container
         main_frame = Frame(self.master, bg=Colors.LIGHT_GRAY)
         main_frame.pack(expand=True, fill='both', padx=Spacing.LG, pady=Spacing.LG)
 
         # Header with back button and title
-        header_frame = CommonPatterns.create_header_with_back_button(
+        header_frame = CommonPatterns.create_header_with_navigation(
             main_frame, "📚 Wordstory", self.back_callback
         )
 
         # Configuration section
         config_frame, config_content = StyledWidgets.create_config_section(main_frame, "Configuration")
-        config_frame.pack(fill='x', pady=(0, Spacing.LG), padx=Spacing.SM)
+        config_frame.pack(fill='x', pady=(0, Spacing.XS), padx=Spacing.SM)
 
         # Vocabulary source options
         vocab_source_frame = Frame(config_content, bg=Colors.WHITE)
-        vocab_source_frame.pack(fill='x', padx=Spacing.LG, pady=(0, Spacing.MD))
+        vocab_source_frame.pack(fill='x', padx=Spacing.LG, pady=(0, 2))
 
         # Main radio button options
         databank_radio = Radiobutton(vocab_source_frame, 
@@ -91,37 +111,53 @@ class VocabularyInterface:
                                       activebackground=Colors.WHITE)
         last_text_radio.pack(anchor='w', pady=2)
 
-        # Batch size configuration
-        batch_frame = Frame(config_content, bg=Colors.WHITE)
-        batch_frame.pack(fill='x', padx=Spacing.LG, pady=(Spacing.SM, Spacing.LG))
-
         # Total words to learn
-        tot_words_frame = Frame(batch_frame, bg=Colors.WHITE)
+        tot_words_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
         tot_words_frame.pack(fill='x', pady=Spacing.XS)
 
-        Label(tot_words_frame, text="Total words to learn:", 
+        tot_words_entry = Entry(tot_words_frame, textvariable=self.total_words, 
+                           font=Fonts.BODY, width=5, justify='center')
+        tot_words_entry.pack(side='left', padx=Spacing.XS)
+        Label(tot_words_frame, text="Total words to learn", 
               font=Fonts.BODY, 
               bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left')
 
-        tot_words_entry = Entry(tot_words_frame, textvariable=self.total_words, 
-                           font=Fonts.BODY, width=10, justify='center')
-        tot_words_entry.pack(side='right')
 
         # New word ratio
-        new_ratio_frame = Frame(batch_frame, bg=Colors.WHITE)
+        new_ratio_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
         new_ratio_frame.pack(fill='x', pady=Spacing.XS)
 
-        Label(new_ratio_frame, text="New words ratio:", 
+        new_ratio_entry = Entry(new_ratio_frame, textvariable=self.new_word_ratio, 
+                           font=Fonts.BODY, width=5, justify='center')
+        new_ratio_entry.pack(side='left', padx=Spacing.XS)
+        Label(new_ratio_frame, text="New words ratio (0-1)", 
               font=Fonts.BODY, 
               bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left')
 
-        new_ratio_entry = Entry(new_ratio_frame, textvariable=self.new_word_ratio, 
-                           font=Fonts.BODY, width=10, justify='center')
-        new_ratio_entry.pack(side='right')
+        # Language selection
+        language_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
+        language_frame.pack(fill='x', pady=Spacing.XS)
+
+        # Get language options from config
+        languages = self.config.get('vocabulary.languages.available_languages')
+
+        language_combobox = ttk.Combobox(language_frame, 
+                                        textvariable=self.selected_language,
+                                        values=[lang[0] for lang in languages],
+                                        state="readonly",
+                                        width=10,
+                                        font=Fonts.BODY)
+        language_combobox.pack(side='left', padx=Spacing.XS)
+        language_combobox.set("French")
+
+        Label(language_frame, text="Generated language", 
+              font=Fonts.BODY, 
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left', padx=(0, Spacing.XS))
+        
 
         # Generate button (using shared utility for large square button)
         self.generate_button = CommonPatterns.create_main_action_button(
-            main_frame, "📖\nGenerate\nText", self.generate_wordtext, button_type="large_square"
+            main_frame, "📖\nGenerate\nText", self.generate_wordtext, button_type="large_square", center=True
         )
 
     def on_import_check(self):
@@ -145,19 +181,12 @@ class VocabularyInterface:
                     # Use the database manager to import vocabulary
                     results = self.vocab_app.database_manager.import_vocabulary_from_csv(file_path)
                     
-                    # Display results
-                    print(f"📋 Import Results:")
-                    print(f"  Total rows: {results['total_rows']}")
-                    print(f"  ✅ Imported: {results['imported']}")
-                    print(f"  ⏭️ Skipped: {results['skipped']}")
-                    print(f"  ❌ Errors: {results['errors']}")
-                    
                     if results['imported'] > 0:
                         messagebox.showinfo("Import Successful", 
-                                          f"Successfully imported {results['imported']} new words!\n\n"
                                           f"Total rows: {results['total_rows']}\n"
-                                          f"Skipped (already exist): {results['skipped']}\n"
-                                          f"Errors: {results['errors']}")
+                                          f"✅ Imported: {results['imported']} new words!\n\n"
+                                          f"⏭️ Skipped (already exist): {results['skipped']}\n"
+                                          f"❌ Errors: {results['errors']}")
                     else:
                         messagebox.showinfo("Import Complete", 
                                           f"No new words to import.\n\n"
@@ -198,10 +227,13 @@ class VocabularyInterface:
             def generation_task():
                 try:
                     print("Starting generation task...")
+                    # Get selected language code
+                    selected_lang_name = self.selected_language.get()
+                    
                     result = self.vocab_app.run_learning_session(
                         total_words=self.total_words.get(),
                         new_word_ratio=self.new_word_ratio.get(),
-                        language="French",
+                        language=selected_lang_name,  # Pass the full language name
                         generate_audio=True,
                         progress_callback=lambda msg: print(f"📖 {msg}"),
                     )
@@ -230,19 +262,10 @@ class VocabularyInterface:
                 try:
                     print("Loading last session...")
                     result = self.vocab_app.load_last_session()
-                    print(f"Load task completed with story length: {len(result.get('story', ''))}")
                     self.master.after(0, lambda: self.on_load_complete(result))
                 except Exception as e:
                     error_msg = f"❌ Load failed: {str(e)}"
                     self.master.after(0, lambda: self.on_load_error(error_msg))
-                finally:
-                    def safe_button_reset():
-                        try:
-                            if hasattr(self, 'generate_button') and self.generate_button.winfo_exists():
-                                self.generate_button.config(state='normal', text="📖\nGenerate\nText")
-                        except Exception:
-                            pass
-                    self.master.after(0, safe_button_reset)
             
             threading.Thread(target=load_task, daemon=True).start()
             
@@ -257,17 +280,8 @@ class VocabularyInterface:
             story = result.get('story', '')
             audio_path = result.get('audio_path', '')
             
-            if selected_words:
-                if self.vocab_source.get() == "test":
-                    print(f"🧪 Test mode complete! {len(selected_words)} words loaded")
-                else:
-                    print(f"✅ Generation complete! {len(selected_words)} words selected")
-                
-                # Start review interface
-                self.show_review_interface(selected_words, story, audio_path)
-            else:
-                print("❌ No words were selected for the story")
-            
+            self.show_reader_interface(selected_words, story, audio_path)
+
         except Exception as e:
             self.on_generation_error(f"Error processing results: {str(e)}")
     
@@ -279,6 +293,8 @@ class VocabularyInterface:
     def on_load_complete(self, result):
         """Handle successful load completion"""
         try:
+            # Reset button state
+            self.generate_button.config(state='normal', text="📖\nGenerate\nText")
             story = result.get('text', '')  # orchestrator returns 'text', not 'story'
             audio_path = result.get('audio_path', '')
             selected_words = result.get('words', [])  # orchestrator returns 'words', not 'selected_words'
@@ -286,24 +302,15 @@ class VocabularyInterface:
             if story:
                 print("✅ Last text loaded successfully (offline mode)")
                 
-                # Use saved vocabulary words if available, otherwise create placeholders
-                if selected_words:
-                    # Convert tuples to dictionaries for compatibility with review interface
-                    review_words = [
-                        {'word': word, 'translation': translation, 'pronunciation': pronunciation}
-                        for word, translation, pronunciation in selected_words
-                    ]
-                    print(f"📚 Using {len(review_words)} saved vocabulary words for review")
-                else:
-                    # Fallback to placeholder words if no saved words found
-                    review_words = [
-                        {'word': f'Word{i+1}', 'translation': f'Translation{i+1}', 'pronunciation': ''}
-                        for i in range(10)  # Create 10 placeholder words for review
-                    ]
-                    print("⚠️ No saved vocabulary words found, using placeholders")
-                
-                # Start review interface with loaded content
-                self.show_review_interface(review_words, story, audio_path)
+                # Convert tuples to dictionaries for compatibility with review interface
+                review_words = [
+                    {'word': word, 'translation': translation, 'pronunciation': pronunciation}
+                    for word, translation, pronunciation in selected_words
+                ]
+                print(f"📚 Using {len(review_words)} saved vocabulary words for review")
+
+                # Start reader interface with loaded content
+                self.show_reader_interface(review_words, story, audio_path)
             else:
                 print("❌ No saved text found. Generate new content first.")
             
@@ -362,10 +369,8 @@ class VocabularyInterface:
             # Use one of the existing audio files for testing
             data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data')
             audio_dir = os.path.join(data_dir, 'transcriptions_and_audio')
-            test_audio_file = os.path.join(audio_dir, 'Le public mène la révolution médiatique - 20 juin 2025.mp3')
+            test_audio_file = os.path.join(audio_dir, '56.Ét 6  Pourquoi on aime Ben Healy.mp3')
             test_audio_path = test_audio_file if os.path.exists(test_audio_file) else ""
-            print(f"DEBUG: Test audio path: {test_audio_path}")
-            print(f"DEBUG: Audio file exists: {os.path.exists(test_audio_path) if test_audio_path else False}")
             
             # Simulate processing delay for realism
             self.generate_button.config(state='disabled', text="🧪 Testing...")
@@ -385,533 +390,231 @@ class VocabularyInterface:
             print(f"❌ Test mode failed: {str(e)}")
             self.generate_button.config(state='normal', text="📖\nGenerate\nText")
     
-    def show_review_interface(self, review_data, generated_text, audio_path):
-        """Show the in-app review interface"""
+    def show_reader_interface(self, review_data, generated_text, audio_path):
+        """Show the in-app reader interface"""
         try:
+            # Store session data in vocabulary service for next stage
+            self.vocab_service.set_current_session_data({
+                'words': review_data,
+                'text': generated_text,
+                'audio_path': audio_path
+            })
+            
             # Hide the main interface
             for widget in self.master.winfo_children():
                 widget.pack_forget()
             
+
             # Create review interface
-            self.review_interface = ReviewInterface(
-                self.master, 
-                review_data, 
-                generated_text, 
-                audio_path,
-                back_callback=self.return_from_review,
-                vocab_app=self.vocab_app
+            self.reader_ui = ReaderUI(
+                master=self.master,
+                title="Reading Practice",
+                audio_path=audio_path,
+                text_content=generated_text,
+                back_callback=self.return_from_reader,
+                forward_callback=self.proceed_to_review,
+                forward_text="Review Words →",
+                config=self.config
             )
             
         except Exception as e:
-            print(f"Failed to show review interface: {str(e)}")
-            
-            # Restore main interface if review fails
-            self.return_from_review()
+            print(f"Failed to show gentexter reader interface: {str(e)}")
 
-    def return_from_review(self):
-        """Return from review interface to main interface"""
+            # Restore main interface if review fails
+            self.return_from_reader()
+
+    def proceed_to_review(self):
+        """Proceed from reader to review stage"""
         try:
-            # Destroy review interface if it exists
-            if hasattr(self, 'review_interface'):
-                for widget in self.master.winfo_children():
-                    widget.destroy()
-                delattr(self, 'review_interface')
+            # Get session data from vocabulary service
+            session_data = self.vocab_service.get_current_session_data()
             
-            # Recreate main interface
-            self.setup_ui()
+            GentexterReview(
+                master=self.master,
+                review_words=session_data.get('words', []),
+                generated_text=session_data.get('text', ''),
+                audio_path=session_data.get('audio_path', ''),
+                back_callback=self.return_from_reader,
+                vocab_app=self.vocab_app,
+                config=self.config
+            )
             
         except Exception as e:
-            print(f"Error returning from review: {e}")
-
-
-class ReviewInterface:
-    """3-stage vocabulary review: READ → TILE → STATS"""
+            print(f"Error proceeding to review: {str(e)}")
+            self.return_from_reader()
     
-    def __init__(self, master, review_data, generated_text, audio_path, back_callback=None, vocab_app=None):
+    def return_from_reader(self):
+        """Return from reader interface to config interface"""
+        # Clear session data when returning
+        if hasattr(self, 'vocab_service'):
+            self.vocab_service.clear_current_session_data()
+            
+        # Destroy reader interface if it exists
+        for widget in self.master.winfo_children():
+            widget.destroy()
+        
+        # Recreate config interface
+        self.setup_ui()
+
+class GentexterReview:
+    def __init__(self, master, review_words, generated_text, audio_path, back_callback=None, vocab_app=None, config=None):
         self.master = master
-        self.review_data = review_data
-        self.generated_text = generated_text
+        self.config = config
+        self.review_words = review_words
         self.audio_path = audio_path
         self.back_callback = back_callback
         self.vocab_app = vocab_app
         
-        # Review session state
-        self.current_view = "READ"  # READ → TILE → STATS
-        self.marked_difficult = set()
-        self.reader_ui = None  # Will hold shared ReaderUI instance
+        # Review state
+        self.current_word_index = 0
+        self.word_scores = {}  # Store scores for each word
+        self.translation_visible = False
         
-        # Setup window and start with READ view
-        self._setup_window()
-        self.style_manager = apply_modern_theme()  # Use shared styling system
-        self.setup_layout()
-        self.show_read_view()
+        self.setup_ui()
 
-    def setup_layout(self):
-        """Setup the main layout"""
-        # Clear existing widgets
+    def setup_ui(self):
+        # Clear any existing widgets to avoid pack/grid conflicts
         for widget in self.master.winfo_children():
             widget.destroy()
-        
-        # Content frame fills the available space
-        self.content_frame = ttk.Frame(self.master)
-        self.content_frame.pack(fill='both', expand=True)
-    
-    def _setup_window(self):
-        """Setup window configuration"""
-        # Get the root window (in case master is a frame)
-        root = self.master.winfo_toplevel()
-        #check what kind of object root is
-        print(f"DEBUG: root is of type {type(root)}")
-        root.title("📚 InfiniLing - Vocabulary Review")
-        # Note: Don't change geometry/size as this should adapt to existing window
-        root.configure(bg=Colors.WHITE)
-    
-    # VIEW 1: Reading Practice (uses shared ReaderUI)
-    def show_read_view(self):
-        """Show reading view with text and audio using shared ReaderUI"""
-        self.current_view = "READ"
-        self.clear_content_frame()
-        
-        # Use shared ReaderUI for the text display and audio controls
-        if hasattr(self, 'reader_ui'):
-            del self.reader_ui
-        
-        # Create wrapper for the reading view
-        reading_frame = Frame(self.content_frame, bg=Colors.WHITE)
-        reading_frame.pack(fill='both', expand=True)
-
-        
-        # Use shared ReaderUI component
-        self.reader_ui = ReaderUI(
-            master=reading_frame,
-            title="Reading Practice",
-            audio_path=self.audio_path,
-            text_content=self.generated_text,
-            back_callback=self.back_callback
-        )
-        
-        # Add navigation to tile view by finding and modifying the header
-        self._add_navigation_to_reader_header(reading_frame)
-    
-    def _add_navigation_to_reader_header(self, reading_frame):
-        """Add navigation button to the shared ReaderUI header"""
-        for widget in reading_frame.winfo_children():
-            if hasattr(widget, 'winfo_children'):
-                for child in widget.winfo_children():
-                    if hasattr(child, 'winfo_children'):
-                        for grandchild in child.winfo_children():
-                            if isinstance(grandchild, Frame) and str(grandchild['bg']) == Colors.LIGHT_GRAY:
-                                btn = ttk.Button(grandchild, text="Review Vocabulary →", 
-                                               command=self.show_tile_view, 
-                                               style='Accent.TButton')
-                                btn.pack(side='right', padx=(Spacing.SM, 0))
-                                return
-    
-    # VIEW 2: Vocabulary Review (tile selection)
-    def show_tile_view(self):
-        """Show vocabulary tile selection view"""
-        self.current_view = "TILE"
-        self.clear_content_frame()
+            
+        window_width, window_height = self.config.get_window_size('gentexter')
+        center_top_window(self.master, width=window_width, height=window_height)
         
         # Main container
-        main_frame = ttk.Frame(self.content_frame, style='Card.TFrame', padding="40")
-        main_frame.pack(expand=True, fill='both', padx=20, pady=20)
+        main_frame = Frame(self.master, bg=Colors.LIGHT_GRAY)
+        main_frame.pack(expand=True, fill='both', padx=Spacing.LG, pady=Spacing.LG)
+
+        # Header with back button and title
+        header_frame = CommonPatterns.create_header_with_navigation(
+            main_frame, "Review", self.back_callback, self.proceed_to_stats, "See Stats"
+        )
         
-        # Header with title and continue button
-        self._create_tile_header(main_frame)
-        
-        # Create vocabulary tiles
-        self._create_vocabulary_tiles(main_frame)
+        # Create word review interface
+        self.create_word_review_interface(main_frame)
     
-    def _create_tile_header(self, parent):
+    def create_header(self, parent):
         """Create header for tile view"""
-        header_frame = ttk.Frame(parent, style='Card.TFrame')
+        header_frame = Frame(parent, bg=Colors.WHITE)
         header_frame.pack(fill='x', pady=(0, Spacing.LG))
         
         # Title section (left side)
-        title_frame = ttk.Frame(header_frame, style='Card.TFrame')
+        title_frame = Frame(header_frame, bg=Colors.WHITE)
         title_frame.pack(side='left', fill='x', expand=True)
         
-        title = ttk.Label(title_frame, text="🎯 Select words you want to review again", style='Heading.TLabel')
+        title = Label(title_frame, text="🎯 Select words you want to review again", 
+                     font=("Segoe UI", 14, "bold"), bg=Colors.WHITE, fg=Colors.DARK_GRAY)
         title.pack(anchor='w')
-        
-        subtitle = ttk.Label(title_frame, text="Click on vocabulary items that need more practice", style='Subheading.TLabel')
+
+        subtitle = Label(title_frame, text="Click on vocabulary item to see translation, then mark difficulty from 0-5", 
+                        font=("Segoe UI", 11), bg=Colors.WHITE, fg=Colors.MEDIUM_GRAY)
         subtitle.pack(anchor='w', pady=(Spacing.XS, 0))
-        
-        # Continue button (right side)
-        continue_btn = ttk.Button(header_frame, text="Continue →", 
-                                 command=self.show_statistics_view, style='Accent.TButton')
-        continue_btn.pack(side='right', padx=(Spacing.LG, 0))
     
-    def _create_vocabulary_tiles(self, parent):
-        """Create the vocabulary selection tiles"""
-        # Create container for tiles
-        tiles_container = ttk.Frame(parent)
-        tiles_container.pack(expand=True, fill='both', pady=(Spacing.SM, 0))
-        tiles_container.configure(style='Card.TFrame')
+    def create_word_review_interface(self, parent):
+        """Create the word-by-word review interface"""
+        # Content container
+        content_frame = Frame(parent, bg=Colors.WHITE, relief='raised', bd=1)
+        content_frame.pack(expand=True, fill='both', padx=Spacing.SM, pady=Spacing.SM)
         
-        # Tiles grid (4 columns x 5 rows, max 20 items)
-        grid_frame = ttk.Frame(tiles_container)
-        grid_frame.pack(expand=True, fill='both', padx=10, pady=10)
+        # Progress indicator
+        progress_text = f"Word {self.current_word_index + 1} of {len(self.review_words)}"
+        self.progress_label = Label(content_frame, text=progress_text, 
+                                   font=Fonts.BODY, bg=Colors.WHITE, fg=Colors.MEDIUM_GRAY)
+        self.progress_label.pack(pady=(Spacing.LG, Spacing.SM))
         
-        self.tiles = []
-        cols = 4
-        rows = 5
-        max_tiles = cols * rows
-        vocab_to_show = self.review_data[:max_tiles]
+        # Current word display
+        current_word = self.review_words[self.current_word_index][0]  # First element is word
+        self.word_label = Label(content_frame, text=current_word, 
+                               font=("Segoe UI", 24, "bold"), bg=Colors.WHITE, fg=Colors.DARK_GRAY)
+        self.word_label.pack(pady=(Spacing.LG, Spacing.MD))
         
-        for i, word_data in enumerate(vocab_to_show):
-            word, translation, pronunciation = self.extract_word_data(word_data, i)
-            row = i // cols
-            col = i % cols
-            
-            # Create individual tile
-            tile_data = self._create_single_tile(grid_frame, word, translation, pronunciation, row, col)
-            self.tiles.append((tile_data, word))
+        # Translation button
+        self.translation_button = Button(content_frame, text="See Translation", 
+                                        command=self.show_translation,
+                                        font=Fonts.BODY, bg=Colors.PRIMARY, fg=Colors.WHITE,
+                                        activebackground=Colors.PRIMARY, relief='flat', bd=0,
+                                        pady=Spacing.SM, padx=Spacing.LG)
+        self.translation_button.pack(pady=Spacing.MD)
         
-        # Configure grid weights
-        LayoutHelpers.configure_grid_weights(grid_frame, cols, rows, min_col_width=220, min_row_height=140)
+        # Translation display (initially hidden)
+        self.translation_label = Label(content_frame, text="", 
+                                      font=("Segoe UI", 16), bg=Colors.WHITE, fg=Colors.INFO)
+        self.translation_label.pack(pady=(0, Spacing.LG))
+        
+        # Difficulty rating buttons (0-5)
+        rating_frame = Frame(content_frame, bg=Colors.WHITE)
+        rating_frame.pack(pady=Spacing.LG)
+        
+        Label(rating_frame, text="How difficult was this word?", 
+              font=Fonts.BODY, bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(pady=(0, Spacing.SM))
+        
+        buttons_frame = Frame(rating_frame, bg=Colors.WHITE)
+        buttons_frame.pack()
+        
+        # Color gradient from green to red
+        colors = ['#27ae60', '#2ecc71', '#f39c12', '#e67e22', '#e74c3c', '#c0392b']
+        for i in range(6):
+            Button(buttons_frame, text=str(i), command=lambda score=i: self.rate_word(score),
+                  font=("Segoe UI", 14, "bold"), bg=colors[i], fg=Colors.WHITE,
+                  activebackground=colors[i], relief='flat', bd=0,
+                  width=2, height=2).pack(side='left', padx=Spacing.XS)
+
+    def show_translation(self):
+        """Show the translation for current word"""
+        translation = self.review_words[self.current_word_index][1]  # Second element is translation
+        self.translation_label.config(text=translation)
+        self.translation_visible = True
     
-    def _create_single_tile(self, parent, word, translation, pronunciation, row, col):
-        """Create a single vocabulary tile using shared styling system"""
-        # Create tile frame
-        tile_frame = ttk.Frame(parent)
-        tile_frame.grid(row=row, column=col, padx=Spacing.XS, pady=Spacing.XS, 
-                       sticky='nsew', ipadx=Spacing.XS, ipady=Spacing.XS)
-        tile_frame.configure(relief='solid', borderwidth=2)
-        tile_frame.grid_propagate(False)
-        tile_frame.configure(width=200, height=100)
+    def rate_word(self, score):
+        """Rate current word and move to next"""
+        current_word = self.review_words[self.current_word_index][0]  # First element is word
+        self.word_scores[current_word] = score
         
-        # Create inner content using shared tile colors
-        tile_colors = TileStyles.get_normal_colors()
-        content_frame = Frame(tile_frame, bg=tile_colors['bg'], relief='flat')
-        content_frame.pack(fill='both', expand=True, padx=Spacing.XS, pady=Spacing.XS)
+        # Move to next word
+        self.current_word_index += 1
         
-        # Word display
-        word_label = Label(content_frame, text=word, 
-                          font=Fonts.TILE_WORD,
-                          bg=tile_colors['bg'], fg=tile_colors['word_fg'])
-        word_label.pack(pady=(Spacing.SM, 2))
-        
-        # Translation
-        trans_label = Label(content_frame, text=f"→ {translation}", 
-                           font=Fonts.TILE_TRANSLATION,
-                           bg=tile_colors['bg'], fg=tile_colors['translation_fg'])
-        trans_label.pack(pady=(2, Spacing.XS))
-        
-        # Pronunciation if available
-        pron_label = None
-        if pronunciation:
-            pron_label = Label(content_frame, text=f"[{pronunciation}]", 
-                              font=Fonts.TILE_PRONUNCIATION,
-                              bg=tile_colors['bg'], fg=tile_colors['pronunciation_fg'])
-            pron_label.pack(pady=(0, Spacing.SM))
-        
-        # Click handler for the entire tile
-        click_handler = lambda event: self.toggle_tile(word)
-        content_frame.bind('<Button-1>', click_handler)
-        word_label.bind('<Button-1>', click_handler)
-        trans_label.bind('<Button-1>', click_handler)
-        if pron_label:
-            pron_label.bind('<Button-1>', click_handler)
-        
-        return (tile_frame, content_frame, word_label, trans_label, pron_label)
+        if self.current_word_index >= len(self.review_words):
+            # All words reviewed, go to stats
+            self.proceed_to_stats()
+        else:
+            # Update interface for next word
+            self.update_word_display()
     
-    # VIEW 3: Statistics & Save options
-    def show_statistics_view(self):
-        """Show statistics and save options"""
-        self.current_view = "STATS"
-        self.clear_content_frame()
+    def update_word_display(self):
+        """Update display for current word"""
+        # Update progress
+        progress_text = f"Word {self.current_word_index + 1} of {len(self.review_words)}"
+        self.progress_label.config(text=progress_text)
         
-        # Main container
-        main_frame = ttk.Frame(self.content_frame, style='Card.TFrame', padding="30")
-        main_frame.pack(expand=True, fill='both', padx=20, pady=20)
+        # Update word
+        current_word = self.review_words[self.current_word_index][0]  # First element is word
+        self.word_label.config(text=current_word)
         
-        # Header with save options
-        self._create_statistics_header(main_frame)
+        # Reset translation
+        self.translation_label.config(text="")
+        self.translation_visible = False
         
-        # Statistics summary
-        self._create_statistics_summary(main_frame)
-        
-        # Visualization
-        self._create_statistics_visualization(main_frame)
-
-    def _create_statistics_header(self, parent):
-        """Create header with save options for statistics view"""
-        header_frame = ttk.Frame(parent, style='Card.TFrame')
-        header_frame.pack(fill='x', pady=(0, Spacing.LG))
-        
-        # Navigation buttons (left side)
-        nav_frame = ttk.Frame(header_frame, style='Card.TFrame')
-        nav_frame.pack(side='left')
-        
-        save_exit_btn = ttk.Button(nav_frame, text="💾 Save & Exit", 
-                                  command=self.save_and_exit, style='Accent.TButton')
-        save_exit_btn.pack(side='left', padx=(0, Spacing.SM))
-        
-        save_menu_btn = ttk.Button(nav_frame, text="💾 Save & Menu", 
-                                  command=self.save_and_menu, style='Modern.TButton')
-        save_menu_btn.pack(side='left', padx=(0, Spacing.SM))
-        
-        exit_no_save_btn = ttk.Button(nav_frame, text="🚪 Exit (No Save)", 
-                                     command=self.exit_without_saving, style='Warning.TButton')
-        exit_no_save_btn.pack(side='left')
-        
-        # Title (right side)
-        title_frame = ttk.Frame(header_frame, style='Card.TFrame')
-        title_frame.pack(side='right')
-        
-        title = ttk.Label(title_frame, text="📊 Review Statistics", style='Heading.TLabel')
-        title.pack()
-    
-    def _create_statistics_summary(self, parent):
-        """Create statistics summary section"""
-        summary_frame = ttk.Frame(parent, style='Card.TFrame')
-        summary_frame.pack(fill='x', pady=(0, Spacing.LG))
-        
-        total_words = len(self.review_data)
-        difficult_words = len(self.marked_difficult)
-        easy_words = total_words - difficult_words
-        
-        summary_text = f"📖 Total: {total_words}   |   😰 Difficult: {difficult_words}   |   😊 Easy: {easy_words}"
-        summary_label = ttk.Label(summary_frame, text=summary_text, style='Subheading.TLabel')
-        summary_label.pack()
-    
-    def _create_statistics_visualization(self, parent):
-        """Create statistics visualization"""
-        viz_frame = ttk.Frame(parent, style='Card.TFrame')
-        viz_frame.pack(fill='both', expand=True, pady=(Spacing.SM, 0))
-        
+    def proceed_to_stats(self):
+        """Proceed from review to stats stage"""
         try:
-            # Try to create advanced visualization
-            self.create_urgency_comparison_chart(viz_frame)
-        except ImportError:
-            # Simple fallback visualization
-            fallback_text = f"📊 Review Complete!\n\n" \
-                           f"Words reviewed: {len(self.review_data)}\n" \
-                           f"Marked for more practice: {len(self.marked_difficult)}\n" \
-                           f"Understood well: {len(self.review_data) - len(self.marked_difficult)}"
-            
-            fallback_label = ttk.Label(viz_frame, text=fallback_text, 
-                                     style='Body.TLabel', justify='center')
-            fallback_label.pack(expand=True)
-
-    def create_urgency_comparison_chart(self, parent_frame):
-        """Create an elegant urgency comparison visualization"""
-        try:
-            # Import matplotlib for visualization
-            import matplotlib.pyplot as plt
-            from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-            from matplotlib.figure import Figure
-            
-            # Prepare data for visualization
-            word_data = []
-            
-            if self.vocab_app and hasattr(self.vocab_app, 'database_manager'):
-                # Get word stats from database
-                all_words = self.vocab_app.database_manager.word_stats
-                
-                # Calculate urgency for each word
-                for word_key, stats in all_words.items():
-                    if '|' in word_key:
-                        word, translation = word_key.split('|', 1)
-                        
-                        # Calculate before urgency
-                        before_urgency = self.vocab_app.vocabulary_selector.calculate_word_priority(word, translation)
-                        
-                        # Check if word was reviewed and marked difficult
-                        reviewed = False
-                        difficult = False
-                        for idx, wd in enumerate(self.review_data):
-                            w, t, _ = self.extract_word_data(wd, idx)
-                            if w == word:
-                                reviewed = True
-                                if word in self.marked_difficult:
-                                    difficult = True
-                                break
-                        
-                        # Calculate after urgency
-                        if difficult:
-                            after_urgency = min(100, before_urgency + 15)
-                        elif reviewed:
-                            after_urgency = max(0, before_urgency - 10)
-                        else:
-                            after_urgency = before_urgency
-                        
-                        word_data.append({
-                            'word': word,
-                            'before': before_urgency,
-                            'after': after_urgency,
-                            'reviewed': reviewed,
-                            'difficult': difficult
-                        })
-            
-            if not word_data:
-                # Fallback if no data available
-                no_data_label = ttk.Label(parent_frame, 
-                                        text="📊 No word tracking data available for visualization", 
-                                        style='Body.TLabel')
-                no_data_label.pack(expand=True)
-                return
-            
-            # Sort by before urgency and limit to top 50
-            word_data.sort(key=lambda x: x['before'], reverse=True)
-            word_data = word_data[:50]
-            
-            # Create matplotlib figure
-            fig = Figure(figsize=(14, 8), dpi=100, facecolor='white')
-            ax = fig.add_subplot(111)
-            
-            # Prepare data for plotting
-            x_pos = list(range(len(word_data)))
-            before_urgencies = [wd['before'] for wd in word_data]
-            after_urgencies = [wd['after'] for wd in word_data]
-            
-            # Create line chart
-            ax.plot(x_pos, before_urgencies, 'o-', color='#dc3545', linewidth=2, 
-                   markersize=6, label='Before Review', alpha=0.8)
-            ax.plot(x_pos, after_urgencies, 'o-', color='#28a745', linewidth=2, 
-                   markersize=6, label='After Review', alpha=0.8)
-            
-            # Styling
-            ax.set_xlabel('Words (sorted by initial urgency)', fontsize=12, fontweight='bold')
-            ax.set_ylabel('Urgency Score', fontsize=12, fontweight='bold')
-            ax.set_title('Word Learning Progress: Before vs After Review', 
-                        fontsize=16, fontweight='bold', pad=20)
-            ax.set_ylim(0, 105)
-            ax.grid(True, alpha=0.3, linestyle='--')
-            ax.legend(loc='upper right', frameon=True, fancybox=True, shadow=True)
-            ax.set_xticks([])
-            
-            # Add statistics
-            total_reviewed = sum(1 for wd in word_data if wd['reviewed'])
-            avg_before = sum(before_urgencies) / len(before_urgencies) if before_urgencies else 0
-            avg_after = sum(after_urgencies) / len(after_urgencies) if after_urgencies else 0
-            
-            stats_text = f"Total: {len(word_data)} | Reviewed: {total_reviewed} | Avg urgency: {avg_before:.1f} -> {avg_after:.1f}"
-            ax.text(0.02, 0.98, stats_text, transform=ax.transAxes, 
-                   fontsize=10, verticalalignment='top',
-                   bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
-            
-            # Embed in tkinter
-            canvas = FigureCanvasTkAgg(fig, parent_frame)
-            canvas.draw()
-            canvas.get_tk_widget().pack(fill='both', expand=True)
-            
-        except ImportError:
-            # Fallback if matplotlib not available
-            raise ImportError("matplotlib not available")
-        except Exception as e:
-            # Error fallback
-            error_label = ttk.Label(parent_frame, 
-                                  text=f"Error creating visualization: {str(e)}", 
-                                  style='Body.TLabel')
-            error_label.pack(expand=True)
-
-    # Save and business logic methods
-    def save_review_progress(self):
-        """Save the review progress to database"""
-        try:
-            if self.vocab_app and hasattr(self.vocab_app, 'database_manager'):
-                print(f"💾 Saving word progress to database...")
-                # Update word statistics based on review
-                for idx, word_data in enumerate(self.review_data):
-                    word, translation, _ = self.extract_word_data(word_data, idx)
-                    if word in self.marked_difficult:
-                        # Mark as difficult (to be repeated)
-                        self.vocab_app.database_manager.add_occurrence(word, translation, repeat=True)
-                    else:
-                        # Mark as understood (not repeated)
-                        self.vocab_app.database_manager.add_occurrence(word, translation, repeat=False)
-            else:
-                print("⚠️ Database manager not available")
-        except Exception as e:
-            print(f"Error saving review progress: {e}")
-            raise
-
-    def save_and_exit(self):
-        """Save progress and exit the application"""
-        try:
-            self.save_review_progress()
-            print("👋 Exiting application...")
-            if hasattr(self, 'master'):
-                self.master.quit()
-                self.master.destroy()
-        except Exception as e:
-            print(f"Error saving and exiting: {e}")
-            if hasattr(self, 'master'):
-                self.master.quit()
-
-    def save_and_menu(self):
-        """Save progress and return to main menu"""
-        try:
-            self.save_review_progress()
-            print("🏠 Returning to main menu...")
-            if self.back_callback:
-                self.back_callback()
-        except Exception as e:
-            print(f"Error saving and returning to menu: {e}")
-            if self.back_callback:
-                self.back_callback()
-
-    def exit_without_saving(self):
-        """Exit without saving progress"""
-        try:
-            print("🚪 Exiting without saving progress...")
-            
-            # Show confirmation dialog
-            result = msgbox.askyesno(
-                "Exit Without Saving", 
-                "Are you sure you want to exit without saving your review progress?\n\n"
-                "This will undo all the words you marked as difficult or easy in this session.",
-                icon='warning'
+            GentexterStats(
+                master=self.master,
+                review_data=self.review_words,
+                word_scores=self.word_scores,
+                vocab_app=self.vocab_app,
+                config=self.config
             )
-            
-            if result:
-                print("⚠️ Review progress discarded")
-                if self.back_callback:
-                    self.back_callback()
+
         except Exception as e:
-            print(f"Error exiting without saving: {e}")
-            if self.back_callback:
-                self.back_callback()
-
+            print(f"Error proceeding to stats: {str(e)}")
+            self.return_from_reader()
     
-    # Helper methods
-    def extract_word_data(self, word_data, idx=None):
-        """Helper to extract word, translation, pronunciation from dict or tuple/list"""
-        if isinstance(word_data, dict):
-            word = word_data.get('word', f'Word{idx+1}' if idx is not None else 'Word')
-            translation = word_data.get('translation', f'Translation{idx+1}' if idx is not None else 'Translation')
-            pronunciation = word_data.get('pronunciation', '')
-        elif isinstance(word_data, (tuple, list)):
-            word = word_data[0] if len(word_data) > 0 else (f'Word{idx+1}' if idx is not None else 'Word')
-            translation = word_data[1] if len(word_data) > 1 else (f'Translation{idx+1}' if idx is not None else 'Translation')
-            pronunciation = word_data[2] if len(word_data) > 2 else ''
-        else:
-            word = f'Word{idx+1}' if idx is not None else 'Word'
-            translation = f'Translation{idx+1}' if idx is not None else 'Translation'
-            pronunciation = ''
-        return word, translation, pronunciation
-
-    def clear_content_frame(self):
-        """Clear all widgets from content frame"""
-        for widget in self.content_frame.winfo_children():
-            widget.destroy()
-
-    def toggle_tile(self, word):
-        """Toggle word selection in tile view using shared styling system"""
-        if word in self.marked_difficult:
-            self.marked_difficult.remove(word)
-            selected = False
-        else:
-            self.marked_difficult.add(word)
-            selected = True
         
-        # Update tile style using shared utility
-        for tile_data, tile_word in self.tiles:
-            if tile_word == word:
-                tile_frame, content_frame, word_label, trans_label, pron_label = tile_data
-                TileStyles.apply_tile_style(content_frame, word_label, trans_label, pron_label, selected)
-                break
 
+class GentexterStats:
+    def __init__(self, master, review_data, word_scores, vocab_app=None, config=None):
+        self.master = master
+        self.config = config
+        self.review_data = review_data
+        self.word_scores = word_scores
+        self.vocab_app = vocab_app
+        

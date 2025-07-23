@@ -6,27 +6,51 @@ from .audio_controls import AudioControls
 from .text_display import TranscriptionTextDisplay
 from .vocabulary_panel import VocabularyPanel
 from .styles import center_top_window
+from .style_utils import CommonPatterns
 
 class ReaderUI:
     """Shared reader UI with text display and audio controls"""
     
     def __init__(self, master, title, audio_path=None, text_content=None, srt_path=None, back_callback=None, 
-                 language_from="fr", language_to="de"):
+                 forward_callback=None, forward_text="Next →", language_from="fr", language_to="de", config=None):
+        """
+        Initialize ReaderUI with dependency injection.
+        
+        Args:
+            master: Tkinter parent widget
+            title: Window title
+            audio_path: Path to audio file
+            text_content: Text content to display
+            srt_path: Path to SRT file for highlighting
+            back_callback: Callback function for back button
+            forward_callback: Callback function for forward button
+            forward_text: Text to display on forward button
+            language_from: Source language code
+            language_to: Target language code
+            config: ConfigManager instance
+        """
         self.master = master
+        self.config = config
         self.title = title
         self.audio_path = audio_path
         self.text_content = text_content
         self.srt_path = srt_path
         self.back_callback = back_callback
+        self.forward_callback = forward_callback
+        self.forward_text = forward_text
         self.language_from = language_from
         self.language_to = language_to
         
         # For custom highlighting functionality
         self.highlight_callback = None
         
-        # Set window size once at initialization
+        # Set window size once at initialization using config
         root = self.master.winfo_toplevel()
-        center_top_window(root, width=850, height=720)
+        if self.config:
+            window_width, window_height = self.config.get_window_size('reader')
+        else:
+            window_width, window_height = 850, 720
+        center_top_window(root, width=window_width, height=window_height)
         
         self.setup_ui()
     
@@ -66,17 +90,18 @@ class ReaderUI:
         self.setup_audio_controls()
 
     def setup_header(self, parent):
-        """Setup the header with back button and title"""
-        header = Frame(parent, bg='#f8f9fa')
-        header.grid(row=0, column=0, columnspan=2, sticky='ew')
+        """Setup the header with navigation using shared utility"""
+        header_container = Frame(parent, bg='#f8f9fa')
+        header_container.grid(row=0, column=0, columnspan=2, sticky='ew')
         
-        if self.back_callback:
-            Button(header, text="← Back", command=self.back_callback,
-                   font=("Segoe UI", 11, "bold"), bg='#95a5a6', fg='white',
-                   activebackground='#7f8c8d', relief='flat', bd=0, pady=5, padx=15).pack(side='left')
-        
-        Label(header, text=self.title, font=("Segoe UI", 18, "bold"),
-              bg='#f9f9fa', fg='#2c3e50').pack(side='left', padx=20)
+        # Use shared header utility with navigation
+        CommonPatterns.create_header_with_navigation(
+            header_container, 
+            self.title, 
+            back_command=self.back_callback,
+            forward_command=self.forward_callback,
+            forward_text=self.forward_text
+        )
 
     def setup_text_area(self, parent):
         """Setup the main text display area"""

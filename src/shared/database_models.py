@@ -129,6 +129,7 @@ class DatabaseManager:
     
     def __init__(self, database_url: str = None):
         """Initialize database manager with connection."""
+        print(f"Initializing database manager with URL: {database_url}")
         self.engine = create_database_engine(database_url)
         self.SessionLocal = sessionmaker(bind=self.engine)
         

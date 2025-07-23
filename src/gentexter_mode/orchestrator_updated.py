@@ -19,31 +19,36 @@ from ..shared.database_models import DatabaseManager
 class VocabularyApp:
     """Main application coordinator for vocabulary learning sessions with database backend."""
     
-    def __init__(self, database_url: str = None):
+    def __init__(self, database_url: str = None, config=None):
         """
-        Initialize the vocabulary app with database backend.
+        Initialize the vocabulary app with database backend and configuration.
         
         Args:
             database_url: Database connection string (defaults to SQLite in project root)
+            config: ConfigManager instance for accessing configuration settings
         """
+        self.config = config
         # Initialize database components
         self.database_manager = DatabaseManager(database_url)
         self.spaced_repetition_selector = SpacedRepetitionSelector(self.database_manager)
         
-        # Initialize AI components (may fail if API key not available)
+        # Initialize AI components with config (may fail if API key not available)
         try:
-            self.text_generator = TextGenerator()
+            self.text_generator = TextGenerator(config=self.config)
             print("✅ Text generator initialized")
         except ValueError as e:
             print(f"⚠️ Text generator not available: {e}")
             self.text_generator = None
         
         try:
-            self.audio_generator = AudioGenerator()
+            self.audio_generator = AudioGenerator(config=self.config)
             print("✅ Audio generator initialized")
         except ValueError as e:
             print(f"⚠️ Audio generator not available: {e}")
             self.audio_generator = None
+        
+        # Session data storage for passing data between stages
+        self._current_session_data = {}
     
     def get_vocabulary_count(self) -> int:
         """Get the total number of words in the database."""
@@ -186,7 +191,12 @@ class VocabularyApp:
                 
                 # Save the generated text persistently
                 if generated_text:
-                    text_path = os.path.join(tempfile.gettempdir(), "infiniling_text.txt")
+                    if self.config:
+                        text_filename = self.config.get('paths.temp_text_file', 'infiniling_text.txt')
+                        text_path = self.config.get_temp_path(text_filename)
+                    else:
+                        text_path = os.path.join(tempfile.gettempdir(), "infiniling_text.txt")
+                    
                     try:
                         with open(text_path, 'w', encoding='utf-8') as f:
                             f.write(generated_text)
@@ -206,7 +216,13 @@ class VocabularyApp:
             try:
                 if progress_callback:
                     progress_callback("🎵 Generating audio...")
-                audio_path = os.path.join(tempfile.gettempdir(), "infiniling_audio.mp3")
+                
+                if self.config:
+                    audio_filename = self.config.get('paths.temp_audio_file', 'infiniling_audio.mp3')
+                    audio_path = self.config.get_temp_path(audio_filename)
+                else:
+                    audio_path = os.path.join(tempfile.gettempdir(), "infiniling_audio.mp3")
+                
                 success = self.audio_generator.generate_audio(generated_text, audio_path)
                 if success and progress_callback:
                     progress_callback("✅ Audio generated successfully")
@@ -252,7 +268,11 @@ class VocabularyApp:
             progress_callback: Optional callback for progress updates
         """
         try:
-            words_path = os.path.join(tempfile.gettempdir(), "infiniling_words.json")
+            if self.config:
+                words_filename = self.config.get('paths.temp_words_file', 'infiniling_words.json')
+                words_path = self.config.get_temp_path(words_filename)
+            else:
+                words_path = os.path.join(tempfile.gettempdir(), "infiniling_words.json")
             words_data = [
                 {
                     "word": word,
@@ -286,19 +306,29 @@ class VocabularyApp:
         }
         
         try:
+            # Load text using config paths
+            if self.config:
+                text_filename = self.config.get('paths.temp_text_file', 'infiniling_text.txt')
+                text_path = self.config.get_temp_path(text_filename)
+                audio_filename = self.config.get('paths.temp_audio_file', 'infiniling_audio.mp3')
+                audio_path = self.config.get_temp_path(audio_filename)
+                words_filename = self.config.get('paths.temp_words_file', 'infiniling_words.json')
+                words_path = self.config.get_temp_path(words_filename)
+            else:
+                text_path = os.path.join(tempfile.gettempdir(), "infiniling_text.txt")
+                audio_path = os.path.join(tempfile.gettempdir(), "infiniling_audio.mp3")
+                words_path = os.path.join(tempfile.gettempdir(), "infiniling_words.json")
+            
             # Load text
-            text_path = os.path.join(tempfile.gettempdir(), "infiniling_text.txt")
             if os.path.exists(text_path):
                 with open(text_path, 'r', encoding='utf-8') as f:
                     result['text'] = f.read()
             
             # Load audio path
-            audio_path = os.path.join(tempfile.gettempdir(), "infiniling_audio.mp3")
             if os.path.exists(audio_path):
                 result['audio_path'] = audio_path
             
             # Load words
-            words_path = os.path.join(tempfile.gettempdir(), "infiniling_words.json")
             if os.path.exists(words_path):
                 with open(words_path, 'r', encoding='utf-8') as f:
                     result['words'] = json.load(f)
@@ -307,6 +337,28 @@ class VocabularyApp:
             print(f"⚠️ Error loading last session: {e}")
         
         return result
+    
+    def set_current_session_data(self, data: dict):
+        """
+        Store current session data for passing between stages.
+        
+        Args:
+            data: Dictionary containing session data (words, text, audio_path, etc.)
+        """
+        self._current_session_data = data.copy()
+    
+    def get_current_session_data(self) -> dict:
+        """
+        Get current session data.
+        
+        Returns:
+            dict: Current session data
+        """
+        return self._current_session_data.copy()
+    
+    def clear_current_session_data(self):
+        """Clear current session data."""
+        self._current_session_data = {}
     
     def get_session_configuration(self) -> dict:
         """

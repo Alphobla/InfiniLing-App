@@ -1,12 +1,23 @@
 from tkinter import Tk, Frame, Button, Label, messagebox, ttk
 from src.transcriber_mode.ui import WhisperInterface
-from src.gentexter_mode.ui import VocabularyInterface
+from src.gentexter_mode.ui import GentexterConfig
 from src.shared.styles import Spacing, Colors, center_top_window
+from src.shared.style_utils import CommonPatterns
 
 
 class MainMenu:
-    def __init__(self, master):
+    def __init__(self, master, config=None, vocab_service=None):
+        """
+        Initialize MainMenu with dependency injection.
+        
+        Args:
+            master: Tkinter root window
+            config: ConfigManager instance
+            vocab_service: VocabularyApp service instance
+        """
         self.master = master
+        self.config = config
+        self.vocab_service = vocab_service
         self.show_main_menu()
 
     def clear_window(self):
@@ -17,12 +28,17 @@ class MainMenu:
     def show_main_menu(self):
         """Show the main menu"""
         self.clear_window()
-        self.master.title("InfiniLing")
-        self.master.configure(bg='#f0f0f0')
-        self.master.resizable(False, False)
-        center_top_window(self.master, width=500, height=350)
+        
+        # Use config for window settings if available
+        app_name = self.config.get('app.name')
+        window_width, window_height = self.config.get_window_size('main_menu')
+        bg_color = self.config.get('ui.colors.background')
 
-        self.current_interface = None
+        self.master.title(app_name)
+        self.master.configure(bg=bg_color)
+        self.master.resizable(False, False)
+        center_top_window(self.master, width=window_width, height=window_height)
+
         self.create_widgets()
 
     def create_widgets(self):
@@ -41,37 +57,28 @@ class MainMenu:
         button_frame.pack(expand=True)
 
         # Whisper Mode Button
-        whisper_frame = Frame(button_frame, bg=Colors.BUTTON_PAUSE_HOVER)
-        whisper_frame.pack(side='left', padx=15, pady=10)
-        whisper_frame.pack_propagate(False)
-        whisper_frame.configure(width=150, height=150)
-        
-        whisper_button = Button(whisper_frame, 
-                                text="🎤\nTranscriber\nMode", 
-                               command=self.open_whisper_mode,
-                               font=("Segoe UI", 12, "bold"),
-                               bg=Colors.BUTTON_PAUSE, 
-                               fg='white', 
-                               activebackground=Colors.BUTTON_PAUSE_HOVER, 
-                               activeforeground='white',
-                               relief='raised', bd=2)
-        whisper_button.pack(fill='both', expand=True)
+        whisper_button = CommonPatterns.create_main_action_button(
+            button_frame, 
+            text="🎤\nTranscriber\nMode", 
+            command=self.open_whisper_mode,
+            button_type='large_square',
+            bg=Colors.BUTTON_PAUSE,
+            active_bg=Colors.BUTTON_PAUSE_HOVER,
+            center=False
+        )
+        whisper_button.master.pack(side='left', padx=15, pady=10)
 
-        # Wordstory Mode Button
-        wordstory_frame = Frame(button_frame, bg=Colors.BUTTON_SPEED_HOVER)
-        wordstory_frame.pack(side='left', padx=15, pady=10)
-        wordstory_frame.pack_propagate(False)
-        wordstory_frame.configure(width=150, height=150)
-        
-        wordstory_button = Button(wordstory_frame, 
-                                  text="📚\nGentexter\nMode", 
-                                  command=self.open_wordstory_mode,
-                                  font=("Segoe UI", 12, "bold"),
-                                  bg=Colors.BUTTON_STOP, fg='white',
-                                  activebackground=Colors.BUTTON_STOP_HOVER, 
-                                  activeforeground='white',
-                                  relief='raised', bd=2)
-        wordstory_button.pack(fill='both', expand=True)
+        # Wordstory Mode Button  
+        wordstory_button = CommonPatterns.create_main_action_button(
+            button_frame,
+            text="📚\nGentexter\nMode", 
+            command=self.open_wordstory_mode,
+            button_type='large_square',
+            bg=Colors.BUTTON_STOP,
+            active_bg=Colors.BUTTON_STOP_HOVER,
+            center=False
+        )
+        wordstory_button.master.pack(side='left', padx=15, pady=10)
 
         # Footer
         footer_label = Label(main_frame, text="© 2025 InfiniLing", 
@@ -83,7 +90,12 @@ class MainMenu:
         """Open the Whisper interface in the same window"""
         try:
             self.clear_window()
-            self.current_interface = WhisperInterface(self.master, self.show_main_menu)
+            # Inject dependencies into WhisperInterface
+            WhisperInterface(
+                self.master, 
+                config=self.config,
+                back_callback=self.show_main_menu
+            )
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open Whisper Mode: {e}")
             self.show_main_menu()
@@ -92,7 +104,13 @@ class MainMenu:
         """Open the Vocabulary interface in the same window"""
         try:
             self.clear_window()
-            self.current_interface = VocabularyInterface(self.master, self.show_main_menu)
+            # Inject dependencies into GentexterConfig
+            GentexterConfig(
+                self.master, 
+                config=self.config,
+                vocab_service=self.vocab_service,
+                back_callback=self.show_main_menu
+            )
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open Wordstory Mode: {e}")
             self.show_main_menu()

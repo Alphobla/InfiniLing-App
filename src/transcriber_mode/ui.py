@@ -8,18 +8,45 @@ from src.shared.reader_ui import ReaderUI
 from src.shared.styles import center_top_window, Colors
 
 class WhisperInterface:
-    def __init__(self, master, back_callback=None):
+    def __init__(self, master, config=None, back_callback=None):
+        """
+        Initialize WhisperInterface with dependency injection.
+        
+        Args:
+            master: Tkinter root window
+            config: ConfigManager instance
+            back_callback: Callback function to return to main menu
+        """
         self.master = master
+        self.config = config
         self.back_callback = back_callback
-        self.master.title("🎤 InfiniLing - Transcription Mode")
-        self.master.configure(bg=Colors.BACKGROUND)
+        
+        # Use config for window settings if available
+        if self.config:
+            app_name = self.config.get('app.name', 'InfiniLing')
+            window_width, window_height = self.config.get_window_size('transcriber')
+            bg_color = self.config.get('ui.colors.background', Colors.BACKGROUND)
+        else:
+            # Fallback values
+            app_name = 'InfiniLing'
+            window_width, window_height = 500, 550
+            bg_color = Colors.BACKGROUND
+        
+        self.master.title(f"🎤 {app_name} - Transcription Mode")
+        self.master.configure(bg=bg_color)
+        center_top_window(self.master, width=window_width, height=window_height)
 
         # State management
         self.audio_file_path = None
         self.transcriber = None
         self.ui_state = "INITIAL"  # INITIAL, FILE_SELECTED, TRANSCRIBING, COMPLETED
-        self.selected_model = StringVar(value="base")
-        self.selected_language = StringVar(value="fr")  # Add language selection, default French
+        
+        # Initialize model and language from config
+        default_model = self.config.get('transcriber.whisper.model', 'base') if self.config else 'base'
+        default_language = self.config.get('transcriber.whisper.language', 'fr') if self.config else 'fr'
+        
+        self.selected_model = StringVar(value=default_model)
+        self.selected_language = StringVar(value=default_language)
         
         # UI components references
         self.browse_button = None
@@ -143,11 +170,14 @@ class WhisperInterface:
             
             self.master.after(0, lambda: self.update_progress_status(f"Model loaded! Starting transcription..."))
             self.master.after(0, lambda: self.update_progress_bar(1))
-            # Prepare output paths in data directory
-            data_dir = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 
-                'data', 'transcriptions_and_audio'
-            )
+            # Prepare output paths in data directory using config
+            if self.config:
+                data_dir = self.config.get('paths.transcriptions_dir', './data/transcriptions_and_audio')
+            else:
+                data_dir = os.path.join(
+                    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 
+                    'data', 'transcriptions_and_audio'
+                )
             os.makedirs(data_dir, exist_ok=True)
             
             # Use original filename
@@ -260,7 +290,11 @@ class WhisperInterface:
         import glob
         from mutagen.easyid3 import EasyID3
         from mutagen.mp3 import MP3
-        folder = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data', 'transcriptions_and_audio')
+        # Get transcriptions directory from config
+        if self.config:
+            folder = self.config.get('paths.transcriptions_dir', './data/transcriptions_and_audio')
+        else:
+            folder = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data', 'transcriptions_and_audio')
         mp3_files = glob.glob(os.path.join(folder, '*.mp3'))
         srt_files = set(os.path.splitext(f)[0] for f in glob.glob(os.path.join(folder, '*.srt')))
         for widget in self.saved_tiles_frame.winfo_children():
@@ -655,7 +689,8 @@ class SavedTranscriptionReview:
             title=f"{display_name}",
             audio_path=self.mp3_path,
             srt_path=self.srt_path,
-            back_callback=self.back_callback
+            back_callback=self.back_callback,
+            config=self.config
         )
 
 def run_whisper_interface():

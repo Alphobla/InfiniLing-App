@@ -2,12 +2,10 @@ import tkinter as tk
 from tkinter import messagebox
 import sys
 import os
+from src.shared.menu import MainMenu
+from src.shared.config import initialize_config
+from src.gentexter_mode.orchestrator_updated import VocabularyApp
 
-try:
-    from src.shared.menu import MainMenu
-except ImportError as e:
-    print(f"Import error: {e}")
-    sys.exit(1)
 
 def resource_path(relative_path):
     """Get absolute path to resource, works for dev and for PyInstaller"""
@@ -19,7 +17,12 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 def main():
-    """Main application entry point"""
+    """Main application entry point with dependency injection"""
+    # Initialize configuration system
+    config = initialize_config()
+    print("✅ Configuration system initialized")
+
+    # Initialize main window
     root = tk.Tk()
     
     # Set icon on Windows only
@@ -32,15 +35,15 @@ def main():
         # Icon setting failed, continue without icon
         pass
     
-    try:
-        main_menu = MainMenu(root)
-        root.mainloop()
-    except Exception as e:
-        messagebox.showerror("Application Error", 
-                           f"Failed to start the application:\n\n{str(e)}\n\n"
-                           f"Please check that all required packages are installed.")
-        print(f"Detailed error: {e}")
-        sys.exit(1)
+    # Initialize vocabulary service with config
+    database_url = config.get('vocabulary.database_url')
+    vocab_service = VocabularyApp(database_url, config=config)
+    print("✅ Vocabulary service initialized")
+
+    
+    # Initialize main menu with dependency injection
+    main_menu = MainMenu(root, config=config, vocab_service=vocab_service)
+    root.mainloop()
 
 if __name__ == "__main__":
     print("Starting InfiniLing...")

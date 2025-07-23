@@ -1,0 +1,92 @@
+{
+  "app": {
+    "name": "InfiniLing",
+    "version": "1.0.0",
+    "debug": false
+  },
+  "vocabulary": {
+    "default_total_words": 20,
+    "default_new_word_ratio": 0.25,
+    "languages": {
+      "from": "fr",
+      "to": "de",
+      "available_languages": [
+        ["French", "fr"],
+        ["Russian", "ru"],
+        ["Arabic", "ar"],
+        ["English", "en"]
+      ]
+    },
+    "database_url": "sqlite:///./src/vocabulary.db"
+  },
+  "audio": {
+    "voice": "onyx",
+    "model": "tts-1",
+    "pause_duration": 0.5
+  },
+  "text_generation": {
+    "model": "gpt-4o-mini",
+    "temperature": 0.7,
+    "max_tokens_per_word": 1.5
+  },
+  "paths": {
+    "data_dir": "./data",
+    "transcriptions_dir": "./data/transcriptions_and_audio",
+    "temp_audio_file": "infiniling_audio.mp3",
+    "temp_text_file": "infiniling_text.txt",
+    "temp_words_file": "infiniling_words.json"
+  },
+  "ui": {
+    "window_sizes": {
+      "main_menu": {
+        "width": 500,
+        "height": 350
+      },
+      "transcriber": {
+        "width": 500,
+        "height": 550
+      },
+      "gentexter": {
+        "width": 500,
+        "height": 700
+      },
+      "reader": {
+        "width": 850,
+        "height": 720
+      }
+    },
+    "colors": {
+      "background": "#f8f9fa",
+      "surface": "#ffffff",
+      "primary": "#0078d4",
+      "secondary": "#27ae60"
+    },
+    "fonts": {
+      "family": "Segoe UI",
+      "sizes": {
+        "title": 20,
+        "heading": 18,
+        "body": 11,
+        "small": 10
+      }
+    }
+  },
+  "transcriber": {
+    "whisper": {
+      "model": "base",
+      "language": "auto",
+      "temperature": 0.0
+    },
+    "output_formats": [
+      "srt",
+      "txt"
+    ],
+    "max_file_size_mb": 100
+  },
+  "api": {
+    "openai": {
+      "timeout": 30,
+      "max_retries": 3
+    }
+  }
+}

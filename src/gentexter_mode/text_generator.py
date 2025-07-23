@@ -17,7 +17,7 @@ load_dotenv()
 class TextGenerator:
     """Handles text generation using OpenAI API."""
     
-    def __init__(self):
+    def __init__(self, config=None):
         self.api_key = os.getenv('OPENAI_API_KEY')
         if not self.api_key:
             raise ValueError("OPENAI_API_KEY not found in environment variables")
