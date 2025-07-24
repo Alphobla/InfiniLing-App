@@ -1,6 +1,6 @@
 from tkinter import Tk, Frame, Button, Label, messagebox, ttk
 from src.transcriber_mode.ui import WhisperInterface
-from src.gentexter_mode.ui import GentexterConfig
+from src.gentexter_mode.gentexter_config_ui import GentexterConfig
 from src.shared.styles import Spacing, Colors, center_top_window
 from src.shared.style_utils import CommonPatterns
 

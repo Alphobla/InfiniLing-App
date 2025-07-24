@@ -73,7 +73,7 @@ class VocabularyOccurrence(Base):
     Tracks individual interactions with vocabulary words.
     
     This table is designed to be compatible with the existing selector.py algorithm
-    that uses an 'occurrences' array with 'date' and 'repeat' fields.
+    that uses an 'occurrences' array with 'date'  fields.
     """
     __tablename__ = 'vocabulary_occurrences'
     
@@ -82,10 +82,9 @@ class VocabularyOccurrence(Base):
     
     # Core tracking data (compatible with existing JSON structure)
     date = Column(DateTime, default=datetime.utcnow, nullable=False)
-    repeat = Column(Boolean, default=False, nullable=False)  # True if word was difficult
     
     # Spaced repetition data (scientific algorithm)
-    feedback_score = Column(Integer)  # 1-5 performance score
+    feedback_score = Column(Integer)  # 0-5 performance score
     easiness_factor = Column(Float, default=2.5)  # SM-2 easiness factor
     interval_days = Column(Integer, default=1)  # Current interval in days
     repetitions = Column(Integer, default=0)  # Number of successful repetitions
@@ -96,7 +95,7 @@ class VocabularyOccurrence(Base):
     vocabulary = relationship("Vocabulary", back_populates="occurrences")
     
     def __repr__(self):
-        return f"<VocabularyOccurrence(vocab_id={self.vocabulary_id}, date={self.date}, repeat={self.repeat})>"
+        return f"<VocabularyOccurrence(vocab_id={self.vocabulary_id}, date={self.date}, feedback_score={self.feedback_score})>"
 
 
 def create_database_engine(database_url: str = None):
@@ -173,19 +172,27 @@ class DatabaseManager:
         with self.session_scope() as session:
             return session.query(Vocabulary).filter(Vocabulary.id == word_id).first()
     
+    def get_id_by_string(self, word_text: str):
+        """Get a vocabulary word by its text."""
+        with self.session_scope() as session:
+            word = session.query(Vocabulary).filter(Vocabulary.word == word_text).first()
+            if word:
+                session.expunge(word)  # Detach from session
+            return word
+    
     def get_all_words(self):
         """Get all vocabulary words."""
         with self.session_scope() as session:
             words = session.query(Vocabulary).all()
             session.expunge_all()  # Detach all objects from session
             return words
-    
-    def add_occurrence(self, vocabulary_id: int, repeat: bool = False):
+
+    def add_occurrence(self, vocabulary_id: int, feedback_score: int):
         """Add an occurrence record for a vocabulary word."""
         with self.session_scope() as session:
             occurrence = VocabularyOccurrence(
                 vocabulary_id=vocabulary_id,
-                repeat=repeat
+                feedback_score=feedback_score
             )
             session.add(occurrence)
             return occurrence
@@ -274,6 +281,41 @@ class DatabaseManager:
         
         return results
 
+    def get_due_days(self, vocabulary_id: int, new_word_due_days: int = 1) -> int:
+        """
+        Get the number of days until the next review for a vocabulary word.
+        
+        Args:
+            vocabulary_id: ID of the vocabulary word
+            new_word_due_days: Default days for new words with no occurrences
+        
+        Returns:
+            int: Number of days until next review (always returns a number, never None)
+        """
+        with self.session_scope() as session:
+            occurrences = session.query(VocabularyOccurrence).filter(
+                VocabularyOccurrence.vocabulary_id == vocabulary_id
+            ).order_by(VocabularyOccurrence.date.desc()).all()
+            
+            if not occurrences:
+                return new_word_due_days
+            
+            last_occurrence = occurrences[0]
+            
+            # Try to use next_review_date first
+            if last_occurrence.next_review_date:
+                days = (last_occurrence.next_review_date - datetime.utcnow()).days
+                return max(0, days)  # Don't return negative days (overdue = 0)
+            
+            # Fallback to interval_days if available
+            if last_occurrence.interval_days:
+                # Calculate days since last review + interval
+                days_since = (datetime.utcnow() - last_occurrence.date).days
+                remaining = last_occurrence.interval_days - days_since
+                return max(0, remaining)
+            
+            # Final fallback
+            return new_word_due_days
 
 if __name__ == "__main__":
     # Test database creation

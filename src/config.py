@@ -14,7 +14,6 @@ APP_DESCRIPTION = "Unified Language Learning Application"
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(ROOT_DIR, 'data')
 TRANSCRIPTIONS_DIR = os.path.join(DATA_DIR, 'transcriptions_and_audio')
-WORD_TRACKING_FILE = os.path.join(DATA_DIR, 'word_tracking.json')
 
 # Transcriber Configuration
 TRANSCRIBER_MODELS = {

@@ -28,35 +28,134 @@ class VocabularyApp:
             config: ConfigManager instance for accessing configuration settings
         """
         self.config = config
-        # Initialize database components
         self.database_manager = DatabaseManager(database_url)
         self.spaced_repetition_selector = SpacedRepetitionSelector(self.database_manager)
-        
-        # Initialize AI components with config (may fail if API key not available)
-        try:
-            self.text_generator = TextGenerator(config=self.config)
-            print("✅ Text generator initialized")
-        except ValueError as e:
-            print(f"⚠️ Text generator not available: {e}")
-            self.text_generator = None
-        
-        try:
-            self.audio_generator = AudioGenerator(config=self.config)
-            print("✅ Audio generator initialized")
-        except ValueError as e:
-            print(f"⚠️ Audio generator not available: {e}")
-            self.audio_generator = None
+        self.text_generator = TextGenerator(config=self.config)
+        self.audio_generator = AudioGenerator(config=self.config)
         
         # Session data storage for passing data between stages
         self._current_session_data = {}
     
+    def run_learning_session(self, 
+                           total_words: int = 20,
+                           new_word_ratio: float = 0.25,  # 25% new words (5 out of 20)
+                           text_length: int = 300,
+                           language: str = "French",
+                           generate_audio: bool = True,
+                           progress_callback=None) -> dict:
+        """
+        Run a complete vocabulary learning session using spaced repetition.
+        
+        Args:
+            total_words: Total number of words to use (default: 20)
+            new_word_ratio: Ratio of new words to include (default: 0.25 = 25%)
+            language: Language for text generation
+            generate_audio: Whether to generate audio
+            progress_callback: Optional callback function for progress updates
+        
+        Returns:
+            dict: Session results with words, text, audio_path, and session_info
+        """
+        
+        # Get database statistics
+        stats = self.spaced_repetition_selector.get_review_statistics()
+        vocab_count = stats['total_words']
+        progress_callback(f"📊 Database: {vocab_count} total words, {stats['due_words']} due, {stats['new_words']} new") if progress_callback else None
+
+        # Check if we have enough vocabulary
+        progress_callback(f"❌ Not enough vocabulary words. Need at least {total_words}, have {vocab_count}") if progress_callback and vocab_count < total_words else None
+        
+        words_objects = self.spaced_repetition_selector.select_words_for_review(
+            target_count=total_words,
+            new_word_ratio=new_word_ratio
+        )
+        
+        if not words_objects:
+            progress_callback("❌ No words selected") if progress_callback else None
+            return {"words": [], "text": "", "audio_path": "", "session_info": {}}
+        
+        # Convert word objects to dicts for text generator compatibility
+        words = []
+        session_info = {
+            'total_words': len(words_objects),
+            'word_details': []
+        }
+        
+        for word_obj in words_objects:
+            # Convert to dictionary format
+            word_dic = {
+                'word': word_obj.word,
+                'translation': word_obj.translation,
+                'pronunciation': word_obj.pronunciation or ""
+            }
+            words.append(word_dic)
+            
+            # Add word details for session info
+            occurrences = self.database_manager.get_word_occurrences(word_obj.id)
+            is_new = len(occurrences) == 0
+            
+            session_info['word_details'].append({
+                'id': word_obj.id,
+                'word': word_obj.word,
+                'translation': word_obj.translation,
+                'is_new': is_new,
+                'total_reviews': len(occurrences),
+                'pronunciation': word_obj.pronunciation
+            })
+        
+        if progress_callback:
+            new_word_count = int(total_words * new_word_ratio)
+            progress_callback(f"✅ Selected {len(words)} ({new_word_count} new) words for the session")
+
+        # Generate content
+        generated_text = ""
+        audio_path = ""
+        
+        if self.text_generator:
+            try:
+                generated_text = self.text_generator.generate_story(words, language, word_count=text_length)
+
+                # Save the generated text persistently
+                text_filename = self.config.get('paths.temp_text_file', 'infiniling_text.txt')
+                text_path = self.config.get_temp_path(text_filename)
+                
+                try:
+                    with open(text_path, 'w', encoding='utf-8') as f:
+                        f.write(generated_text)
+                except Exception as e:
+                    if progress_callback:
+                        progress_callback(f"⚠️ Could not save text file: {e}")
+                
+            except Exception as e:
+                if progress_callback:
+                    progress_callback(f"❌ Error generating text: {e}")
+                generated_text = ""
+        
+        if self.audio_generator and generated_text and generate_audio:
+            try:
+                progress_callback("🎵 Generating audio...") if progress_callback else None
+
+                audio_filename = self.config.get('paths.temp_audio_file', 'infiniling_audio.mp3')
+                audio_path = self.config.get_temp_path(audio_filename)
+                success = self.audio_generator.generate_audio(generated_text, audio_path)
+
+            except Exception as e:
+                if progress_callback:
+                    progress_callback(f"⚠️ Error generating audio: {e}")
+                audio_path = ""
+        self._current_session_data = {
+            "words": words,
+            "text": generated_text,
+            "audio_path": audio_path,
+            "session_info": session_info
+        }
+        self.save_temp_session_data()
+        # Return session results
+        return self._current_session_data
+    
     def get_vocabulary_count(self) -> int:
         """Get the total number of words in the database."""
         return len(self.database_manager.get_all_words())
-    
-    def get_review_statistics(self) -> dict:
-        """Get current review statistics."""
-        return self.spaced_repetition_selector.get_review_statistics()
     
     def add_word_to_database(self, word: str, translation: str, 
                            language_from: str = 'fr', language_to: str = 'de',
@@ -93,154 +192,6 @@ class VocabularyApp:
             print(f"❌ Error adding word to database: {e}")
             return False
     
-    def run_learning_session(self, 
-                           total_words: int = 20,
-                           new_word_ratio: float = 0.25,  # 25% new words (5 out of 20)
-                           language: str = "French",
-                           generate_audio: bool = True,
-                           progress_callback=None) -> dict:
-        """
-        Run a complete vocabulary learning session using spaced repetition.
-        
-        Args:
-            total_words: Total number of words to use (default: 20)
-            new_word_ratio: Ratio of new words to include (default: 0.25 = 25%)
-            language: Language for text generation
-            generate_audio: Whether to generate audio
-            progress_callback: Optional callback function for progress updates
-        
-        Returns:
-            dict: Session results with selected_words, story, audio_path, and session_info
-        """
-        
-        if progress_callback:
-            progress_callback("🚀 Starting vocabulary learning session...")
-        
-        # Get database statistics
-        stats = self.get_review_statistics()
-        vocab_count = stats['total_words']
-        
-        if progress_callback:
-            progress_callback(f"📊 Database: {vocab_count} total words, {stats['due_words']} due, {stats['new_words']} new")
-        
-        # Check if we have enough vocabulary
-        if vocab_count < total_words:
-            if progress_callback:
-                progress_callback(f"❌ Not enough vocabulary words. Need at least {total_words}, have {vocab_count}")
-            return {"selected_words": [], "story": "", "audio_path": "", "session_info": {}}
-        
-        # Select words using scientific spaced repetition
-        if progress_callback:
-            new_word_count = int(total_words * new_word_ratio)
-            due_word_count = total_words - new_word_count
-            progress_callback(f"🎯 Selecting {total_words} words ({due_word_count} due + {new_word_count} new)...")
-        
-        selected_words_objects = self.spaced_repetition_selector.select_words_for_review(
-            target_count=total_words,
-            new_word_ratio=new_word_ratio
-        )
-        
-        if not selected_words_objects:
-            if progress_callback:
-                progress_callback("❌ No words selected")
-            return {"selected_words": [], "story": "", "audio_path": "", "session_info": {}}
-        
-        # Convert word objects to tuples for text generator compatibility
-        selected_words = []
-        session_info = {
-            'total_words': len(selected_words_objects),
-            'word_details': []
-        }
-        
-        for word_obj in selected_words_objects:
-            # Convert to tuple format: (word, translation, pronunciation)
-            word_tuple = (
-                word_obj.word,
-                word_obj.translation,
-                word_obj.pronunciation or ""
-            )
-            selected_words.append(word_tuple)
-            
-            # Add word details for session info
-            occurrences = self.database_manager.get_word_occurrences(word_obj.id)
-            is_new = len(occurrences) == 0
-            
-            session_info['word_details'].append({
-                'id': word_obj.id,
-                'word': word_obj.word,
-                'translation': word_obj.translation,
-                'is_new': is_new,
-                'total_reviews': len(occurrences),
-                'pronunciation': word_obj.pronunciation
-            })
-        
-        if progress_callback:
-            progress_callback(f"✅ Selected {len(selected_words)} words for the session")
-        
-        # Generate content
-        generated_text = ""
-        audio_path = ""
-        
-        if self.text_generator:
-            try:
-                if progress_callback:
-                    progress_callback(f"📝 Generating story in {language}...")
-                generated_text = self.text_generator.generate_story(selected_words, language)
-                if progress_callback:
-                    progress_callback("✅ Story generated successfully")
-                
-                # Save the generated text persistently
-                if generated_text:
-                    if self.config:
-                        text_filename = self.config.get('paths.temp_text_file', 'infiniling_text.txt')
-                        text_path = self.config.get_temp_path(text_filename)
-                    else:
-                        text_path = os.path.join(tempfile.gettempdir(), "infiniling_text.txt")
-                    
-                    try:
-                        with open(text_path, 'w', encoding='utf-8') as f:
-                            f.write(generated_text)
-                    except Exception as e:
-                        if progress_callback:
-                            progress_callback(f"⚠️ Could not save text file: {e}")
-                
-                # Save the selected vocabulary words for vocabulary review
-                self._save_selected_words(selected_words, progress_callback)
-                
-            except Exception as e:
-                if progress_callback:
-                    progress_callback(f"❌ Error generating story: {e}")
-                generated_text = ""
-        
-        if self.audio_generator and generated_text and generate_audio:
-            try:
-                if progress_callback:
-                    progress_callback("🎵 Generating audio...")
-                
-                if self.config:
-                    audio_filename = self.config.get('paths.temp_audio_file', 'infiniling_audio.mp3')
-                    audio_path = self.config.get_temp_path(audio_filename)
-                else:
-                    audio_path = os.path.join(tempfile.gettempdir(), "infiniling_audio.mp3")
-                
-                success = self.audio_generator.generate_audio(generated_text, audio_path)
-                if success and progress_callback:
-                    progress_callback("✅ Audio generated successfully")
-                elif not success:
-                    audio_path = ""
-            except Exception as e:
-                if progress_callback:
-                    progress_callback(f"⚠️ Error generating audio: {e}")
-                audio_path = ""
-        
-        # Return session results
-        return {
-            "selected_words": selected_words,
-            "story": generated_text,
-            "audio_path": audio_path,
-            "session_info": session_info
-        }
-    
     def mark_word_reviewed(self, word_id: int, feedback_score: int) -> bool:
         """
         Mark a word as reviewed with feedback score.
@@ -259,39 +210,6 @@ class VocabularyApp:
             print(f"❌ Error marking word as reviewed: {e}")
             return False
     
-    def _save_selected_words(self, selected_words: List[Tuple[str, str, str]], progress_callback=None):
-        """
-        Save selected words to temp file for vocabulary review.
-        
-        Args:
-            selected_words: List of (word, translation, pronunciation) tuples
-            progress_callback: Optional callback for progress updates
-        """
-        try:
-            if self.config:
-                words_filename = self.config.get('paths.temp_words_file', 'infiniling_words.json')
-                words_path = self.config.get_temp_path(words_filename)
-            else:
-                words_path = os.path.join(tempfile.gettempdir(), "infiniling_words.json")
-            words_data = [
-                {
-                    "word": word,
-                    "translation": translation,
-                    "pronunciation": pronunciation
-                }
-                for word, translation, pronunciation in selected_words
-            ]
-            
-            with open(words_path, 'w', encoding='utf-8') as f:
-                json.dump(words_data, f, ensure_ascii=False, indent=2)
-            
-            if progress_callback:
-                progress_callback(f"💾 Temporary vocabulary list saved to {words_path}")
-                
-        except Exception as e:
-            if progress_callback:
-                progress_callback(f"⚠️ Could not save vocabulary list: {e}")
-    
     def load_last_session(self) -> dict:
         """
         Load the last generated session content.
@@ -307,46 +225,41 @@ class VocabularyApp:
         
         try:
             # Load text using config paths
-            if self.config:
-                text_filename = self.config.get('paths.temp_text_file', 'infiniling_text.txt')
-                text_path = self.config.get_temp_path(text_filename)
-                audio_filename = self.config.get('paths.temp_audio_file', 'infiniling_audio.mp3')
-                audio_path = self.config.get_temp_path(audio_filename)
-                words_filename = self.config.get('paths.temp_words_file', 'infiniling_words.json')
-                words_path = self.config.get_temp_path(words_filename)
-            else:
-                text_path = os.path.join(tempfile.gettempdir(), "infiniling_text.txt")
-                audio_path = os.path.join(tempfile.gettempdir(), "infiniling_audio.mp3")
-                words_path = os.path.join(tempfile.gettempdir(), "infiniling_words.json")
+            text_filename = self.config.get('paths.temp_text_file', 'infiniling_text.txt')
+            text_path = self.config.get_temp_path(text_filename)
+            audio_filename = self.config.get('paths.temp_audio_file', 'infiniling_audio.mp3')
+            audio_path = self.config.get_temp_path(audio_filename)
+            words_filename = self.config.get('paths.temp_words_file', 'infiniling_words.json')
+            words_path = self.config.get_temp_path(words_filename)
             
             # Load text
-            if os.path.exists(text_path):
-                with open(text_path, 'r', encoding='utf-8') as f:
-                    result['text'] = f.read()
+            with open(text_path, 'r', encoding='utf-8') as f:
+                result['text'] = f.read()
             
             # Load audio path
-            if os.path.exists(audio_path):
-                result['audio_path'] = audio_path
+            result['audio_path'] = audio_path
             
             # Load words
-            if os.path.exists(words_path):
-                with open(words_path, 'r', encoding='utf-8') as f:
-                    result['words'] = json.load(f)
+            with open(words_path, 'r', encoding='utf-8') as f:
+                result['words'] = json.load(f)
         
         except Exception as e:
             print(f"⚠️ Error loading last session: {e}")
         
         return result
     
-    def set_current_session_data(self, data: dict):
+    def update_current_session_data(self, data: dict):
         """
-        Store current session data for passing between stages.
+        Update the current session data with new information.
         
         Args:
-            data: Dictionary containing session data (words, text, audio_path, etc.)
+            data: Dictionary with session data to update
         """
-        self._current_session_data = data.copy()
-    
+        if not isinstance(data, dict):
+            raise ValueError("Session data must be a dictionary")
+        
+        self._current_session_data.update(data)
+
     def get_current_session_data(self) -> dict:
         """
         Get current session data.
@@ -359,39 +272,41 @@ class VocabularyApp:
     def clear_current_session_data(self):
         """Clear current session data."""
         self._current_session_data = {}
-    
-    def get_session_configuration(self) -> dict:
+
+    def save_temp_session_data(self):
         """
-        Get current session configuration settings.
-        
-        Returns:
-            dict: Configuration settings
-        """
-        return {
-            'total_words': 20,
-            'new_word_ratio': 0.25,
-            'due_words': 15,
-            'new_words': 5,
-            'language': 'French',
-            'generate_audio': True
-        }
-    
-    def update_session_configuration(self, **kwargs) -> dict:
-        """
-        Update session configuration settings.
+        Save session data to a temporary file.
         
         Args:
-            **kwargs: Configuration parameters to update
+            session_data: Dictionary with session data to save
         
         Returns:
-            dict: Updated configuration
+            str: Path to the temporary file
         """
-        # For now, this is a placeholder since we're using parameters in run_learning_session
-        # In a full implementation, this could persist settings to a config file
-        current_config = self.get_session_configuration()
-        current_config.update(kwargs)
-        return current_config
+        try:
+            words_filename = self.config.get('paths.temp_words_file')
+            words_path = self.config.get_temp_path(words_filename)
+            session_data = self.get_current_session_data()
+            
+            with open(words_path, 'w', encoding='utf-8') as f:
+                json.dump(session_data, f, ensure_ascii=False, indent=4)
+            return words_path
+        except Exception as e:
+            print(f"❌ Error saving temporary session data: {e}")
+            return ""
 
+    def read_temp_session_data(self):
+        """Read temporary session data from file"""
+        try:
+            words_filename = self.config.get('paths.temp_words_file')
+            words_path = self.config.get_temp_path(words_filename)
+            
+            with open(words_path, 'r', encoding='utf-8') as f:
+                session_data = json.load(f)
+            return session_data
+        except Exception as e:
+            print(f"❌ Error reading temporary words: {str(e)}")
+            return None
 
 # Example usage and testing
 if __name__ == "__main__":
@@ -399,7 +314,7 @@ if __name__ == "__main__":
     app = VocabularyApp()
     
     # Get statistics
-    stats = app.get_review_statistics()
+    stats = app.spaced_repetition_selector.get_review_statistics()
     print(f"📊 Vocabulary Statistics:")
     print(f"  Total words: {stats['total_words']}")
     print(f"  New words: {stats['new_words']}")
@@ -420,8 +335,8 @@ if __name__ == "__main__":
             progress_callback=progress_callback
         )
         
-        print(f"\n📝 Generated story ({len(result['story'])} characters):")
-        print(result['story'][:200] + "..." if len(result['story']) > 200 else result['story'])
+        print(f"\n📝 Generated text ({len(result['text'])} characters):")
+        print(result['text'][:200] + "..." if len(result['text']) > 200 else result['text'])
         
         print(f"\n📊 Session info:")
         print(f"  Words selected: {result['session_info']['total_words']}")

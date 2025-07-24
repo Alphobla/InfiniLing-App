@@ -329,7 +329,7 @@ class WhisperInterface:
             for widget in self.master.winfo_children():
                 widget.destroy()
             self.setup_ui()
-        SavedTranscriptionReview(self.master, srt_path, mp3_path, back_callback=return_to_main)
+        SavedTranscriptionReview(self.master, srt_path, mp3_path, config=self.config, back_callback=return_to_main)
 
     def update_ui_state(self):
         """Update UI based on current state"""
@@ -671,10 +671,11 @@ class WhisperInterface:
 
 class SavedTranscriptionReview:
     """Modern review UI for saved transcriptions using shared components."""
-    def __init__(self, master, srt_path, mp3_path, back_callback=None):
+    def __init__(self, master, srt_path, mp3_path, config=None, back_callback=None):
         self.master = master
         self.srt_path = srt_path
         self.mp3_path = mp3_path
+        self.config = config
         self.back_callback = back_callback
         
         # Process filename for display

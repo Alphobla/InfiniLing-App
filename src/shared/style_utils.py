@@ -162,13 +162,13 @@ class CommonPatterns:
     """Common UI patterns used across the application"""
     
     @staticmethod
-    def create_header_with_navigation(parent, title, back_command=None, forward_command=None, forward_text="Next →"):
+    def create_header_with_navigation(parent, title, back_command=None, forward_command=None, backward_text="← Back", forward_text="Next →"):
         """Create a standard header with optional back button, title, and forward button"""
         header_frame = StyledWidgets.create_header_frame(parent)
         header_frame.pack(fill='x', pady=(0, Spacing.MD))
         
         if back_command:
-            back_btn = StyledWidgets.create_back_button(header_frame, back_command)
+            back_btn = StyledWidgets.create_back_button(header_frame, back_command, text=backward_text)
             back_btn.pack(side='left')
         
         title_label = StyledWidgets.create_title_label(header_frame, title, bg=Colors.HEADER_BG)

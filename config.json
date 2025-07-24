@@ -7,6 +7,7 @@
   "vocabulary": {
     "default_total_words": 20,
     "default_new_word_ratio": 0.25,
+    "default_text_length": 300,
     "languages": {
       "from": "fr",
       "to": "de",
@@ -88,5 +89,45 @@
       "timeout": 30,
       "max_retries": 3
     }
+  },
+  "test_data": {
+    "words": [
+      {"word": "bonjour", "translation": "hello", "pronunciation": "bon-ZHOOR"},
+      {"word": "merci", "translation": "thank you", "pronunciation": "mer-SEE"},
+      {"word": "au revoir", "translation": "goodbye", "pronunciation": "oh ruh-VWAHR"},
+      {"word": "oui", "translation": "yes", "pronunciation": "WEE"},
+      {"word": "non", "translation": "no", "pronunciation": "NOH"},
+      {"word": "excusez-moi", "translation": "excuse me", "pronunciation": "eh-skoo-zay MWAH"},
+      {"word": "pardon", "translation": "sorry", "pronunciation": "par-DOH"},
+      {"word": "comment", "translation": "how", "pronunciation": "koh-MAHN"},
+      {"word": "pourquoi", "translation": "why", "pronunciation": "poor-KWAH"},
+      {"word": "où", "translation": "where", "pronunciation": "OO"},
+      {"word": "quand", "translation": "when", "pronunciation": "KAHN"},
+      {"word": "combien", "translation": "how much", "pronunciation": "kohn-bee-AHN"},
+      {"word": "maintenant", "translation": "now", "pronunciation": "mahn-tuh-NAHN"},
+      {"word": "aujourd'hui", "translation": "today", "pronunciation": "oh-zhoor-DWEE"},
+      {"word": "demain", "translation": "tomorrow", "pronunciation": "duh-MAHN"},
+      {"word": "hier", "translation": "yesterday", "pronunciation": "ee-YEHR"},
+      {"word": "bien", "translation": "well", "pronunciation": "bee-AHN"},
+      {"word": "mal", "translation": "bad", "pronunciation": "MAHL"},
+      {"word": "beaucoup", "translation": "a lot", "pronunciation": "boh-KOO"},
+      {"word": "peu", "translation": "little", "pronunciation": "PUH"}
+    ],
+    "text": [
+      "Bonjour! Aujourd'hui, je vais vous raconter une petite histoire.",
+      "",
+      "Marie se réveille et dit Bonjour! à sa famille. Elle demande Comment allez-vous? à sa mère.",
+      "Sa mère répond Bien, merci beaucoup!",
+      "",
+      "Marie va au marché. Elle demande Combien coûte cette pomme? Le vendeur répond Deux euros, s'il vous plaît.",
+      "Marie dit Merci! et achète la pomme.",
+      "",
+      "Le soir, Marie dit Au revoir! à ses amis. Elle rentre chez elle et dit Bonne nuit!",
+      "Demain, elle dira encore Bonjour! au monde.",
+      "",
+      "Cette histoire simple montre pourquoi il est important de bien parler français.",
+      "Quand nous disons Excusez-moi ou Pardon, nous montrons du respect.",
+      "Où que nous allions, ces mots nous aident. Maintenant, vous savez comment utiliser ces expressions!"
+    ]
   }
 }

@@ -8,10 +8,11 @@ from .vocabulary_panel import VocabularyPanel
 from .styles import center_top_window
 from .style_utils import CommonPatterns
 
+
 class ReaderUI:
     """Shared reader UI with text display and audio controls"""
     
-    def __init__(self, master, title, audio_path=None, text_content=None, srt_path=None, back_callback=None, 
+    def __init__(self, master,  title, service_app=None, audio_path=None, text_content=None, srt_path=None, back_callback=None, 
                  forward_callback=None, forward_text="Next →", language_from="fr", language_to="de", config=None):
         """
         Initialize ReaderUI with dependency injection.
@@ -32,28 +33,28 @@ class ReaderUI:
         self.master = master
         self.config = config
         self.title = title
+        self.vocab_app = service_app if hasattr(service_app, 'get_current_session_data') else None
         self.audio_path = audio_path
         self.text_content = text_content
         self.srt_path = srt_path
         self.back_callback = back_callback
-        self.forward_callback = forward_callback
         self.forward_text = forward_text
         self.language_from = language_from
         self.language_to = language_to
+        self.forward_callback = getattr(self, forward_callback) if forward_callback else None
         
         # For custom highlighting functionality
         self.highlight_callback = None
         
-        # Set window size once at initialization using config
-        root = self.master.winfo_toplevel()
-        if self.config:
-            window_width, window_height = self.config.get_window_size('reader')
-        else:
-            window_width, window_height = 850, 720
-        center_top_window(root, width=window_width, height=window_height)
-        
+        self._set_window_size()
         self.setup_ui()
     
+    def _set_window_size(self):
+        """Set window size for gentexter interface using config"""
+        root = self.master.winfo_toplevel()
+        window_width, window_height = self.config.get_window_size('reader')
+        center_top_window(self.master, width=window_width, height=window_height)
+
     def setup_ui(self):
         """Setup the complete reader UI layout"""
         # Clear existing widgets
@@ -265,3 +266,38 @@ class ReaderUI:
         
         if hasattr(self, 'vocabulary_panel'):
             self.vocabulary_panel.set_languages(language_from, language_to)
+
+    def proceed_to_review(self):
+        """Proceed from reader to review stage"""
+        try:
+            # Late import to avoid circular import
+            from ..gentexter_mode.gentexter_review_ui import GentexterReview
+            
+            # Get session data from vocabulary service
+            session_data = self.vocab_app.get_current_session_data()
+            words = session_data.get('words')
+            
+            if not words:
+                print("No words available for review!")
+                return
+            
+            GentexterReview(
+                master=self.master,
+                review_words=session_data.get('words'),
+                back_callback=self.return_to_reader,
+                vocab_app=self.vocab_app,
+                config=self.config
+            )
+            
+        except Exception as e:
+            print(f"Error proceeding to review: {str(e)}")
+            self.return_to_reader()
+
+    def return_to_reader(self):
+        """Return from config interface to reader interface"""
+        # Destroy config interface if it exists
+        for widget in self.master.winfo_children():
+            widget.destroy()
+        
+        self._set_window_size()
+        self.setup_ui()

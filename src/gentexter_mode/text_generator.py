@@ -24,7 +24,7 @@ class TextGenerator:
         
         self.client = openai.OpenAI(api_key=self.api_key)
     
-    def generate_story(self, vocab_list: List[Tuple[str, str, str]], 
+    def generate_story(self, vocab_list: List[dict[str, str,str]], 
                       language: str = "French", 
                       word_count: int = 300) -> str:
         """Generate a story incorporating the vocabulary words."""
@@ -35,7 +35,7 @@ class TextGenerator:
         # Format vocabulary for the prompt
         vocab_strings = []
         for vocab_entry in vocab_list:
-            word, translation = vocab_entry[0], vocab_entry[1]
+            word, translation = vocab_entry['word'], vocab_entry['translation']
             vocab_strings.append(f"{word} ({translation})")
         
         vocab_list_str = ", ".join(vocab_strings)
