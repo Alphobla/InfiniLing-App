@@ -96,7 +96,6 @@ class GentexterStats:
 
                 performance_data.append({'days_until_review': days_until_review,'is_reviewed': is_reviewed})
 
-            print(f" sample performance data: {performance_data[:5]}")  # Debug output
             # Sort by performance (worse performance = more days = left side of graph)
             performance_data.sort(key=lambda x: x['days_until_review'], reverse=True)
             return performance_data
@@ -196,8 +195,8 @@ class GentexterStats:
                     
                     if vocab_word:
                         # Add occurrence record
-                        self.vocab_app.database_manager.add_occurrence(
-                            vocabulary_id=vocab_word.id,
+                        self.vocab_app.spaced_repetition_selector.mark_word_reviewed(
+                            word_id=vocab_word.id,
                             feedback_score=score
                         )
                     else:
@@ -208,12 +207,13 @@ class GentexterStats:
                         break
             
             print(f"✅ Saved test results for {len(self.word_scores)} words")
+            messagebox.showinfo("Test Saved", "Your test results have been saved successfully.")
             
         except Exception as e:
-            print(f"❌ Error saving test results: {e}")
+            messagebox.showwarning("Error",f"❌ Error saving test results: {e}")
         
         # Return to menu
-        messagebox.showinfo("Test Saved", "Your test results have been saved successfully.")
+        
         self.return_to_menu()
 
     def return_to_menu(self):

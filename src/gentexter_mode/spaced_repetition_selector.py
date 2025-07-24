@@ -220,7 +220,6 @@ class SpacedRepetitionSelector:
             occurrence = VocabularyOccurrence(
                 vocabulary_id=word_id,
                 date=datetime.now(),
-                repeat=not success,
                 feedback_score=feedback_score,
                 easiness_factor=new_ef,
                 interval_days=new_interval,
@@ -263,68 +262,3 @@ class SpacedRepetitionSelector:
             'future_words': future_words
         }
     
-    def print_review_urgency(self, words: List[Dict]) -> None:
-        """
-        Print review urgency information for debugging/visualization.
-        
-        Args:
-            words: List of word dictionaries to display
-        """
-        print(f"\n=== Review Session ({len(words)} words) ===")
-        
-        for i, word in enumerate(words, 1):
-            word_id = word.id
-            occurrences = self.db_manager.get_word_occurrences(word_id)
-            
-            if not occurrences:
-                status = "NEW"
-                urgency = "●●●●●"
-            else:
-                next_review = self.get_next_review_date(word_id)
-                days_overdue = (datetime.now() - next_review).days
-                
-                if days_overdue > 7:
-                    urgency = "●●●●●"
-                elif days_overdue > 3:
-                    urgency = "●●●●○"
-                elif days_overdue > 1:
-                    urgency = "●●●○○"
-                elif days_overdue > 0:
-                    urgency = "●●○○○"
-                else:
-                    urgency = "●○○○○"
-                
-                # Get current state for display
-                ef, reps, interval, _ = self.get_word_current_state(word_id)
-                status = f"Rep:{reps} EF:{ef:.1f}"
-            
-            print(f"{i:2d}. {word.word} → {word.translation} [{urgency}] {status}")
-
-
-# Example usage and testing
-if __name__ == "__main__":
-    # Initialize database and selector
-    db_manager = DatabaseManager()
-    selector = SpacedRepetitionSelector(db_manager)
-    
-    # Get review statistics
-    stats = selector.get_review_statistics()
-    print("Review Statistics:")
-    print(f"Total words: {stats['total_words']}")
-    print(f"New words: {stats['new_words']}")
-    print(f"Due words: {stats['due_words']}")
-    print(f"Future words: {stats['future_words']}")
-    
-    # Select words for review
-    review_words = selector.select_words_for_review(target_count=10, new_word_ratio=0.3)
-    selector.print_review_urgency(review_words)
-    
-    # Example of marking a word as reviewed
-    if review_words:
-        word = review_words[0]
-        print(f"\n=== Reviewing: {word.word} → {word.translation} ===")
-        
-        # Simulate review (replace with actual user interaction)
-        feedback_score = 4  # User performed well
-        selector.mark_word_reviewed(word.id, feedback_score)
-        print(f"Marked with feedback score: {feedback_score}")

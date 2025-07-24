@@ -353,7 +353,7 @@ class GentexterConfig:
             for widget in self.master.winfo_children():
                 widget.pack_forget()
             
-
+            print(f"service app: {type(self.vocab_app)}")
             # Create review interface
             self.reader_ui = ReaderUI(
                 master=self.master,
