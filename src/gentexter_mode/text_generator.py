@@ -40,28 +40,27 @@ class TextGenerator:
         
         vocab_list_str = ", ".join(vocab_strings)
         
-        prompt = f"""Write an engaging short story in {language} (about {word_count} words) that naturally incorporates these vocabulary words:
+        prompt = f"""Write an engaging short dialogue in {language} (about {word_count} words) that naturally incorporates these vocabulary words:
 
-{vocab_list_str}
+            {vocab_list_str}
 
-Requirements:
-- Use ALL the vocabulary words naturally in context
-- Make the story interesting and coherent  
-- Use conversational, modern {language}
-- The story should help reinforce the meaning of each word through context
-- Include some dialogue if possible
-- Make sure the story flows well and is enjoyable to read
+            Requirements:
+            - Use ALL the vocabulary words naturally in context
+            - Make the dialogue interesting and coherent  
+            - Use conversational, modern {language}, dont use rare words
+            - The dialogue should help reinforce the meaning of each word through context
+            - Make sure the dialogue flows well and is enjoyable to read
 
-Please write only the story in {language}, no other text."""
+            Please write only the dialogue in {language}, no other text."""
 
         try:
-            print(f"🎯 Generating story with {len(vocab_list)} vocabulary words...")
+            print(f"🎯 Generating dialogue with {len(vocab_list)} vocabulary words...")
             
             response = self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=int(word_count * 1.5),  # Allow some buffer
-                temperature=0.7
+                max_tokens=int(word_count * 2),  # Allow some buffer
+                temperature=0.8
             )
             
             content = response.choices[0].message.content
@@ -91,23 +90,23 @@ Please write only the story in {language}, no other text."""
         
         prompt = f"""Write an engaging short story in {language} about {context} that naturally incorporates these vocabulary words:
 
-{vocab_list_str}
+            {vocab_list_str}
 
-Requirements:
-- Use ALL the vocabulary words naturally in context
-- The story should be about: {context}
-- Make it interesting and coherent  
-- Use conversational, modern {language}
-- Include dialogue when appropriate
-- About 250-350 words
+            Requirements:
+            - Use ALL the vocabulary words naturally in context
+            - The story should be about: {context}
+            - Make it interesting and coherent  
+            - Use conversational, modern {language}
+            - Include dialogue when appropriate
+            - About 250-350 words
 
-Please write only the story in {language}, no other text."""
+            Please write only the story in {language}, no other text."""
 
         try:
             response = self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=500,
+                max_tokens=int(word_count * 1.5),
                 temperature=0.8  # Slightly higher for more creativity
             )
             
@@ -118,43 +117,5 @@ Please write only the story in {language}, no other text."""
             print(f"❌ Error generating contextual story: {e}")
             raise
     
-    def validate_story_contains_words(self, story: str, vocab_list: List[Tuple[str, str, str]]) -> dict:
-        """Check which vocabulary words are actually used in the generated story."""
-        story_lower = story.lower()
-        
-        found_words = []
-        missing_words = []
-        
-        for word, translation, pronunciation in vocab_list:
-            word_lower = word.lower()
-            if word_lower in story_lower:
-                found_words.append((word, translation, pronunciation))
-            else:
-                missing_words.append((word, translation, pronunciation))
-        
-        return {
-            'found_words': found_words,
-            'missing_words': missing_words,
-            'coverage_percentage': (len(found_words) / len(vocab_list)) * 100 if vocab_list else 0
-        }
     
-    def save_story_to_file(self, story: str, file_path: str, vocab_list: List[Tuple[str, str, str]] = None):
-        """Save the generated story to a text file with optional vocabulary list."""
-        try:
-            with open(file_path, "w", encoding="utf-8") as f:
-                if vocab_list:
-                    f.write("=== VOCABULARY WORDS ===\n")
-                    for i, (word, translation, pronunciation) in enumerate(vocab_list, 1):
-                        if pronunciation:
-                            f.write(f"{i:2}. {word} [{pronunciation}] → {translation}\n")
-                        else:
-                            f.write(f"{i:2}. {word} → {translation}\n")
-                    f.write("\n=== GENERATED STORY ===\n\n")
-                
-                f.write(story)
-            
-            print(f"💾 Story saved to: {file_path}")
-            
-        except Exception as e:
-            print(f"❌ Error saving story: {e}")
-            raise
+

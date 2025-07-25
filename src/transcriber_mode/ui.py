@@ -488,11 +488,11 @@ class WhisperInterface:
         
         # Model options: (description, time_factor, model_name)
         models = [
-            ("Blitz guess", 0.3, "tiny"),
-            ("Hurried estimate", 0.5, "base"),
-            ("Measured notion", 0.8, "small"),
-            ("Careful take", 1.2, "medium"),
-            ("Deliberate precision", 2.0, "large")
+            ("Blitz guess", 0.6, "tiny"),
+            ("Hurried estimate", 1, "base"),
+            ("Measured notion", 1.6, "small"),
+            ("Careful take", 2.4, "medium"),
+            ("Deliberate precision", 4.0, "large")
         ]
         self.model_frame = Frame(self.content_frame, bg=Colors.SURFACE, relief='raised', bd=1)
         self.model_frame.pack(fill='both', expand=True, pady=(0, 10), padx=10)
