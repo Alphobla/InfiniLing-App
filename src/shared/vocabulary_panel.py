@@ -27,9 +27,11 @@ class VocabularyPanel:
         self.language_from = language_from
         self.language_to = language_to
         
-        # Initialize translator
+        # Initialize translator and database manager
         try:
             self.translator = GPTTranslator()
+            from .database_models import DatabaseManager
+            self.db_manager = DatabaseManager()
         except ValueError as e:
             self.translator = None
             print(f"Translation disabled: {e}")
@@ -156,21 +158,11 @@ class VocabularyPanel:
         word_frame = Frame(parent, bg='#ffffff')
         word_frame.pack(fill='x', padx=10, pady=5)
         
-        if analysis.original_word != analysis.root_word:
-            Label(word_frame, text=analysis.original_word,
-                  font=("Segoe UI", 14, "bold"),
-                  bg='#ffffff', fg='#2c3e50').pack(anchor='w')
-            
-            Label(word_frame, text=f"{analysis.root_word} ({analysis.grammatical_relation})",
-                  font=("Segoe UI", 10),
-                  bg='#ffffff', fg='#6c757d').pack(anchor='w')
-        else:
-            Label(word_frame, text=analysis.original_word,
-                  font=("Segoe UI", 14, "bold"),
-                  bg='#ffffff', fg='#2c3e50').pack(anchor='w')
+        Label(word_frame, text=analysis.root_word,
+                font=("Segoe UI", 14, "bold"),
+                bg='#ffffff', fg='#2c3e50').pack(anchor='w')
         
         # Translation section
-        # self.add_section_header(parent, "Translation")
         
         trans_frame = Frame(parent, bg='#ffffff')
         trans_frame.pack(fill='x', padx=10, pady=5)
@@ -184,13 +176,7 @@ class VocabularyPanel:
                   font=("Segoe UI", 10),
                   bg='#ffffff', fg='#6c757d').pack(anchor='w')
         
-        if analysis.context_translation and analysis.context_translation != analysis.primary_translation:
-            Label(trans_frame, text=f"Context: {analysis.context_translation}",
-                  font=("Segoe UI", 10),
-                  bg='#ffffff', fg='#6c757d').pack(anchor='w')
-        
         # Frequency section with color coding
-        # self.add_section_header(parent, "Frequency Analysis")
         
         freq_frame = Frame(parent, bg='#ffffff')
         freq_frame.pack(fill='x', padx=10, pady=5)
@@ -217,16 +203,27 @@ class VocabularyPanel:
                   font=("Segoe UI", 10),
                   bg='#ffffff', fg='#6c757d').pack(anchor='w')
         
-        # Part of speech
-        if analysis.part_of_speech != "unknown":
-            # self.add_section_header(parent, "Grammar")
+        # Example sentences section
+        if analysis.example_original:
+            example_frame = Frame(parent, bg='#ffffff')
+            example_frame.pack(fill='x', padx=10, pady=(10, 5))
             
-            grammar_frame = Frame(parent, bg='#ffffff')
-            grammar_frame.pack(fill='x', padx=10, pady=5)
+            Label(example_frame, text="Example:",
+                  font=("Segoe UI", 10, "bold"),
+                  bg='#ffffff', fg='#2c3e50').pack(anchor='w')
             
-            Label(grammar_frame, text=f"🏷️ {analysis.part_of_speech}",
-                  font=("Segoe UI", 10),
-                  bg='#ffffff', fg='#6c757d').pack(anchor='w')
+            # Original sentence
+            Label(example_frame, text=analysis.example_original,
+                  font=("Segoe UI", 10, "italic"),
+                  bg='#ffffff', fg='#495057',
+                  wraplength=240, justify='left').pack(anchor='w', pady=(2, 0))
+            
+            # Translation
+            if analysis.example_translation:
+                Label(example_frame, text=analysis.example_translation,
+                      font=("Segoe UI", 9),
+                      bg='#ffffff', fg='#6c757d',
+                      wraplength=240, justify='left').pack(anchor='w', pady=(2, 0))
         
         # Add to vocabulary button
         self.add_vocabulary_button(parent, analysis)
@@ -269,12 +266,9 @@ class VocabularyPanel:
             success = self.db_manager.add_word(
                 word=analysis.root_word,
                 translation=analysis.primary_translation,
+                secondary_translation=analysis.secondary_translation,
                 language_from=self.language_from,
                 language_to=self.language_to,
-                pronunciation=getattr(analysis, 'pronunciation', None),
-                part_of_speech=analysis.part_of_speech if analysis.part_of_speech != "unknown" else None,
-                secondary_translation=analysis.secondary_translation,
-                context_translation=analysis.context_translation if analysis.context_translation != analysis.primary_translation else None,
                 frequency_rank=analysis.frequency_info.get('rank') if analysis.frequency_info.get('found') else None,
                 frequency_level=analysis.frequency_info.get('level') if analysis.frequency_info.get('found') else None
             )
@@ -367,10 +361,31 @@ class VocabularyPanel:
     def _translate_worker(self, word: str, context: str):
         """Background worker for translation."""
         try:
-            # Perform translation
-            analysis = self.translator.analyze_word_comprehensive(
-                word, self.language_from, self.language_to, context
+            # Perform translation using GPT translator
+            result = self.translator.analyze_word_string(word, self.language_from, self.language_to)
+            
+            if "error" in result:
+                raise Exception(result["error"])
+            
+            # Convert dict result to WordAnalysis object
+            from .gpt_translator import WordAnalysis
+            analysis = WordAnalysis(
+                original_word=result["original_word"],
+                root_word=result["normalized_word"],
+                primary_translation=result["primary_translation"],
+                secondary_translation=result["secondary_translation"],
+                frequency_info={
+                    "level": result["frequency_level"],
+                    "rank": result["frequency_rank"],
+                    "found": result["frequency_level"] is not None
+                },
+                language_from=result["language_from"],
+                language_to=result["language_to"]
             )
+            
+            # Add example sentences
+            analysis.example_original = result.get("example_original")
+            analysis.example_translation = result.get("example_translation")
             
             # Update UI on main thread
             self.parent.after(0, lambda: self.show_translation(analysis))

@@ -164,7 +164,6 @@ class DatabaseManager:
                 **kwargs
             )
             # Enhance the word with GPT normalization and frequency data
-            vocab = self.enhance_word(vocab)
             session.add(vocab)
             session.flush()  # Get the ID
 

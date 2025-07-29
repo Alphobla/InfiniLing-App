@@ -315,6 +315,71 @@ class GPTTranslator:
         
         return "\n".join(lines)
 
+    def analyze_word_string(self, word_text: str, language_from: str = 'fr', language_to: str = 'de', assist_translation: str = None) -> dict:
+        """
+        Analyze a single word and return all enhancement data as dictionary.
+        
+        Args:
+            word_text: The word to analyze
+            language_from: Source language (default: 'fr')
+            language_to: Target language (default: 'de')
+            assist_translation: Optional existing translation as guidance
+            
+        Returns:
+            dict: Complete word analysis with all data
+        """
+        try:
+            from .tatoeba_client import get_sentence_example
+            
+            # Get GPT analysis using existing method
+            analysis = self.normalize_and_translate(
+                word_text,
+                language_from,
+                language_to,
+                assist_translation
+            )
+            
+            if not analysis or not isinstance(analysis, dict):
+                return {"error": "Failed to get GPT analysis"}
+            
+            # Get frequency data
+            root_word = analysis.get('root_word', word_text)
+            frequency = get_word_frequency_category(root_word, language_from)
+            
+            # Get example sentence with core word
+            def strip_to_core_word(word_form):
+                """Strip articles and gender markers."""
+                import re
+                core = re.sub(r'\s*\([mf]\.\)$', '', word_form)
+                return core.strip()
+            
+            example_original = None
+            example_translation = None
+            try:
+                core_word = strip_to_core_word(root_word)
+                example = get_sentence_example(core_word, language_from, language_to)
+                if example:
+                    example_original = example[0]
+                    example_translation = example[1]
+            except:
+                pass
+            
+            # Return complete analysis
+            return {
+                "original_word": word_text,
+                "normalized_word": root_word,
+                "primary_translation": analysis.get("primary_translation", ""),
+                "secondary_translation": analysis.get("secondary_translation"),
+                "frequency_level": frequency.get('level'),
+                "frequency_rank": frequency.get('rank'),
+                "example_original": example_original,
+                "example_translation": example_translation,
+                "language_from": language_from,
+                "language_to": language_to
+            }
+            
+        except Exception as e:
+            return {"error": f"Error analyzing word '{word_text}': {e}"}
 # Utility functions for easy integration
 def create_translator(api_key: str) -> GPTTranslator:
     """Create a GPT translator instance."""

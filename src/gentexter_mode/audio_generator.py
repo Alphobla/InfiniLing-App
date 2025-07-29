@@ -62,9 +62,13 @@ class AudioGenerator:
         try:
             print(f"🎵 Generating audio with voice '{voice}'...")
             
+            import json
+            with open('config.json', 'r') as f:
+                config = json.load(f)
+            
             audio_response = self.client.audio.speech.create(
-                model=model,
-                voice=voice,
+                model=config['audio']['model'],
+                voice=config['audio']['voice'],
                 input=text,
                 response_format="mp3",
                 speed=speed
