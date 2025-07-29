@@ -8,6 +8,7 @@ designed to be compatible with the existing selector.py spaced repetition algori
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Float, ForeignKey, Text, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
+from src.shared.frequency_analysis import get_word_frequency_category, get_word_frequency_rank
 from datetime import datetime
 from typing import Optional
 from contextlib import contextmanager
@@ -31,6 +32,7 @@ class Vocabulary(Base):
     
     id = Column(Integer, primary_key=True, autoincrement=True)
     word = Column(String(255), nullable=False, index=True)
+    original_word = Column(String(255), nullable=False, index=True)  # Original word in source language
     translation = Column(String(255), nullable=False)
     language_from = Column(String(10), nullable=False, default='fr')
     language_to = Column(String(10), nullable=False, default='de')
@@ -38,15 +40,11 @@ class Vocabulary(Base):
     # Optional metadata from GPT translation
     primary_translation = Column(String(255))
     secondary_translation = Column(String(255))
-    context_translation = Column(String(255))
-    part_of_speech = Column(String(50))
     pronunciation = Column(String(255))  # Compatible with existing JSON
     
     # Example sentence (one per word)
     example_sentence_original = Column(Text)
     example_sentence_translation = Column(Text)
-    example_sentence_source = Column(String(50), default='tatoeba')  # 'tatoeba', 'manual', 'gpt', etc.
-    example_sentence_source_id = Column(String(50))  # External ID from source
     
     # Frequency analysis data
     frequency_rank = Column(Integer)
@@ -159,12 +157,18 @@ class DatabaseManager:
         with self.session_scope() as session:
             vocab = Vocabulary(
                 word=word,
+                original_word=word,  # Store original word
                 translation=translation,
                 language_from=language_from,
                 language_to=language_to,
                 **kwargs
             )
+            # Enhance the word with GPT normalization and frequency data
+            vocab = self.enhance_word(vocab)
             session.add(vocab)
+            session.flush()  # Get the ID
+
+            
             return vocab
     
     def get_word(self, word_id: int):
@@ -206,13 +210,6 @@ class DatabaseManager:
             session.expunge_all()
             return  occurences
             
-    def get_old_word_occurrences(self, vocabulary_id: int):
-        """Get all occurrences for a vocabulary word from the old table structure."""
-        with self.session_scope() as session:
-            return session.query(VocabularyOccurrenceOld).filter(
-                VocabularyOccurrenceOld.vocabulary_id == vocabulary_id
-            ).all()
-    
     def import_vocabulary_from_csv(self, csv_file_path: str, language_from: str = 'fr', language_to: str = 'de'):
         """
         Import vocabulary from a CSV file.
@@ -231,9 +228,6 @@ class DatabaseManager:
         results = {
             'total_rows': 0,
             'imported': 0,
-            'skipped': 0,
-            'errors': 0,
-            'error_details': []
         }
         
         with open(csv_file_path, 'r', encoding='utf-8') as file:
@@ -249,35 +243,76 @@ class DatabaseManager:
                     
                     # Skip empty rows
                     if not word or not translation:
-                        results['skipped'] += 1
                         continue
                     
-                    # Check if word already exists
+                    # Check if word already exists (as word OR original_word)
                     with self.session_scope() as session:
                         existing_word = session.query(Vocabulary).filter(
-                            Vocabulary.word == word,
-                            Vocabulary.translation == translation,
+                            (
+                                (Vocabulary.word == word) | 
+                                (Vocabulary.original_word == word)
+                            ),
                             Vocabulary.language_from == language_from,
                             Vocabulary.language_to == language_to
                         ).first()
                         
                         if existing_word:
-                            results['skipped'] += 1
                             continue
                         
-                        # Add new word
+                        # Create vocabulary entry with original word as placeholder
                         vocab = Vocabulary(
-                            word=word,
+                            word=word,  # Temporary placeholder, will be replaced during enhancement
+                            original_word="empty",  # Store original word as entered
                             translation=translation,
                             language_from=language_from,
                             language_to=language_to
                         )
+                        
+                        # Enhance the word (normalization, frequency, examples)
+                        vocab = self.enhance_word(word=vocab)
+                        
                         session.add(vocab)
                         results['imported'] += 1
                         
                 except Exception as e:
-                    results['errors'] += 1
-                    results['error_details'].append(f"Row {results['total_rows']}: {str(e)}")
+                    print(f"Row {results['total_rows']}: {str(e)}")
+        
+        return results
+
+    def update_words(self, start_id: int = None, end_id: int = None) -> dict:
+        """
+        Re-enhance existing words from their original_word.
+        
+        Args:
+            word_ids: Single ID or list of IDs
+            start_id, end_id: ID range (inclusive)
+        """
+        # Determine target IDs
+        target_ids = list(range(start_id, end_id + 1))
+        
+        results = {'updated': 0, 'errors': 0, 'not_found': 0}
+        
+        for word_id in target_ids:
+            try:
+                with self.session_scope() as session:
+                    vocab = session.query(Vocabulary).filter(Vocabulary.id == word_id).first()
+                    if not vocab:
+                        results['not_found'] += 1
+                        continue
+                    
+                    # Re-enhance and update
+                    enhanced = self.enhance_word(vocab)
+                    for attr in ['word', 'primary_translation', 'secondary_translation', 
+                               'frequency_level', 'frequency_rank', 'example_sentence_original', 
+                               'example_sentence_translation']:
+                        setattr(vocab, attr, getattr(enhanced, attr))
+                    vocab.date_modified = datetime.utcnow()  # Update modified date
+                    
+                    results['updated'] += 1
+                    
+            except Exception as e:
+                results['errors'] += 1
+                print(f"Error updating ID {word_id}: {e}")
         
         return results
 
@@ -316,6 +351,82 @@ class DatabaseManager:
             
             # Final fallback
             return new_word_due_days
+
+    def enhance_word(self, word: Vocabulary, api_key: str = None) -> Vocabulary:
+        """
+        Enhance a vocabulary word with normalized form, translations, examples, and frequency.
+        
+        Args:
+            word: Vocabulary object to enhance
+            api_key: OpenAI API key (if None, uses environment variable)
+            
+        Returns:
+            Enhanced Vocabulary object or original if error
+        """
+        try:
+            # Import here to avoid circular imports
+            from .gpt_translator import GPTTranslator
+            from .tatoeba_client import get_sentence_example
+            
+            # Initialize translator
+            if not api_key:
+                import os
+                from dotenv import load_dotenv
+                load_dotenv()
+                api_key = os.getenv('OPENAI_API_KEY')
+            
+            if not api_key:
+                print("Error: OPENAI_API_KEY not found")
+                return word
+            
+            translator = GPTTranslator(api_key)
+            
+            # Get GPT analysis using original word
+            analysis = translator.normalize_and_translate(
+                word.original_word,
+                word.language_from,
+                word.language_to,
+                word.translation
+            )
+            
+            if not analysis or not isinstance(analysis, dict):
+                return word
+                
+            # Update word with normalized data
+            root_word = analysis.get('root_word', word.original_word)
+            word.word = root_word
+            word.primary_translation = analysis.get("primary_translation", "")
+            word.secondary_translation = analysis.get("secondary_translation")
+            
+            # Add frequency data
+            frequency = get_word_frequency_category(word.word, word.language_from)
+            word.frequency_level = frequency.get('level')
+            word.frequency_rank = frequency.get('rank')
+
+            
+            # Get example sentence (optional - don't fail if this errors)
+            try:
+                # Strip root word to core form for sentence search
+                def strip_to_core_word(word_form):
+                    """Strip articles, gender markers, and extra formatting from word."""
+                    import re
+                    # Remove gender markers like (m.), (f.)
+                    core = re.sub(r'\s*\([mf]\.\)$', '', word_form)
+                    return core.strip()
+                
+                core_word = strip_to_core_word(root_word)
+                example = get_sentence_example(core_word, word.language_from, word.language_to)
+                if example:
+                    word.example_sentence_original = example[0]
+                    word.example_sentence_translation = example[1]
+            except:
+                pass  # Continue without example sentences
+            
+            return word
+            
+        except Exception as e:
+            print(f"Error enhancing word '{word.original_word}': {e}")
+            return word
 
 if __name__ == "__main__":
     # Test database creation

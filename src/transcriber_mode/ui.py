@@ -202,6 +202,7 @@ class WhisperInterface:
                 progress_callback=progress_callback
             )
             print(f"Transcription completed.")  # Debug log
+            messagebox.showinfo("Transcription Complete", f"Transcription saved to:\n{audio_dest}\n{srt_dest}")
             
             if transcription_success:
                 # Save audio file to data directory

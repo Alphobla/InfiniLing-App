@@ -20,12 +20,9 @@ class WordAnalysis:
     """Data class for comprehensive word analysis results."""
     original_word: str
     root_word: str
-    grammatical_relation: str
     primary_translation: str
     secondary_translation: Optional[str]
-    part_of_speech: str
     frequency_info: Dict
-    context_translation: Optional[str]
     language_from: str
     language_to: str
 
@@ -42,28 +39,31 @@ class GPTTranslator:
         self.client = OpenAI(api_key=self.api_key)
         self.cache = {}  # Simple translation cache
         
-    def _call_gpt(self, prompt: str, model: str = "gpt-3.5-turbo") -> str:
+    def _call_gpt(self, prompt: str, model: str = None) -> str:
         """Make API call to GPT."""
         try:
+            import json
+            with open('config.json', 'r') as f:
+                config = json.load(f)
+            
             response = self.client.chat.completions.create(
-                model=model,
+                model=config['word_enhancement']['model'],
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=200,
-                temperature=0.1
+                max_tokens=config['word_enhancement']['max_tokens'],
+                temperature=config['word_enhancement']['temperature']
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
             print(f"GPT API error: {e}")
             return None
     
-    def lemmatize_word(self, word: str, language: str, context: str = "") -> Dict:
+    def lemmatize_word(self, word: str, language: str) -> Dict:
         """
         Find root word and grammatical relation using GPT.
         
         Args:
             word: Word to analyze
             language: Source language code (e.g., 'fr', 'de')
-            context: Surrounding sentence for better accuracy
             
         Returns:
             Dictionary with root word and grammatical relation
@@ -73,31 +73,35 @@ class GPTTranslator:
             return self.cache[cache_key]
         
         prompt = f"""
-        Analyze this {language} word: "{word}"
-        {f'Context: "{context}"' if context else ''}
-        
-        Provide a JSON response with:
-        1. "root_word": the base/dictionary form (infinitive for verbs, singular for nouns)
-        2. "grammatical_relation": describe the transformation (e.g., "past tense", "plural", "3rd person singular", "comparative", "unchanged")
-        3. "part_of_speech": noun, verb, adjective, adverb, etc.
-        
-        Example: "books" -> {{"root_word": "book", "grammatical_relation": "plural noun", "part_of_speech": "noun"}}
-        
-        Response format: JSON only, no explanation.
+        Analyze the following word in {language}: "{word}"
+
+        For vocabulary database storage, normalize as follows (IMPORTANT)
+        - Verbs: convert to infinitive (parlais -> parler)
+        - EVERY Noun needs an article (poussière -> la poussière). If the translation is a noun, add the article to the root word.
+        - EVERY Adjective stays an adjective: use the base form (gâtée -> gâté)
+        - EVERY reflexive verb should stay reflexive (s'empare -> s'emparer, se déroule -> se dérouler)
+        - NEVER delete whole words or short version of words ( "s'en va" never to "en aller", "s'effondre" never to "effondrer")
+        - Preserve compound words (à peu près -> à peu près)
+        - Preserve combined structures (porter plainte -> porter plainte)
+
+        Respond in JSON only, output is the root word.
+
+        Example: "porte plainte" → {{"root_word": "porter plainte"}}
+        Output JSON only. No explanation or extra text.
         """
         
         response = self._call_gpt(prompt)
         if not response:
-            return {"root_word": word, "grammatical_relation": "unchanged", "part_of_speech": "unknown"}
+            return {"root_word": word}
         
         try:
             result = json.loads(response)
             self.cache[cache_key] = result
             return result
         except json.JSONDecodeError:
-            return {"root_word": word, "grammatical_relation": "unchanged", "part_of_speech": "unknown"}
-    
-    def translate_word(self, word: str, language_from: str, language_to: str, context: str = "") -> Dict:
+            return {"root_word": word}
+
+    def translate_word(self, word: str, language_from: str, language_to: str, assist_translation: str = None) -> Dict:
         """
         Translate word with primary and secondary translations.
         
@@ -105,7 +109,6 @@ class GPTTranslator:
             word: Word to translate
             language_from: Source language code
             language_to: Target language code
-            context: Surrounding text for context-aware translation
             
         Returns:
             Dictionary with translation information
@@ -125,64 +128,162 @@ class GPTTranslator:
         
         prompt = f"""
         Translate this {from_lang} word to {to_lang}: "{word}"
-        {f'Context: "{context}"' if context else ''}
+        {f'Assistant translation guidance: "{assist_translation}" - use this as a reference.' if assist_translation else ''}
         
         Provide a JSON response with:
         1. "primary_translation": most common/best translation
-        2. "secondary_translation": alternative translation if relevant (null if not applicable)
-        3. "context_translation": translation considering the context (null if no context or same as primary)
-        
+        2. "secondary_translation": alternative translation if occurring often (else null)
+
         Response format: JSON only, no explanation.
         """
         
         response = self._call_gpt(prompt)
         if not response:
-            return {"primary_translation": "Translation unavailable", "secondary_translation": None, "context_translation": None}
+            return {"primary_translation": "Translation unavailable", "secondary_translation": None}
         
         try:
             result = json.loads(response)
             self.cache[cache_key] = result
             return result
         except json.JSONDecodeError:
-            return {"primary_translation": "Translation error", "secondary_translation": None, "context_translation": None}
+            return {"primary_translation": "Translation error", "secondary_translation": None}
     
-    def analyze_word_comprehensive(self, word: str, language_from: str, language_to: str = "en", context: str = "") -> WordAnalysis:
+    def normalize_and_translate(self, word: str, language_from: str, language_to: str, assist_translation: str = None) -> Dict:
         """
-        Comprehensive word analysis combining lemmatization, translation, and frequency.
+        Combined normalization and translation in one GPT call for consistency.
         
         Args:
-            word: Word to analyze
+            word: Word to normalize and translate
             language_from: Source language code
-            language_to: Target language code (default: English)
-            context: Surrounding text for context
+            language_to: Target language code
+            assist_translation: Existing translation as guidance
             
         Returns:
-            WordAnalysis object with all information
+            Dictionary with normalized word and translations
         """
-        # Step 1: Lemmatize the word
-        lemma_info = self.lemmatize_word(word, language_from, context)
-        root_word = lemma_info.get("root_word", word)
+        cache_key = f"norm_trans_{word}_{language_from}_{language_to}_{assist_translation}"
+        if cache_key in self.cache:
+            return self.cache[cache_key]
         
-        # Step 2: Translate the root word
-        translation_info = self.translate_word(root_word, language_from, language_to, context)
+        lang_names = {
+            'en': 'English', 'fr': 'French', 'de': 'German', 'es': 'Spanish',
+            'it': 'Italian', 'pt': 'Portuguese', 'ru': 'Russian', 'ja': 'Japanese',
+            'ko': 'Korean', 'zh': 'Chinese', 'ar': 'Arabic', 'hi': 'Hindi'
+        }
         
-        # Step 3: Get frequency analysis for root word
-        frequency_info = get_word_frequency_category(root_word, language_from)
+        from_lang = lang_names.get(language_from, language_from)
+        to_lang = lang_names.get(language_to, language_to)
         
-        # Step 4: Combine all information
-        return WordAnalysis(
-            original_word=word,
-            root_word=root_word,
-            grammatical_relation=lemma_info.get("grammatical_relation", "unchanged"),
-            primary_translation=translation_info.get("primary_translation", ""),
-            secondary_translation=translation_info.get("secondary_translation"),
-            part_of_speech=lemma_info.get("part_of_speech", "unknown"),
-            frequency_info=frequency_info,
-            context_translation=translation_info.get("context_translation"),
-            language_from=language_from,
-            language_to=language_to
-        )
-    
+        prompt = f"""
+        You are a vocabulary database cleaner for a language learning app.
+
+        CONTEXT:
+        Users input vocabulary words in messy formats — conjugated verbs, declined adjectives, plural or article-less nouns, etc.  
+        Your job is to normalize these into proper **dictionary forms**, then translate them.
+
+        INPUT: Raw {from_lang} word "{word}" (possibly messy/conjugated/declined)  
+        {f'HINT: Existing translation is "{assist_translation}" — use as context.' if assist_translation else ''}
+
+        CRITICAL: The word "{word}" IS A REAL {from_lang} WORD. Do NOT translate it to English or another language. Normalize it, then translate.
+
+        ---
+
+        YOUR TASK — STEP BY STEP:
+
+        **STEP 1 — DETERMINE WORD TYPE (based on the word and optional assist_translation):**
+        - Is it a **noun**? → go to Step 2
+        - Is it a **verb** or reflexive verb? → go to Step 3
+        - Is it an **adjective**? → go to Step 4
+        - Is it a **compound expression** (e.g. "à peu près", "porter plainte")? → go to Step 5
+        - Is it an **abbreviation** or proper name? → go to Step 6
+
+        ---
+
+        **STEP 2 — NOUNS → Normalize and translate**
+        - Convert to dictionary form with definite article:
+            - "racine" → "la racine "
+            - "nid" → "le nid "
+        - Add **gender** in brackets if the article abbreviated (l') or in plural (les):
+            - "flics" → "les flics (m.)"
+            - "arnaque" → "l'arnaque (f.)"
+        - Use `assist_translation` to guide sense (e.g. "raccourci" → "le raccourci", not the verb)
+
+        ---
+
+        **STEP 3 — VERBS → Normalize and translate**
+        - Convert to **infinitive** form
+        - If it's reflexive, keep the **reflexive pronoun**:
+            - "parlais" → "parler"
+            - "se lève" → "se lever"
+            - "s'empêche" → "s'empêcher"
+
+        ---
+
+        **STEP 4 — ADJECTIVES → Normalize and translate**
+        - Convert to **masculine singular** form:
+            - "belle" → "beau"
+            - "gâtée" → "gâté"
+            - "verte" → "vert"
+
+        ---
+
+        **STEP 5 — EXPRESSIONS → Keep as-is**
+        - Leave intact if it’s a valid phrase or idiom:
+            - "porter plainte" → "porter plainte"
+            - "à peu près" → "à peu près"
+
+        ---
+
+        **STEP 6 — ABBREVIATIONS / PROPER NAMES**
+        - Keep unchanged (e.g. "udc" → "udc")
+
+        ---
+
+        🚫 DO NOT:
+        - Guess or change the word’s meaning
+        - Omit gender/article for nouns
+        - Translate the word into English or a third language
+        - Invent new root words (e.g. “belle” → “beller” ✗)
+
+        ---
+
+        ⚠️ IF `assist_translation` IS PRESENT:
+        - Use it to **disambiguate the meaning** — e.g. "supplier" + "anflehen" → "supplier", not "liefern"
+
+        ---
+
+        ✅ OUTPUT FORMAT — JSON ONLY (no markdown, no explanation):
+        {{
+        "root_word": "<cleaned dictionary form in {from_lang}>",
+        "primary_translation": "<best translation in {to_lang}, no article needed for nouns>",
+        "secondary_translation": "<alternative translation or null>"
+        }}
+
+        """
+        
+        response = self._call_gpt(prompt)
+        if not response:
+            return {"root_word": word, "primary_translation": "Translation unavailable", "secondary_translation": None}
+        
+        print(f"Raw GPT response for '{word}': {response}")
+        
+        try:
+            result = json.loads(response)
+            
+            # Validate root_word - if it's "None", "null", empty, or suspicious, use original
+            root_word = result.get("root_word", word)
+            if not root_word or root_word.lower() in ["none", "null", "aucun", "nul"]:
+                root_word = word
+                print(f"Warning: GPT returned invalid root_word '{result.get('root_word')}' for '{word}', using original")
+            
+            result["root_word"] = root_word
+            self.cache[cache_key] = result
+            return result
+        except (json.JSONDecodeError, AttributeError) as e:
+            print(f"JSON parsing error for '{word}': {e}")
+            print(f"Response was: {response}")
+            return {"root_word": word, "primary_translation": "Translation error", "secondary_translation": None}
+
     def format_analysis_for_display(self, analysis: WordAnalysis) -> str:
         """
         Format analysis results for display in UI.
@@ -197,7 +298,7 @@ class GPTTranslator:
         
         # Word and root
         if analysis.original_word != analysis.root_word:
-            lines.append(f"📝 {analysis.original_word} → {analysis.root_word} ({analysis.grammatical_relation})")
+            lines.append(f"📝 {analysis.original_word} → {analysis.root_word}")
         else:
             lines.append(f"📝 {analysis.original_word}")
         
@@ -206,47 +307,15 @@ class GPTTranslator:
         if analysis.secondary_translation:
             lines.append(f"   Alt: {analysis.secondary_translation}")
         
-        # Context translation if different
-        if analysis.context_translation and analysis.context_translation != analysis.primary_translation:
-            lines.append(f"   Context: {analysis.context_translation}")
-        
         # Frequency
         freq = analysis.frequency_info
         if freq.get("found"):
             lines.append(f"📊 {freq['level']} (#{freq['rank']})")
         
-        # Part of speech
-        if analysis.part_of_speech != "unknown":
-            lines.append(f"🏷️ {analysis.part_of_speech}")
         
         return "\n".join(lines)
-    
-    def get_quick_translation(self, word: str, language_from: str, language_to: str = "en") -> str:
-        """
-        Quick translation for simple cases.
-        
-        Args:
-            word: Word to translate
-            language_from: Source language
-            language_to: Target language
-            
-        Returns:
-            Simple translation string
-        """
-        translation_info = self.translate_word(word, language_from, language_to)
-        return translation_info.get("primary_translation", "Translation unavailable")
-
 
 # Utility functions for easy integration
 def create_translator(api_key: str) -> GPTTranslator:
     """Create a GPT translator instance."""
     return GPTTranslator(api_key)
-
-
-def quick_translate(word: str, language_from: str, language_to: str = "en", api_key: str = None) -> str:
-    """Quick translation function."""
-    if not api_key:
-        return "API key required"
-    
-    translator = GPTTranslator(api_key)
-    return translator.get_quick_translation(word, language_from, language_to)

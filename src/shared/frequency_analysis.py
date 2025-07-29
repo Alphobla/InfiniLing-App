@@ -82,10 +82,14 @@ def get_word_frequency_category(word: str, language: str) -> Dict[str, any]:
             category = "top_100000"
             level = "Top 100,000"
             color = "#F57C00"  # Dark orange
-        else:
+        elif rank and rank <= 100000000:
             category = "rare"
             level = "Rare"
             color = "#D32F2F"  # Red
+        else:
+            category = "unknown"
+            level = "Unknown"
+            color = "#757575"
         
         return {
             "word": word,

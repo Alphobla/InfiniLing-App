@@ -234,8 +234,7 @@ class GentexterConfig:
                         messagebox.showinfo("Import Successful", 
                                           f"Total rows: {results['total_rows']}\n"
                                           f"✅ Imported: {results['imported']} new words!\n\n"
-                                          f"⏭️ Skipped (already exist): {results['skipped']}\n"
-                                          f"❌ Errors: {results['errors']}")
+                                          f"⏭️ Skipped the rest (already exist).\n")
                     else:
                         messagebox.showinfo("Import Complete", 
                                           f"No new words to import.\n\n"

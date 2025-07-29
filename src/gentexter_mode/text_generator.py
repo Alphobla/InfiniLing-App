@@ -56,11 +56,15 @@ class TextGenerator:
         try:
             print(f"🎯 Generating dialogue with {len(vocab_list)} vocabulary words...")
             
+            import json
+            with open('config.json', 'r') as f:
+                config = json.load(f)
+            
             response = self.client.chat.completions.create(
-                model="gpt-4",
+                model=config['text_generation']['model'],
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=int(word_count * 2),  # Allow some buffer
-                temperature=0.8
+                max_tokens=int(word_count * config['text_generation']['max_tokens_per_word']),
+                temperature=config['text_generation']['temperature']
             )
             
             content = response.choices[0].message.content
@@ -75,47 +79,4 @@ class TextGenerator:
         except Exception as e:
             print(f"❌ Error generating story: {e}")
             raise
-    
-    def generate_contextual_story(self, vocab_list: List[Tuple[str, str, str]], 
-                                 context: str, 
-                                 language: str = "French") -> str:
-        """Generate a story with a specific context or theme."""
-        
-        vocab_strings = []
-        for vocab_entry in vocab_list:
-            word, translation = vocab_entry[0], vocab_entry[1]
-            vocab_strings.append(f"{word} ({translation})")
-        
-        vocab_list_str = ", ".join(vocab_strings)
-        
-        prompt = f"""Write an engaging short story in {language} about {context} that naturally incorporates these vocabulary words:
-
-            {vocab_list_str}
-
-            Requirements:
-            - Use ALL the vocabulary words naturally in context
-            - The story should be about: {context}
-            - Make it interesting and coherent  
-            - Use conversational, modern {language}
-            - Include dialogue when appropriate
-            - About 250-350 words
-
-            Please write only the story in {language}, no other text."""
-
-        try:
-            response = self.client.chat.completions.create(
-                model="gpt-4",
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=int(word_count * 1.5),
-                temperature=0.8  # Slightly higher for more creativity
-            )
-            
-            content = response.choices[0].message.content
-            return content.strip() if content else ""
-            
-        except Exception as e:
-            print(f"❌ Error generating contextual story: {e}")
-            raise
-    
-    
 
