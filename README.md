@@ -10,7 +10,17 @@ InfiniLing is a smart language learning application that leverages AI to generat
 - **Cross-Platform**: Designed to run on both Windows and macOS.
 - **Customizable**: Tweak generation parameters, voices, and window sizes via `config.json`.
 
-## 🚀 Getting Started
+## 📦 Professional Distribution
+
+For the best experience, users can download the latest version of InfiniLing directly from the **[Releases](https://github.com/yourusername/InfiniLing/releases)** page.
+
+- **Windows**: Download `InfiniLing-Windows.exe` and run it directly.
+- **macOS**: Download `InfiniLing-macOS.zip`, extract it, and run the `InfiniLing.app`.
+
+> [!NOTE]  
+> VLC Media Player must still be installed on your system for audio playback to function in the standalone app.
+
+## 🚀 Getting Started (Developers)
 
 ### Prerequisites
 
