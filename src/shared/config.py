@@ -36,6 +36,46 @@ class ConfigManager:
         window_config = self.get(f'ui.window_sizes.{window_type}', {'width': 500, 'height': 600})
         return window_config['width'], window_config['height']
     
+    def get_user_settings_path(self):
+        """Get path to user settings in home directory."""
+        home = os.path.expanduser('~')
+        settings_dir = os.path.join(home, '.infiniling')
+        os.makedirs(settings_dir, exist_ok=True)
+        return os.path.join(settings_dir, 'settings.json')
+
+    def load_user_settings(self):
+        """Load user settings from home directory."""
+        path = self.get_user_settings_path()
+        if os.path.exists(path):
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception:
+                return {}
+        return {}
+
+    def save_api_key(self, api_key):
+        """Save API key to user settings."""
+        settings = self.load_user_settings()
+        settings['openai_api_key'] = api_key
+        path = self.get_user_settings_path()
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(settings, f, indent=4)
+        # Also update the in-memory config for immediate use
+        # We store it where the app expects it (usually env or passed to classes)
+        os.environ['OPENAI_API_KEY'] = api_key
+
+    def get_api_key(self):
+        """Get API key from ENV or User Settings."""
+        # 1. Check ENV (highest priority, from .env file)
+        key = os.getenv('OPENAI_API_KEY')
+        if key and key.strip():
+            return key
+            
+        # 2. Check User Settings
+        settings = self.load_user_settings()
+        return settings.get('openai_api_key')
+
     def get_temp_path(self, filename):
         """Get full path for temp file."""
         return os.path.join(tempfile.gettempdir(), filename)
