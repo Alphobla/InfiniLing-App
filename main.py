@@ -7,21 +7,18 @@ from src.shared.config import initialize_config
 from src.gentexter_mode.orchestrator_updated import VocabularyApp
 
 
-def resource_path(relative_path):
-    """Get absolute path to resource, works for dev and for PyInstaller"""
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
-    return os.path.join(base_path, relative_path)
+# sys and os are still needed for start_app logic
 
 from src.shared.setup_ui import SetupWindow
 
 def main():
     """Main application entry point with dependency injection"""
     # Initialize configuration system
-    config = initialize_config(resource_path('config.json'))
+    # We use a temporary ConfigManager just to resolve its own file path
+    from src.shared.config import ConfigManager
+    temp_config = ConfigManager()
+    config_path = temp_config.resolve_path('config.json')
+    config = initialize_config(config_path)
     print("✅ Configuration system initialized")
 
     # Initialize main window
@@ -34,7 +31,7 @@ def main():
         # Set icon on Windows only
         try:
             if sys.platform.startswith('win'):
-                icon_path = resource_path("data/icon.ico")
+                icon_path = config.resolve_path("data/icon.ico")
                 if os.path.exists(icon_path):
                     root.iconbitmap(icon_path)
         except Exception:

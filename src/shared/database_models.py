@@ -108,9 +108,12 @@ def create_database_engine(database_url: str = None):
         SQLAlchemy engine instance
     """
     if database_url is None:
-        # Default to SQLite database in the project directory
-        import os
-        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'vocabulary.db')
+        # Default to SQLite database in the user's home directory
+        # This ensures it's writable even when the app is packaged
+        home = os.path.expanduser('~')
+        db_dir = os.path.join(home, '.infiniling')
+        os.makedirs(db_dir, exist_ok=True)
+        db_path = os.path.join(db_dir, 'vocabulary.db')
         database_url = f'sqlite:///{db_path}'
     
     engine = create_engine(database_url, echo=False)

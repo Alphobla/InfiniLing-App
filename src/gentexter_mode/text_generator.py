@@ -56,15 +56,15 @@ class TextGenerator:
         try:
             print(f"🎯 Generating dialogue with {len(vocab_list)} vocabulary words...")
             
-            import json
-            with open('config.json', 'r') as f:
-                config = json.load(f)
+            story_model = self.config.get('text_generation.model', 'gpt-4o-mini')
+            story_temp = self.config.get('text_generation.temperature', 0.7)
+            max_factor = self.config.get('text_generation.max_tokens_per_word', 1.5)
             
             response = self.client.chat.completions.create(
-                model=config['text_generation']['model'],
+                model=story_model,
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=int(word_count * config['text_generation']['max_tokens_per_word']),
-                temperature=config['text_generation']['temperature']
+                max_tokens=int(word_count * max_factor),
+                temperature=story_temp
             )
             
             content = response.choices[0].message.content

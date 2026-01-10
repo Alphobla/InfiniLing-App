@@ -118,6 +118,7 @@ class VocabularyApp:
                 # Save the generated text persistently
                 text_filename = self.config.get('paths.temp_text_file', 'infiniling_text.txt')
                 text_path = self.config.get_temp_path(text_filename)
+                text_path = self.config.resolve_path(text_path)
                 
                 try:
                     with open(text_path, 'w', encoding='utf-8') as f:
@@ -137,6 +138,7 @@ class VocabularyApp:
 
                 audio_filename = self.config.get('paths.temp_audio_file', 'infiniling_audio.mp3')
                 audio_path = self.config.get_temp_path(audio_filename)
+                audio_path = self.config.resolve_path(audio_path)
                 success = self.audio_generator.generate_audio(generated_text, audio_path)
 
             except Exception as e:

@@ -37,10 +37,10 @@ def get_sentence_example(word: str, source_lang: str, target_lang: str) -> Optio
         params = {
             'lang': source_code,  # Search in source language only
             'trans:lang': target_code,  # Get translation in target language
-            'sort': 'random',  # Sort by word count (longest first)
-            'word_count': '4-10',  # Filter for sentences with 5 or more words
-            'q': word,  # Actually search for the word
-            'limit': 10  # Get more results to find one containing the word
+            'sort': 'random',
+            'word_count': '4-10',
+            'q': word,
+            'limit': 20
         }
         
         response = requests.get(url, params=params, timeout=10)
@@ -58,6 +58,8 @@ def get_sentence_example(word: str, source_lang: str, target_lang: str) -> Optio
                     for translation in translation_group:
                         if translation.get('lang') == target_code:
                             return (original_text, translation.get('text', ''))
+        else:
+            print(f"DEBUG: No 'data' in Tatoeba response: {data}")
         
         return None
         

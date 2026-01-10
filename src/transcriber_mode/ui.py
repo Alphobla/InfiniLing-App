@@ -172,7 +172,8 @@ class WhisperInterface:
             self.master.after(0, lambda: self.update_progress_bar(1))
             # Prepare output paths in data directory using config
             if self.config:
-                data_dir = self.config.get('paths.transcriptions_dir', './data/transcriptions_and_audio')
+                folder = self.config.get('paths.transcriptions_dir', './data/transcriptions_and_audio')
+                data_dir = self.config.resolve_path(folder)
             else:
                 data_dir = os.path.join(
                     os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 
@@ -294,6 +295,7 @@ class WhisperInterface:
         # Get transcriptions directory from config
         if self.config:
             folder = self.config.get('paths.transcriptions_dir', './data/transcriptions_and_audio')
+            folder = self.config.resolve_path(folder)
         else:
             folder = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data', 'transcriptions_and_audio')
         mp3_files = glob.glob(os.path.join(folder, '*.mp3'))

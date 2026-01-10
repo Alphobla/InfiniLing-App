@@ -10,8 +10,22 @@ class ConfigManager:
     """Simple configuration manager."""
     
     def __init__(self, config_file='config.json'):
-        self.config_file = config_file
+        self.config_root = self._get_config_root()
+        self.config_file = self.resolve_path(config_file)
         self.config = self._load_config()
+    
+    def _get_config_root(self):
+        """Get the base directory for resources (handles PyInstaller)."""
+        import sys
+        if hasattr(sys, '_MEIPASS'):
+            return sys._MEIPASS
+        return os.path.abspath(".")
+
+    def resolve_path(self, relative_path):
+        """Resolve a path relative to the config root or absolute."""
+        if os.path.isabs(relative_path):
+            return relative_path
+        return os.path.join(self.config_root, relative_path)
     
     def _load_config(self):
         """Load config from JSON file."""
