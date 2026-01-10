@@ -19,7 +19,7 @@ def resource_path(relative_path):
 def main():
     """Main application entry point with dependency injection"""
     # Initialize configuration system
-    config = initialize_config()
+    config = initialize_config(resource_path('config.json'))
     print("✅ Configuration system initialized")
 
     # Initialize main window
