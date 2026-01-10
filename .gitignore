@@ -1,5 +1,6 @@
 .env
-.env.*
+.env.[a-zA-Z0-9]*
+!.env.example
 .vscode
 venv/
 **/__pycache__/
