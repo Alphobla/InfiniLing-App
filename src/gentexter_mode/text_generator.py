@@ -6,6 +6,7 @@ Handles story generation using OpenAI API.
 """
 
 import os
+import json
 from typing import List, Tuple
 from dotenv import load_dotenv
 import openai
@@ -78,5 +79,62 @@ class TextGenerator:
             
         except Exception as e:
             print(f"❌ Error generating story: {e}")
+            raise
+
+    def generate_initial_words(self, language: str, difficulty: str, count: int = 20) -> List[dict]:
+        """Generate a list of vocabulary words for a specific language and difficulty."""
+        
+        prompt = f"""Generate a list of exactly {count} common and useful vocabulary words in {language} for a learner at {difficulty} level.
+        
+        Requirements:
+        - Words should be appropriate for the {difficulty} (CEFR) level.
+        - Focus on practical, everyday vocabulary.
+        - Provide the response as a JSON array of objects.
+        - Each object MUST have "word" and "translation" (in German) keys.
+        
+        Example format:
+        [
+            {{"word": "bonjour", "translation": "Guten Tag"}},
+            ...
+        ]
+        
+        Provide ONLY the JSON array, no other text."""
+
+        try:
+            print(f"🎯 Generating {count} words for {language} ({difficulty})...")
+            
+            story_model = self.config.get('text_generation.model', 'gpt-4o-mini')
+            
+            response = self.client.chat.completions.create(
+                model=story_model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7,
+                response_format={"type": "json_object"} if "4o" in story_model else None
+            )
+            
+            content = response.choices[0].message.content
+            # GPT might wrap JSON in code blocks
+            if "```json" in content:
+                content = content.split("```json")[1].split("```")[0].strip()
+            elif "```" in content:
+                content = content.split("```")[1].split("```")[0].strip()
+                
+            data = json.loads(content)
+            
+            # Handle cases where GPT might return a root object instead of a list
+            if isinstance(data, dict):
+                # Look for a list inside the dict
+                for key, value in data.items():
+                    if isinstance(value, list):
+                        data = value
+                        break
+            
+            if not isinstance(data, list):
+                raise ValueError("Generated content is not a list of words")
+                
+            return data[:count]
+            
+        except Exception as e:
+            print(f"❌ Error generating initial words: {e}")
             raise
 

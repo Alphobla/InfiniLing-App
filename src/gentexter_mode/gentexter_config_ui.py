@@ -42,6 +42,7 @@ class GentexterConfig:
         self.new_word_ratio = DoubleVar(value=self.vocab_defaults['default_new_word_ratio'])
         self.text_length = IntVar(value=self.vocab_defaults['default_text_length'])
         self.selected_language = StringVar(value="fr")  # Language selection
+        self.selected_difficulty = StringVar(value="A1")  # Difficulty for scratch mode
         self.set_window_size()
         self.setup_ui()
         
@@ -88,13 +89,34 @@ class GentexterConfig:
         import_check.pack(anchor='w')
 
         test_radio = Radiobutton(vocab_source_frame, 
-                                text="🧪 Test mode (use preset data)", 
+                                text="✨ Start from scratch (generate new words)", 
                                 variable=self.vocab_source,
-                                value="test",
+                                value="scratch",
                                 font=Fonts.BODY,
-                                bg=Colors.WHITE, fg=Colors.WARNING,
+                                bg=Colors.WHITE, fg=Colors.PRIMARY,
                                 activebackground=Colors.WHITE)
         test_radio.pack(anchor='w', pady=2)
+
+        # Difficulty selection for scratch mode (hidden by default)
+        self.difficulty_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
+        Label(self.difficulty_frame, text="Difficulty:", font=Fonts.BODY, bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left', padx=(20, 5))
+        difficulty_combo = ttk.Combobox(self.difficulty_frame, 
+                                       textvariable=self.selected_difficulty,
+                                       values=["A1", "A2", "B1", "B2", "C1", "C2"],
+                                       state="readonly",
+                                       width=5,
+                                       font=Fonts.BODY)
+        difficulty_combo.pack(side='left')
+        
+        # Trace to show/hide difficulty
+        def on_source_change(*args):
+            if self.vocab_source.get() == "scratch":
+                self.difficulty_frame.pack(anchor='w', pady=2, after=test_radio)
+            else:
+                self.difficulty_frame.pack_forget()
+        
+        self.vocab_source.trace_add("write", on_source_change)
+        on_source_change() # Initial state
 
         last_text_radio = Radiobutton(vocab_source_frame, 
                                       text="📄 Use last generated text", 
@@ -168,9 +190,9 @@ class GentexterConfig:
             # Check selected vocabulary source
             vocab_source = self.vocab_source.get()
             
-            if vocab_source == "test":
-                self.run_test_mode()
-                return
+            if vocab_source == "scratch":
+                # scratch mode logic will be handled in separate thread
+                pass
             elif vocab_source == "last_text":
                 self.load_last_text_mode()
                 return
@@ -189,14 +211,24 @@ class GentexterConfig:
                     # Get selected language code
                     selected_lang_name = self.selected_language.get()
                     
-                    result = self.vocab_app.run_learning_session(
-                        total_words=self.total_words.get(),
-                        new_word_ratio=self.new_word_ratio.get(),
-                        text_length=self.text_length.get(),
-                        language=selected_lang_name,  # Pass the full language name
-                        generate_audio=True,
-                        progress_callback=lambda msg: print(f"📖 {msg}"),
-                    )
+                    if vocab_source == "scratch":
+                        result = self.vocab_app.run_scratch_session(
+                            language=selected_lang_name,
+                            difficulty=self.selected_difficulty.get(),
+                            total_words=self.total_words.get(),
+                            text_length=self.text_length.get(),
+                            generate_audio=True,
+                            progress_callback=lambda msg: print(f"✨ {msg}"),
+                        )
+                    else:
+                        result = self.vocab_app.run_learning_session(
+                            total_words=self.total_words.get(),
+                            new_word_ratio=self.new_word_ratio.get(),
+                            text_length=self.text_length.get(),
+                            language=selected_lang_name,  # Pass the full language name
+                            generate_audio=True,
+                            progress_callback=lambda msg: print(f"📖 {msg}"),
+                        )
                     self.master.after(0, lambda: self.on_generation_complete(result))
                 except Exception as e:
                     error_msg = f"❌ Generation failed: {str(e)}"
@@ -250,39 +282,6 @@ class GentexterConfig:
                 # User canceled file selection
                 self.import_new_list.set(False)
 
-    def run_test_mode(self):
-            """Run test mode with preset data for development"""
-            try:
-                print("🧪 Running in test mode...")
-                # Use test data from config
-                test_data = self.config.get('test_data')
-                test_words = test_data.get('words')
-                test_text_array = test_data.get('text')
-                test_text = '\n'.join(test_text_array)  # Join array into single string
-
-                # Use one of the existing audio files for testing
-                data_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data')
-                audio_dir = os.path.join(data_dir, 'transcriptions_and_audio')
-                test_audio_file = os.path.join(audio_dir, '56.Ét 6  Pourquoi on aime Ben Healy.mp3')
-                test_audio_path = test_audio_file if os.path.exists(test_audio_file) else ""
-                
-                # Simulate processing delay for realism
-                self.generate_button.config(state='disabled', text="🧪 Testing...")
-                
-                def complete_test():
-                    result = {
-                        'words': test_words,
-                        'text': test_text,
-                        'audio_path': test_audio_path
-                    }
-                    self.on_load_complete(result)
-                
-                # Complete test after a short delay
-                self.master.after(1000, complete_test)
-                
-            except Exception as e:
-                print(f"❌ Test mode failed: {str(e)}")
-                self.generate_button.config(state='normal', text="📖\nGenerate\nText")
     
     def load_last_text_mode(self):
         """Load last generated text mode for offline use"""

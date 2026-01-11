@@ -22,22 +22,7 @@ After proposing a change in the code, wait. I might ask followup questions. Aim 
 
 ## Project Status
 
-### Completed
-- ✅ Install SQLAlchemy and create database models
-- ✅ Simplified database structure (removed ExampleSentence table, merged into Vocabulary)
-- ✅ Removed unnecessary tables (ReviewSession, DatabaseConfig)
-- ✅ Simplified initialization (just create tables, no config setup)
-
-### Current Focus
-- Design tables: vocabulary, vocabulary_occurrences (compatible with current selector.py)
-- Maintain compatibility with existing spaced repetition system
-
-## Architecture Decisions
-
 ### Database Structure
 - **Vocabulary table**: Core word data + example sentences (1:1 relationship)
 - **VocabularyOccurrence table**: Track individual reviews (date, repeat flag)
 - **No session tracking**: Keep spaced repetition simple, focus on per-word data
-
-### Testing Commands
-- TBD - Will add lint/typecheck commands when discovered

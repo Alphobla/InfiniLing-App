@@ -155,6 +155,84 @@ class VocabularyApp:
         # Return session results
         return self._current_session_data
     
+    def run_scratch_session(self, 
+                             language: str = "French",
+                             difficulty: str = "A1",
+                             total_words: int = 20,
+                             text_length: int = 300,
+                             generate_audio: bool = True,
+                             progress_callback=None) -> dict:
+        """
+        Run a learning session starting from scratch by generating words from GPT.
+        
+        Args:
+            language: Language for word and text generation
+            difficulty: Difficulty level (A1-C2)
+            total_words: Total number of words to generate
+            text_length: Length of the generated story
+            generate_audio: Whether to generate audio
+            progress_callback: Optional callback for progress updates
+            
+        Returns:
+            dict: Session results
+        """
+        # 1. Generate words and translations
+        progress_callback(f"🎯 Generating {total_words} {difficulty} words in {language}...") if progress_callback else None
+        words = self.text_generator.generate_initial_words(language, difficulty, count=total_words)
+        
+        if not words:
+            progress_callback("❌ Failed to generate words") if progress_callback else None
+            return {"words": [], "text": "", "audio_path": "", "session_info": {}}
+            
+        progress_callback(f"✅ Generated {len(words)} words") if progress_callback else None
+        
+        # 2. Generate content (Story)
+        progress_callback(f"📖 Generating story in {language}...") if progress_callback else None
+        generated_text = self.text_generator.generate_story(words, language, word_count=text_length)
+        
+        # Save text file
+        text_filename = self.config.get('paths.temp_text_file', 'infiniling_text.txt')
+        text_path = self.config.get_temp_path(text_filename)
+        text_path = self.config.resolve_path(text_path)
+        with open(text_path, 'w', encoding='utf-8') as f:
+            f.write(generated_text)
+            
+        # 3. Generate Audio
+        audio_path = ""
+        if generate_audio and generated_text:
+            progress_callback("🎵 Generating audio...") if progress_callback else None
+            audio_filename = self.config.get('paths.temp_audio_file', 'infiniling_audio.mp3')
+            audio_path = self.config.get_temp_path(audio_filename)
+            audio_path = self.config.resolve_path(audio_path)
+            self.audio_generator.generate_audio(generated_text, audio_path)
+            
+        # 4. Prepare session info
+        session_info = {
+            'total_words': len(words),
+            'word_details': [
+                {
+                    'id': None, 
+                    'word': w['word'], 
+                    'translation': w['translation'], 
+                    'is_new': True, 
+                    'total_reviews': 0,
+                    'pronunciation': w.get('pronunciation', '')
+                } for w in words
+            ],
+            'mode': 'scratch',
+            'difficulty': difficulty
+        }
+        
+        self._current_session_data = {
+            "words": words,
+            "text": generated_text,
+            "audio_path": audio_path,
+            "session_info": session_info
+        }
+        
+        self.save_temp_session_data()
+        return self._current_session_data
+
     def get_vocabulary_count(self) -> int:
         """Get the total number of words in the database."""
         return len(self.database_manager.get_all_words())

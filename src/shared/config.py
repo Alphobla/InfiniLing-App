@@ -23,9 +23,18 @@ class ConfigManager:
 
     def resolve_path(self, relative_path):
         """Resolve a path relative to the config root or absolute."""
+        if not relative_path:
+            return self.config_root
         if os.path.isabs(relative_path):
-            return relative_path
-        return os.path.join(self.config_root, relative_path)
+            return os.path.normpath(relative_path)
+        return os.path.normpath(os.path.join(self.config_root, relative_path))
+    
+    def get_user_data_dir(self):
+        """Get path to writable user data directory."""
+        home = os.path.expanduser('~')
+        data_dir = os.path.join(home, '.infiniling')
+        os.makedirs(data_dir, exist_ok=True)
+        return data_dir
     
     def _load_config(self):
         """Load config from JSON file."""

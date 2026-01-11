@@ -170,15 +170,10 @@ class WhisperInterface:
             
             self.master.after(0, lambda: self.update_progress_status(f"Model loaded! Starting transcription..."))
             self.master.after(0, lambda: self.update_progress_bar(1))
-            # Prepare output paths in data directory using config
-            if self.config:
-                folder = self.config.get('paths.transcriptions_dir', './data/transcriptions_and_audio')
-                data_dir = self.config.resolve_path(folder)
-            else:
-                data_dir = os.path.join(
-                    os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 
-                    'data', 'transcriptions_and_audio'
-                )
+            # Determine where to save the new transcription
+            # We always save to the writable user directory in packaged mode
+            user_data_dir = self.config.get_user_data_dir() if self.config else os.path.expanduser('~/.infiniling')
+            data_dir = os.path.join(user_data_dir, 'transcriptions')
             os.makedirs(data_dir, exist_ok=True)
             
             # Use original filename
@@ -292,14 +287,27 @@ class WhisperInterface:
         import glob
         from mutagen.easyid3 import EasyID3
         from mutagen.mp3 import MP3
-        # Get transcriptions directory from config
+        # 1. Get the bundled examples folder
         if self.config:
-            folder = self.config.get('paths.transcriptions_dir', './data/transcriptions_and_audio')
-            folder = self.config.resolve_path(folder)
+            bundled_folder = self.config.resolve_path('data/transcriptions_and_audio')
         else:
-            folder = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data', 'transcriptions_and_audio')
-        mp3_files = glob.glob(os.path.join(folder, '*.mp3'))
-        srt_files = set(os.path.splitext(f)[0] for f in glob.glob(os.path.join(folder, '*.srt')))
+            bundled_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'data', 'transcriptions_and_audio')
+        
+        # 2. Get the user's writable folder
+        user_data_dir = self.config.get_user_data_dir() if self.config else os.path.expanduser('~/.infiniling')
+        user_folder = os.path.join(user_data_dir, 'transcriptions')
+        os.makedirs(user_folder, exist_ok=True)
+        
+        # Scan both folders
+        mp3_files = []
+        for f in [bundled_folder, user_folder]:
+            if os.path.exists(f):
+                mp3_files.extend(glob.glob(os.path.join(f, '*.mp3')))
+        
+        srt_files = set()
+        for f in [bundled_folder, user_folder]:
+            if os.path.exists(f):
+                srt_files.update(os.path.splitext(f_path)[0] for f_path in glob.glob(os.path.join(f, '*.srt')))
         for widget in self.saved_tiles_frame.winfo_children():
             widget.destroy()
         for mp3_path in mp3_files:
