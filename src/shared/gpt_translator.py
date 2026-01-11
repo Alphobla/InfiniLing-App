@@ -43,18 +43,34 @@ class GPTTranslator:
         """Make API call to GPT."""
         try:
             import json
-            with open('config.json', 'r') as f:
-                config = json.load(f)
+            # Default values if config fails
+            model_to_use = "gpt-4o-mini"
+            max_tokens = 500
+            temperature = 0.3
+
+            try:
+                with open('config.json', 'r') as f:
+                    config = json.load(f)
+                enh_config = config.get('word_enhancement', {})
+                model_to_use = enh_config.get('model', model_to_use)
+                max_tokens = enh_config.get('max_tokens', max_tokens)
+                temperature = enh_config.get('temperature', temperature)
+            except Exception as e:
+                print(f"Warning: Could not load config.json for GPTTranslator: {e}")
             
+            # Allow override via parameter
+            if model:
+                model_to_use = model
+
             response = self.client.chat.completions.create(
-                model=config['word_enhancement']['model'],
+                model=model_to_use,
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=config['word_enhancement']['max_tokens'],
-                temperature=config['word_enhancement']['temperature']
+                max_tokens=max_tokens,
+                temperature=temperature
             )
             return response.choices[0].message.content.strip()
         except Exception as e:
-            print(f"GPT API error: {e}")
+            print(f"GPT API error ({model_to_use if 'model_to_use' in locals() else 'unknown'}): {e}")
             return None
     
     def lemmatize_word(self, word: str, language: str) -> Dict:
@@ -265,10 +281,17 @@ class GPTTranslator:
         if not response:
             return {"root_word": word, "primary_translation": "Translation unavailable", "secondary_translation": None}
         
-        print(f"Raw GPT response for '{word}': {response}")
-        
         try:
-            result = json.loads(response)
+            # Clean response from potential markdown code blocks
+            clean_response = response.strip()
+            if clean_response.startswith("```"):
+                # Handle ```json ... ``` or just ``` ... ```
+                lines = clean_response.splitlines()
+                if len(lines) >= 3:
+                    # Remove the first and last lines (the backticks)
+                    clean_response = "\n".join(lines[1:-1]).strip()
+            
+            result = json.loads(clean_response)
             
             # Validate root_word - if it's "None", "null", empty, or suspicious, use original
             root_word = result.get("root_word", word)

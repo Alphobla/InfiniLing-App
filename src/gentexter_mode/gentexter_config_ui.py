@@ -35,8 +35,15 @@ class GentexterConfig:
         # Group all vocabulary config reads together
         self.vocab_defaults = self.config.get('vocabulary')
         
-        # Configuration variables
-        self.vocab_source = StringVar(value="databank")  # Radio button group: "databank", "test", "last_text"
+        # Determine initial source: Use scratch if databank is empty
+        initial_source = "databank"
+        try:
+            if vocab_service and vocab_service.get_vocabulary_count() == 0:
+                initial_source = "scratch"
+        except Exception:
+            pass
+            
+        self.vocab_source = StringVar(value=initial_source)  # Radio button group: "databank", "scratch", "last_text"
         self.import_new_list = BooleanVar(value=False)  # Sub-option for databank
         self.total_words = IntVar(value=self.vocab_defaults['default_total_words'])
         self.new_word_ratio = DoubleVar(value=self.vocab_defaults['default_new_word_ratio'])
@@ -203,7 +210,7 @@ class GentexterConfig:
 
             # Disable generate button during processing
             self.generate_button.config(state='disabled', text="Generating...")
-            print("🚀 Generating Text...")
+            print(f"🚀 Generating Text... Source: {vocab_source}, Total Words: {self.total_words.get()}, Lang: {self.selected_language.get()}")
             
             # Run generation in a separate thread
             def generation_task():
@@ -313,10 +320,20 @@ class GentexterConfig:
             words = result.get('words')
             text = result.get('text')
             audio_path = result.get('audio_path')
+            
+            if not words and not text:
+                msg = "No content was generated."
+                if self.vocab_source.get() == "databank":
+                    msg += "\n\nTip: Your databank might be empty. Try 'Start from scratch' to generate new words!"
+                else:
+                    msg += " Please check your API key and connection."
+                self.on_task_error(msg)
+                return
+                
             self.proceed_to_reader(words, text, audio_path)
 
         except Exception as e:
-            self.on_generation_error(f"Error processing results: {str(e)}")
+            self.on_task_error(f"Error processing results: {str(e)}")
 
     def on_load_complete(self, result):
         """Handle successful load completion"""
@@ -340,9 +357,12 @@ class GentexterConfig:
             self.on_task_error(f"Error processing loaded content: {str(e)}")
     
     def on_task_error(self, error_message):
-        """Handle task errors"""
+        """Handle task errors with user notification"""
         print(f"❌ {error_message}")
+        # Reset button state
         self.generate_button.config(state='normal', text="📖\nGenerate\nText")
+        # Show error to user
+        messagebox.showerror("Generation Error", error_message)
 
     def proceed_to_reader(self, words, generated_text, audio_path):
         """Show the in-app reader interface"""

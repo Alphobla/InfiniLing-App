@@ -29,6 +29,7 @@ class VocabularyApp:
         """
         self.config = config
         self.database_manager = DatabaseManager(database_url)
+        self.database_manager.initialize_database()
         self.spaced_repetition_selector = SpacedRepetitionSelector(self.database_manager)
         self.text_generator = TextGenerator(config=self.config)
         self.audio_generator = AudioGenerator(config=self.config)
