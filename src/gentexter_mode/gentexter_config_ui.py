@@ -372,6 +372,9 @@ class GentexterConfig:
                 widget.pack_forget()
             
             print(f"service app: {type(self.vocab_app)}")
+            # Get target language from config
+            language_to = self.config.get('vocabulary.languages.to', 'de')
+
             # Create review interface
             self.reader_ui = ReaderUI(
                 master=self.master,
@@ -382,6 +385,8 @@ class GentexterConfig:
                 back_callback=self.return_to_config,
                 forward_callback="proceed_to_review",
                 forward_text="Review Words →",
+                language_from=self.selected_language.get(),
+                language_to=language_to,
                 config=self.config
             )
             
