@@ -6,16 +6,20 @@ designed to be compatible with the existing selector.py spaced repetition algori
 """
 
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Float, ForeignKey, Text, Index
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 from src.shared.frequency_analysis import get_word_frequency_category, get_word_frequency_rank
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from contextlib import contextmanager
 import csv
 import os
 
 Base = declarative_base()
+
+
+def utc_now():
+    """Return current UTC time (timezone-aware)."""
+    return datetime.now(timezone.utc)
 
 
 class Vocabulary(Base):
@@ -51,8 +55,8 @@ class Vocabulary(Base):
     frequency_level = Column(String(50))  # 'very_common', 'common', 'uncommon', etc.
     
     # Timestamps
-    date_added = Column(DateTime, default=datetime.utcnow)
-    date_modified = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    date_added = Column(DateTime, default=utc_now)
+    date_modified = Column(DateTime, default=utc_now, onupdate=utc_now)
     
     # Relationships
     occurrences = relationship("VocabularyOccurrence", back_populates="vocabulary", cascade="all, delete-orphan")
@@ -79,7 +83,7 @@ class VocabularyOccurrence(Base):
     vocabulary_id = Column(Integer, ForeignKey('vocabulary.id'), nullable=False)
     
     # Core tracking data (compatible with existing JSON structure)
-    date = Column(DateTime, default=datetime.utcnow, nullable=False)
+    date = Column(DateTime, default=utc_now, nullable=False)
     
     # Spaced repetition data (scientific algorithm)
     feedback_score = Column(Integer)  # 0-5 performance score
@@ -176,7 +180,10 @@ class DatabaseManager:
     def get_word(self, word_id: int):
         """Get a vocabulary word by ID."""
         with self.session_scope() as session:
-            return session.query(Vocabulary).filter(Vocabulary.id == word_id).first()
+            word = session.query(Vocabulary).filter(Vocabulary.id == word_id).first()
+            if word:
+                session.expunge(word)  # Detach from session so it's usable after
+            return word
     
     def get_id_by_string(self, word_text: str):
         """Get a vocabulary word by its text."""
@@ -308,7 +315,7 @@ class DatabaseManager:
                                'frequency_level', 'frequency_rank', 'example_sentence_original', 
                                'example_sentence_translation']:
                         setattr(vocab, attr, getattr(enhanced, attr))
-                    vocab.date_modified = datetime.utcnow()  # Update modified date
+                    vocab.date_modified = utc_now()  # Update modified date
                     
                     results['updated'] += 1
                     
@@ -341,13 +348,13 @@ class DatabaseManager:
             
             # Try to use next_review_date first
             if last_occurrence.next_review_date:
-                days = (last_occurrence.next_review_date - datetime.utcnow()).days
+                days = (last_occurrence.next_review_date - utc_now()).days
                 return max(0, days)  # Don't return negative days (overdue = 0)
             
             # Fallback to interval_days if available
             if last_occurrence.interval_days:
                 # Calculate days since last review + interval
-                days_since = (datetime.utcnow() - last_occurrence.date).days
+                days_since = (utc_now() - last_occurrence.date).days
                 remaining = last_occurrence.interval_days - days_since
                 return max(0, remaining)
             

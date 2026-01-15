@@ -5,7 +5,9 @@
       "Bash(cd:*)",
       "Bash(cd:*)",
       "Bash(./venv/Scripts/python.exe:*)",
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(claude)",
+      "Bash(tree:*)"
     ],
     "deny": []
   }

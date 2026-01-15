@@ -102,19 +102,19 @@ class SpacedRepetitionSelector:
     def get_next_review_date(self, word_id: int) -> datetime:
         """
         Calculate when a word should be reviewed next.
-        
+
         Args:
             word_id: ID of the word
-        
+
         Returns:
             Next review date
         """
         easiness_factor, repetitions, interval_days, last_review = self.get_word_current_state(word_id)
-        
+
         if last_review is None:
-            # New word - due now
-            return datetime.now()
-        
+            # New word - due immediately (use min datetime to ensure it's always in the past)
+            return datetime.min
+
         return last_review + timedelta(days=interval_days)
     
     def get_due_words(self, limit: int = 20) -> List[Dict]:
