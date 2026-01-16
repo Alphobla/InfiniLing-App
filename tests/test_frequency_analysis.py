@@ -53,6 +53,13 @@ class TestFrequencyRank:
         rank = get_word_frequency_rank("xyzabc123nonsense", "en")
         assert rank is None
 
+    def test_rare_but_valid_word_has_rank(self):
+        """Rare but real words should have a rank, not None."""
+        # "serendipitous" is rare (zipf ~2.3) but real
+        rank = get_word_frequency_rank("serendipitous", "en")
+        assert rank is not None
+        assert rank > 100000  # Should be ranked very high (rare)
+
 
 class TestFrequencyCategory:
     """Tests for frequency categorization."""
