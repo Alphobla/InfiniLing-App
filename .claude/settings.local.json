@@ -7,7 +7,12 @@
       "Bash(./venv/Scripts/python.exe:*)",
       "mcp__ide__getDiagnostics",
       "Bash(claude)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(.venvScriptsactivate)",
+      "Bash(\".venv/Scripts/python.exe\" -m pytest tests/test_frequency_analysis.py -v)",
+      "Bash(\".venv/Scripts/pytest.exe\" tests/test_frequency_analysis.py -v)"
     ],
     "deny": []
   }
