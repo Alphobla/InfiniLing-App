@@ -37,12 +37,14 @@ class ReaderUI:
         self.audio_path = audio_path
         self.text_content = text_content
         self.srt_path = srt_path
-        self.back_callback = back_callback
+        self._back_callback = back_callback
+        self.back_callback = self._wrap_with_pause(back_callback) if back_callback else None
         self.forward_text = forward_text
         self.language_from = language_from
         self.language_to = language_to
-        self.forward_callback = getattr(self, forward_callback) if forward_callback else None
-        
+        self._forward_callback_name = forward_callback
+        self.forward_callback = self._wrap_with_pause(getattr(self, forward_callback)) if forward_callback else None
+
         # For custom highlighting functionality
         self.highlight_callback = None
         
@@ -54,6 +56,20 @@ class ReaderUI:
         root = self.master.winfo_toplevel()
         window_width, window_height = self.config.get_window_size('reader')
         center_top_window(self.master, width=window_width, height=window_height)
+
+    def _wrap_with_pause(self, callback):
+        """Wrap a callback to pause audio before executing"""
+        if callback is None:
+            return None
+        def wrapped():
+            self._pause_audio()
+            callback()
+        return wrapped
+
+    def _pause_audio(self):
+        """Pause audio playback if active"""
+        if hasattr(self, 'audio_controls') and hasattr(self.audio_controls, 'vlc_player'):
+            self.audio_controls.vlc_player.stop()
 
     def setup_ui(self):
         """Setup the complete reader UI layout"""
