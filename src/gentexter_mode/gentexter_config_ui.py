@@ -34,7 +34,11 @@ class GentexterConfig:
         
         # Group all vocabulary config reads together
         self.vocab_defaults = self.config.get('vocabulary')
-        
+
+        # Build language name-to-code mapping for API calls
+        languages = self.vocab_defaults['languages']['available_languages']
+        self.language_code_map = {lang[0]: lang[1] for lang in languages}  # {"French": "fr", ...}
+
         # Determine initial source: Use scratch if databank is empty
         initial_source = "databank"
         try:
@@ -215,12 +219,12 @@ class GentexterConfig:
             # Run generation in a separate thread
             def generation_task():
                 try:
-                    # Get selected language code
-                    selected_lang_name = self.selected_language.get()
-                    
+                    # Get selected language code (convert display name to code)
+                    lang_code = self.get_selected_language_code()
+
                     if vocab_source == "scratch":
                         result = self.vocab_app.run_scratch_session(
-                            language=selected_lang_name,
+                            language=lang_code,
                             difficulty=self.selected_difficulty.get(),
                             total_words=self.total_words.get(),
                             text_length=self.text_length.get(),
@@ -232,7 +236,7 @@ class GentexterConfig:
                             total_words=self.total_words.get(),
                             new_word_ratio=self.new_word_ratio.get(),
                             text_length=self.text_length.get(),
-                            language=selected_lang_name,  # Pass the full language name
+                            language=lang_code,
                             generate_audio=True,
                             progress_callback=lambda msg: print(f"📖 {msg}"),
                         )
@@ -385,7 +389,7 @@ class GentexterConfig:
                 back_callback=self.return_to_config,
                 forward_callback="proceed_to_review",
                 forward_text="Review Words →",
-                language_from=self.selected_language.get(),
+                language_from=self.get_selected_language_code(),
                 language_to=language_to,
                 config=self.config
             )
@@ -412,3 +416,8 @@ class GentexterConfig:
         root = self.master.winfo_toplevel()
         window_width, window_height = self.config.get_window_size('gentexter')
         center_top_window(self.master, width=window_width, height=window_height)
+
+    def get_selected_language_code(self) -> str:
+        """Convert selected language display name to code for API calls."""
+        display_name = self.selected_language.get()
+        return self.language_code_map.get(display_name, display_name.lower()[:2])

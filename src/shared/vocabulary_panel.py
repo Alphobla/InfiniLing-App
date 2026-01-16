@@ -184,7 +184,7 @@ class VocabularyPanel:
         freq_info = analysis.frequency_info
         if freq_info.get("found"):
             # Color-coded frequency level
-            freq_color = freq_info.get("color", "#6c757d")
+            freq_color = freq_info.get("color")
             
             freq_label_frame = Frame(freq_frame, bg=freq_color, relief='solid', bd=1)
             freq_label_frame.pack(fill='x', pady=2)
@@ -357,7 +357,27 @@ class VocabularyPanel:
         thread = threading.Thread(target=self._translate_worker, args=(word, context))
         thread.daemon = True
         thread.start()
-    
+
+    def _build_frequency_info(self, level: str, rank: int) -> dict:
+        """Build frequency_info dict with color derived from level."""
+        level_colors = {
+            "Top 100": "#1B5E20",
+            "Top 1,000": "#2E7D32",
+            "Top 5,000": "#388E3C",
+            "Top 10,000": "#689F38",
+            "Top 20,000": "#FBC02D",
+            "Top 50,000": "#FF8F00",
+            "Top 100,000": "#F57C00",
+            "Rare": "#D32F2F",
+            "Unknown": "#757575",
+        }
+        return {
+            "level": level,
+            "rank": rank,
+            "found": level is not None,
+            "color": level_colors.get(level, "#757575")
+        }
+
     def _translate_worker(self, word: str, context: str):
         """Background worker for translation."""
         try:
@@ -374,11 +394,10 @@ class VocabularyPanel:
                 root_word=result["normalized_word"],
                 primary_translation=result["primary_translation"],
                 secondary_translation=result["secondary_translation"],
-                frequency_info={
-                    "level": result["frequency_level"],
-                    "rank": result["frequency_rank"],
-                    "found": result["frequency_level"] is not None
-                },
+                frequency_info=self._build_frequency_info(
+                    result["frequency_level"],
+                    result["frequency_rank"]
+                ),
                 language_from=result["language_from"],
                 language_to=result["language_to"]
             )

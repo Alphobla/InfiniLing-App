@@ -406,24 +406,22 @@ class DatabaseManager:
             word.word = root_word
             word.primary_translation = analysis.get("primary_translation", "")
             word.secondary_translation = analysis.get("secondary_translation")
-            
-            # Add frequency data
-            frequency = get_word_frequency_category(word.word, word.language_from)
+
+            # Helper to strip articles and gender markers for lookups
+            def strip_to_core_word(word_form):
+                """Strip articles, gender markers, and extra formatting from word."""
+                import re
+                core = re.sub(r'\s*\([mf]\.\)$', '', word_form)
+                return core.strip()
+
+            # Add frequency data (use stripped word - wordfreq won't find "chien (m.)")
+            core_word = strip_to_core_word(root_word)
+            frequency = get_word_frequency_category(core_word, word.language_from)
             word.frequency_level = frequency.get('level')
             word.frequency_rank = frequency.get('rank')
 
-            
             # Get example sentence (optional - don't fail if this errors)
             try:
-                # Strip root word to core form for sentence search
-                def strip_to_core_word(word_form):
-                    """Strip articles, gender markers, and extra formatting from word."""
-                    import re
-                    # Remove gender markers like (m.), (f.)
-                    core = re.sub(r'\s*\([mf]\.\)$', '', word_form)
-                    return core.strip()
-                
-                core_word = strip_to_core_word(root_word)
                 example = get_sentence_example(core_word, word.language_from, word.language_to)
                 if example:
                     word.example_sentence_original = example[0]
