@@ -216,6 +216,28 @@ class DatabaseManager:
             session.delete(word)
             return True
 
+    def update_word(self, word_id: int, **kwargs) -> bool:
+        """Update a vocabulary word's fields.
+
+        Args:
+            word_id: ID of the word to update
+            **kwargs: Fields to update (word, translation, etc.)
+
+        Returns:
+            True if updated, False if not found
+        """
+        with self.session_scope() as session:
+            word = session.query(Vocabulary).filter(Vocabulary.id == word_id).first()
+            if not word:
+                return False
+
+            for key, value in kwargs.items():
+                if hasattr(word, key):
+                    setattr(word, key, value)
+
+            word.date_modified = utc_now()
+            return True
+
     def add_occurrence(self, vocabulary_id: int, feedback_score: int):
         """Add an occurrence record for a vocabulary word."""
         with self.session_scope() as session:

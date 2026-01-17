@@ -250,3 +250,56 @@ class TestDeleteWord:
         # Occurrences should be gone (cascade)
         occurrences = populated_db.get_word_occurrences(word_id)
         assert len(occurrences) == 0
+
+
+class TestUpdateWord:
+    """Tests for updating vocabulary words."""
+
+    def test_update_word_single_field(self, populated_db):
+        """Should update a single field."""
+        words = populated_db.get_all_words()
+        word_id = words[0].id
+
+        result = populated_db.update_word(word_id, translation="Neue Übersetzung")
+
+        assert result is True
+        updated = populated_db.get_word(word_id)
+        assert updated.translation == "Neue Übersetzung"
+
+    def test_update_word_multiple_fields(self, populated_db):
+        """Should update multiple fields at once."""
+        words = populated_db.get_all_words()
+        word_id = words[0].id
+
+        result = populated_db.update_word(
+            word_id,
+            word="nouveau",
+            translation="neu",
+            frequency_level="Top 1,000"
+        )
+
+        assert result is True
+        updated = populated_db.get_word(word_id)
+        assert updated.word == "nouveau"
+        assert updated.translation == "neu"
+        assert updated.frequency_level == "Top 1,000"
+
+    def test_update_word_nonexistent(self, in_memory_db):
+        """Should return False for nonexistent ID."""
+        result = in_memory_db.update_word(99999, translation="test")
+        assert result is False
+
+    def test_update_word_sets_modified_date(self, populated_db):
+        """Should update date_modified timestamp."""
+        words = populated_db.get_all_words()
+        word_id = words[0].id
+        original_modified = words[0].date_modified
+
+        # Small delay to ensure timestamp differs
+        import time
+        time.sleep(0.01)
+
+        populated_db.update_word(word_id, translation="changed")
+
+        updated = populated_db.get_word(word_id)
+        assert updated.date_modified >= original_modified
