@@ -200,6 +200,22 @@ class DatabaseManager:
             session.expunge_all()  # Detach all objects from session
             return words
 
+    def delete_word(self, word_id: int) -> bool:
+        """Delete a vocabulary word by ID.
+
+        Args:
+            word_id: ID of the word to delete
+
+        Returns:
+            True if deleted, False if not found
+        """
+        with self.session_scope() as session:
+            word = session.query(Vocabulary).filter(Vocabulary.id == word_id).first()
+            if not word:
+                return False
+            session.delete(word)
+            return True
+
     def add_occurrence(self, vocabulary_id: int, feedback_score: int):
         """Add an occurrence record for a vocabulary word."""
         with self.session_scope() as session:

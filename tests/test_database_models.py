@@ -214,3 +214,39 @@ class TestSessionScope:
         # Should NOT persist due to rollback
         words = in_memory_db.get_all_words()
         assert len(words) == 0
+
+
+class TestDeleteWord:
+    """Tests for deleting vocabulary words."""
+
+    def test_delete_word_by_id(self, populated_db):
+        """Should delete a word by ID."""
+        words = populated_db.get_all_words()
+        word_id = words[0].id
+        initial_count = len(words)
+
+        result = populated_db.delete_word(word_id)
+
+        assert result is True
+        remaining = populated_db.get_all_words()
+        assert len(remaining) == initial_count - 1
+
+    def test_delete_word_nonexistent(self, in_memory_db):
+        """Should return False for nonexistent ID."""
+        result = in_memory_db.delete_word(99999)
+        assert result is False
+
+    def test_delete_word_cascades_occurrences(self, populated_db):
+        """Deleting a word should delete its occurrences."""
+        words = populated_db.get_all_words()
+        word_id = words[0].id
+
+        # Add an occurrence first
+        populated_db.add_occurrence(word_id, feedback_score=4)
+
+        # Delete the word
+        populated_db.delete_word(word_id)
+
+        # Occurrences should be gone (cascade)
+        occurrences = populated_db.get_word_occurrences(word_id)
+        assert len(occurrences) == 0
