@@ -131,7 +131,7 @@ class DatabaseManager:
     Handles database connection, session management, and basic operations.
     """
     
-    def __init__(self, database_url: str = None):
+    def __init__(self, database_url: str = "sqlite:///./src/vocabulary.db"):
         """Initialize database manager with connection."""
         print(f"Initializing database manager with URL: {database_url}")
         self.engine = create_database_engine(database_url)
@@ -383,16 +383,17 @@ class DatabaseManager:
                 return new_word_due_days
             
             last_occurrence = occurrences[0]
+            now = datetime.utcnow()  # Use naive datetime to match SQLite storage
             
             # Try to use next_review_date first
             if last_occurrence.next_review_date:
-                days = (last_occurrence.next_review_date - utc_now()).days
+                days = (last_occurrence.next_review_date - now).days
                 return max(0, days)  # Don't return negative days (overdue = 0)
             
             # Fallback to interval_days if available
             if last_occurrence.interval_days:
                 # Calculate days since last review + interval
-                days_since = (utc_now() - last_occurrence.date).days
+                days_since = (now - last_occurrence.date).days
                 remaining = last_occurrence.interval_days - days_since
                 return max(0, remaining)
             

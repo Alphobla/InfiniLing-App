@@ -12,8 +12,12 @@
       "Bash(python -m pytest:*)",
       "Bash(.venvScriptsactivate)",
       "Bash(\".venv/Scripts/python.exe\" -m pytest tests/test_frequency_analysis.py -v)",
-      "Bash(\".venv/Scripts/pytest.exe\" tests/test_frequency_analysis.py -v)"
+      "Bash(\".venv/Scripts/pytest.exe\" tests/test_frequency_analysis.py -v)",
+      "Skill(superpowers:brainstorming)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
-  }
+  },
+  "includeCoAuthoredBy": false
 }
