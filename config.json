@@ -30,7 +30,7 @@
         ]
       ]
     },
-    "database_url": null
+    "database_url": "sqlite:///./src/vocabulary.db"
   },
   "audio": {
     "voice": "onyx",
@@ -57,7 +57,7 @@
   "ui": {
     "window_sizes": {
       "main_menu": {
-        "width": 500,
+        "width": 700,
         "height": 350
       },
       "transcriber": {
