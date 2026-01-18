@@ -2,7 +2,8 @@
 Database View UI for browsing and managing vocabulary words.
 """
 
-from tkinter import Frame, Label, Button, Canvas, Scrollbar, messagebox
+import tkinter as tk
+from tkinter import Frame, Label, Button, messagebox, Entry, Canvas, Scrollbar, ttk
 from .styles import Colors, Fonts, Spacing, center_top_window
 from .style_utils import StyledWidgets, CommonPatterns
 from .database_models import DatabaseManager
@@ -334,9 +335,106 @@ class DatabaseView:
             del row_data['expanded_frame']
 
     def start_edit(self, word_id):
-        """Start editing a word row."""
-        # Placeholder - will be implemented in Task 5
-        messagebox.showinfo("Edit", f"Edit word {word_id} coming soon")
+        """Start editing a word row - replace display with input fields."""
+        if word_id not in self.row_widgets:
+            return
+
+        row_data = self.row_widgets[word_id]
+        word = row_data['word']
+
+        # Collapse if expanded
+        if word_id in self.expanded_rows:
+            self.collapse_row(word_id)
+
+        # Clear the row frame
+        for widget in row_data['frame'].winfo_children():
+            widget.destroy()
+
+        # Create edit mode content
+        edit_frame = Frame(row_data['frame'], bg=Colors.TILE_SELECTED)
+        edit_frame.pack(fill='x', pady=1)
+        row_data['edit_frame'] = edit_frame
+
+        # Word entry
+        word_entry = Entry(edit_frame, font=Fonts.BODY, width=15)
+        word_entry.insert(0, word.word or "")
+        word_entry.pack(side='left', padx=Spacing.XS, pady=Spacing.XS)
+        row_data['word_entry'] = word_entry
+
+        # Primary translation entry
+        trans_entry = Entry(edit_frame, font=Fonts.BODY, width=15)
+        trans_entry.insert(0, word.primary_translation or word.translation or "")
+        trans_entry.pack(side='left', padx=Spacing.XS, pady=Spacing.XS)
+        row_data['trans_entry'] = trans_entry
+
+        # Secondary translation entry
+        sec_trans_entry = Entry(edit_frame, font=Fonts.BODY, width=12)
+        sec_trans_entry.insert(0, word.secondary_translation or "")
+        sec_trans_entry.pack(side='left', padx=Spacing.XS, pady=Spacing.XS)
+        row_data['sec_trans_entry'] = sec_trans_entry
+
+        # Frequency dropdown
+        freq_options = ["Top 100", "Top 1,000", "Top 5,000", "Top 10,000",
+                       "Top 20,000", "Top 50,000", "Top 100,000", "Rare"]
+        freq_var = tk.StringVar(value=word.frequency_level or "")
+        freq_combo = ttk.Combobox(edit_frame, textvariable=freq_var,
+                                  values=freq_options, width=10, state='readonly')
+        freq_combo.pack(side='left', padx=Spacing.XS, pady=Spacing.XS)
+        row_data['freq_var'] = freq_var
+
+        # Save/Cancel buttons
+        btn_frame = Frame(edit_frame, bg=Colors.TILE_SELECTED)
+        btn_frame.pack(side='right', padx=Spacing.XS)
+
+        save_btn = Button(btn_frame, text="✅", font=Fonts.SMALL,
+                         bg=Colors.SUCCESS, fg=Colors.WHITE, relief='flat', bd=0,
+                         command=lambda: self.save_edit(word_id))
+        save_btn.pack(side='left', padx=2)
+
+        cancel_btn = Button(btn_frame, text="❌", font=Fonts.SMALL,
+                           bg=Colors.ERROR, fg=Colors.WHITE, relief='flat', bd=0,
+                           command=lambda: self.cancel_edit(word_id))
+        cancel_btn.pack(side='left', padx=2)
+
+        # Focus on word entry
+        word_entry.focus_set()
+
+    def save_edit(self, word_id):
+        """Save edited word data."""
+        if word_id not in self.row_widgets:
+            return
+
+        row_data = self.row_widgets[word_id]
+
+        # Get values from entries
+        new_word = row_data['word_entry'].get().strip()
+        new_trans = row_data['trans_entry'].get().strip()
+        new_sec_trans = row_data['sec_trans_entry'].get().strip()
+        new_freq = row_data['freq_var'].get()
+
+        # Validate required fields
+        if not new_word or not new_trans:
+            messagebox.showerror("Error", "Word and Translation are required")
+            return
+
+        # Update in database
+        success = self.db_manager.update_word(
+            word_id,
+            word=new_word,
+            primary_translation=new_trans,
+            translation=new_trans,  # Keep translation in sync
+            secondary_translation=new_sec_trans or None,
+            frequency_level=new_freq or None
+        )
+
+        if success:
+            self.load_words()  # Refresh table
+        else:
+            messagebox.showerror("Error", "Failed to update word")
+
+    def cancel_edit(self, word_id):
+        """Cancel editing and restore row display."""
+        self.load_words()  # Simply reload to restore original state
 
     def confirm_delete(self, word_id):
         """Show delete confirmation dialog."""
