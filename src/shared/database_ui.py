@@ -3,10 +3,253 @@ Database View UI for browsing and managing vocabulary words.
 """
 
 import tkinter as tk
-from tkinter import Frame, Label, Button, messagebox, Entry, Canvas, Scrollbar, ttk
+from tkinter import Frame, Label, Button, messagebox, Entry, Canvas, Scrollbar, ttk, Toplevel, StringVar
 from .styles import Colors, Fonts, Spacing, center_top_window
 from .style_utils import StyledWidgets, CommonPatterns
 from .database_models import DatabaseManager
+
+
+class AddWordDialog:
+    """Modal dialog for adding new words."""
+
+    def __init__(self, parent, db_manager, on_success=None):
+        """
+        Initialize Add Word dialog.
+
+        Args:
+            parent: Parent window
+            db_manager: DatabaseManager instance
+            on_success: Callback when word is added successfully
+        """
+        self.parent = parent
+        self.db_manager = db_manager
+        self.on_success = on_success
+        self.is_auto_mode = True
+
+        self.create_dialog()
+
+    def create_dialog(self):
+        """Create the dialog window."""
+        self.dialog = Toplevel(self.parent)
+        self.dialog.title("Add New Word")
+        self.dialog.configure(bg=Colors.WHITE)
+        self.dialog.resizable(False, False)
+
+        # Center dialog
+        dialog_width, dialog_height = 400, 420
+        x = self.parent.winfo_x() + (self.parent.winfo_width() // 2) - (dialog_width // 2)
+        y = self.parent.winfo_y() + (self.parent.winfo_height() // 2) - (dialog_height // 2)
+        self.dialog.geometry(f"{dialog_width}x{dialog_height}+{x}+{y}")
+
+        # Make modal
+        self.dialog.transient(self.parent)
+        self.dialog.grab_set()
+
+        # Title
+        title_frame = Frame(self.dialog, bg=Colors.WHITE)
+        title_frame.pack(fill='x', padx=Spacing.LG, pady=Spacing.MD)
+
+        Label(title_frame, text="Add New Word", font=Fonts.HEADING,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left')
+
+        close_btn = Button(title_frame, text="X", font=Fonts.BODY,
+                          bg=Colors.WHITE, fg=Colors.MEDIUM_GRAY, relief='flat', bd=0,
+                          command=self.dialog.destroy)
+        close_btn.pack(side='right')
+
+        # Mode toggle
+        mode_frame = Frame(self.dialog, bg=Colors.LIGHT_GRAY)
+        mode_frame.pack(fill='x', padx=Spacing.LG, pady=Spacing.SM)
+
+        Label(mode_frame, text="Mode:", font=Fonts.BODY,
+              bg=Colors.LIGHT_GRAY, fg=Colors.DARK_GRAY).pack(side='left', padx=Spacing.SM)
+
+        self.auto_btn = Button(mode_frame, text="Auto", font=Fonts.BODY_BOLD,
+                              bg=Colors.PRIMARY, fg=Colors.WHITE, relief='flat', bd=0,
+                              padx=Spacing.MD, pady=Spacing.XS,
+                              command=lambda: self.set_mode(True))
+        self.auto_btn.pack(side='left', padx=2)
+
+        self.manual_btn = Button(mode_frame, text="Manual", font=Fonts.BODY,
+                                bg=Colors.LIGHT_GRAY, fg=Colors.DARK_GRAY, relief='flat', bd=0,
+                                padx=Spacing.MD, pady=Spacing.XS,
+                                command=lambda: self.set_mode(False))
+        self.manual_btn.pack(side='left', padx=2)
+
+        # Form fields
+        form_frame = Frame(self.dialog, bg=Colors.WHITE)
+        form_frame.pack(fill='both', expand=True, padx=Spacing.LG, pady=Spacing.MD)
+
+        # Word field (always enabled)
+        Label(form_frame, text="Word *", font=Fonts.BODY_BOLD,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(anchor='w')
+        self.word_entry = Entry(form_frame, font=Fonts.BODY, width=40)
+        self.word_entry.pack(fill='x', pady=(0, Spacing.SM))
+
+        # Separator
+        Label(form_frame, text="--- Auto mode fills these ---",
+              font=Fonts.SMALL, bg=Colors.WHITE, fg=Colors.MEDIUM_GRAY).pack(pady=Spacing.XS)
+
+        # Translation field
+        Label(form_frame, text="Translation *", font=Fonts.BODY_BOLD,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(anchor='w')
+        self.trans_entry = Entry(form_frame, font=Fonts.BODY, width=40, state='disabled')
+        self.trans_entry.pack(fill='x', pady=(0, Spacing.SM))
+
+        # Alt translation
+        Label(form_frame, text="Alt Translation", font=Fonts.BODY,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(anchor='w')
+        self.alt_trans_entry = Entry(form_frame, font=Fonts.BODY, width=40, state='disabled')
+        self.alt_trans_entry.pack(fill='x', pady=(0, Spacing.SM))
+
+        # Frequency dropdown
+        Label(form_frame, text="Frequency", font=Fonts.BODY,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(anchor='w')
+        self.freq_var = StringVar()
+        freq_options = ["", "Top 100", "Top 1,000", "Top 5,000", "Top 10,000",
+                       "Top 20,000", "Top 50,000", "Top 100,000", "Rare"]
+        self.freq_combo = ttk.Combobox(form_frame, textvariable=self.freq_var,
+                                       values=freq_options, width=37, state='disabled')
+        self.freq_combo.pack(fill='x', pady=(0, Spacing.SM))
+
+        # Example sentence
+        Label(form_frame, text="Example (original)", font=Fonts.BODY,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(anchor='w')
+        self.example_orig_entry = Entry(form_frame, font=Fonts.BODY, width=40, state='disabled')
+        self.example_orig_entry.pack(fill='x', pady=(0, Spacing.SM))
+
+        Label(form_frame, text="Example (translation)", font=Fonts.BODY,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(anchor='w')
+        self.example_trans_entry = Entry(form_frame, font=Fonts.BODY, width=40, state='disabled')
+        self.example_trans_entry.pack(fill='x', pady=(0, Spacing.SM))
+
+        # Buttons
+        btn_frame = Frame(self.dialog, bg=Colors.WHITE)
+        btn_frame.pack(fill='x', padx=Spacing.LG, pady=Spacing.MD)
+
+        cancel_btn = Button(btn_frame, text="Cancel", font=Fonts.BODY,
+                           bg=Colors.LIGHT_GRAY, fg=Colors.DARK_GRAY, relief='flat', bd=0,
+                           padx=Spacing.LG, pady=Spacing.SM,
+                           command=self.dialog.destroy)
+        cancel_btn.pack(side='left')
+
+        self.add_btn = Button(btn_frame, text="Add Word", font=Fonts.BODY_BOLD,
+                             bg=Colors.SUCCESS, fg=Colors.WHITE, relief='flat', bd=0,
+                             padx=Spacing.LG, pady=Spacing.SM,
+                             command=self.add_word)
+        self.add_btn.pack(side='right')
+
+        # Status label for loading
+        self.status_label = Label(self.dialog, text="", font=Fonts.SMALL,
+                                  bg=Colors.WHITE, fg=Colors.MEDIUM_GRAY)
+        self.status_label.pack(pady=(0, Spacing.SM))
+
+    def set_mode(self, is_auto):
+        """Switch between auto and manual mode."""
+        self.is_auto_mode = is_auto
+
+        # Update button styles
+        if is_auto:
+            self.auto_btn.config(bg=Colors.PRIMARY, fg=Colors.WHITE, font=Fonts.BODY_BOLD)
+            self.manual_btn.config(bg=Colors.LIGHT_GRAY, fg=Colors.DARK_GRAY, font=Fonts.BODY)
+            state = 'disabled'
+        else:
+            self.auto_btn.config(bg=Colors.LIGHT_GRAY, fg=Colors.DARK_GRAY, font=Fonts.BODY)
+            self.manual_btn.config(bg=Colors.PRIMARY, fg=Colors.WHITE, font=Fonts.BODY_BOLD)
+            state = 'normal'
+
+        # Update field states
+        self.trans_entry.config(state=state)
+        self.alt_trans_entry.config(state=state)
+        self.freq_combo.config(state='readonly' if state == 'normal' else 'disabled')
+        self.example_orig_entry.config(state=state)
+        self.example_trans_entry.config(state=state)
+
+    def add_word(self):
+        """Add the word to the database."""
+        word_text = self.word_entry.get().strip()
+
+        if not word_text:
+            messagebox.showerror("Error", "Word is required", parent=self.dialog)
+            return
+
+        if self.is_auto_mode:
+            self.add_word_auto(word_text)
+        else:
+            self.add_word_manual(word_text)
+
+    def add_word_auto(self, word_text):
+        """Add word using GPT auto-fill."""
+        self.status_label.config(text="Processing with GPT...")
+        self.add_btn.config(state='disabled')
+        self.dialog.update()
+
+        import threading
+
+        def worker():
+            try:
+                # Add word and let enhance_word fill the details
+                word = self.db_manager.add_word(
+                    word=word_text,
+                    translation=word_text,  # Temporary, will be enhanced
+                    language_from='fr',
+                    language_to='de'
+                )
+
+                # Enhance the word (GPT translation, frequency, examples)
+                from src.shared.database_models import Vocabulary
+                with self.db_manager.session_scope() as session:
+                    vocab = session.query(Vocabulary).filter(Vocabulary.id == word.id).first()
+                    if vocab:
+                        enhanced = self.db_manager.enhance_word(vocab)
+                        for attr in ['word', 'primary_translation', 'secondary_translation',
+                                   'translation', 'frequency_level', 'frequency_rank',
+                                   'example_sentence_original', 'example_sentence_translation']:
+                            if hasattr(enhanced, attr):
+                                setattr(vocab, attr, getattr(enhanced, attr))
+
+                self.dialog.after(0, self.on_add_success)
+            except Exception as e:
+                self.dialog.after(0, lambda: self.on_add_error(str(e)))
+
+        thread = threading.Thread(target=worker, daemon=True)
+        thread.start()
+
+    def add_word_manual(self, word_text):
+        """Add word with manual entries."""
+        translation = self.trans_entry.get().strip()
+
+        if not translation:
+            messagebox.showerror("Error", "Translation is required", parent=self.dialog)
+            return
+
+        try:
+            self.db_manager.add_word(
+                word=word_text,
+                translation=translation,
+                primary_translation=translation,
+                secondary_translation=self.alt_trans_entry.get().strip() or None,
+                frequency_level=self.freq_var.get() or None,
+                example_sentence_original=self.example_orig_entry.get().strip() or None,
+                example_sentence_translation=self.example_trans_entry.get().strip() or None,
+                language_from='fr',
+                language_to='de'
+            )
+            self.on_add_success()
+        except Exception as e:
+            self.on_add_error(str(e))
+
+    def on_add_success(self):
+        """Handle successful word addition."""
+        self.dialog.destroy()
+        if self.on_success:
+            self.on_success()
+
+    def on_add_error(self, error_msg):
+        """Handle error during word addition."""
+        self.status_label.config(text="")
+        self.add_btn.config(state='normal')
+        messagebox.showerror("Error", f"Failed to add word: {error_msg}", parent=self.dialog)
 
 
 class DatabaseView:
@@ -461,8 +704,7 @@ class DatabaseView:
 
     def show_add_dialog(self):
         """Show the Add Word dialog."""
-        # Placeholder - will be implemented in Task 6
-        messagebox.showinfo("Add Word", "Add Word dialog coming soon")
+        AddWordDialog(self.master, self.db_manager, on_success=self.load_words)
 
     def go_back(self):
         """Return to main menu."""
