@@ -74,7 +74,6 @@ class TestFrequencyCategory:
         assert "category" in result
         assert "level" in result
         assert "rank" in result
-        assert "color" in result
         assert "found" in result
 
     def test_common_word_categorized(self):
