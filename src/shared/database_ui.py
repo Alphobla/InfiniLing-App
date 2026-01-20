@@ -133,19 +133,29 @@ class SettingsDialog:
 class AddWordDialog:
     """Modal dialog for adding new words."""
 
-    def __init__(self, parent, db_manager, on_success=None):
+    def __init__(self, parent, db_manager, config=None, current_language=None, on_success=None):
         """
         Initialize Add Word dialog.
 
         Args:
             parent: Parent window
             db_manager: DatabaseManager instance
+            config: ConfigManager instance
+            current_language: Currently selected language code (default for new words)
             on_success: Callback when word is added successfully
         """
         self.parent = parent
         self.db_manager = db_manager
+        self.config = config
+        self.current_language = current_language
         self.on_success = on_success
         self.is_auto_mode = True
+
+        self.available_languages = []
+        if config:
+            self.available_languages = config.get('vocabulary.languages.available_languages', [])
+        if not self.available_languages:
+            self.available_languages = [["French", "fr"], ["German", "de"], ["English", "en"], ["Spanish", "es"]]
 
         self.create_dialog()
 
@@ -157,7 +167,7 @@ class AddWordDialog:
         self.dialog.resizable(False, False)
 
         # Center dialog
-        dialog_width, dialog_height = 400, 420
+        dialog_width, dialog_height = 400, 480
         x = self.parent.winfo_x() + (self.parent.winfo_width() // 2) - (dialog_width // 2)
         y = self.parent.winfo_y() + (self.parent.winfo_height() // 2) - (dialog_height // 2)
         self.dialog.geometry(f"{dialog_width}x{dialog_height}+{x}+{y}")
@@ -200,6 +210,24 @@ class AddWordDialog:
         # Form fields
         form_frame = Frame(self.dialog, bg=Colors.WHITE)
         form_frame.pack(fill='both', expand=True, padx=Spacing.LG, pady=Spacing.MD)
+
+        # Source Language dropdown
+        Label(form_frame, text="Source Language", font=Fonts.BODY_BOLD,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(anchor='w')
+        self.lang_var = StringVar()
+        language_names = [lang[0] for lang in self.available_languages]
+        self.lang_combo = ttk.Combobox(form_frame, textvariable=self.lang_var,
+                                       values=language_names, width=37, state='readonly')
+        self.lang_combo.pack(fill='x', pady=(0, Spacing.SM))
+
+        # Set default to current language
+        if self.current_language:
+            for i, (name, code) in enumerate(self.available_languages):
+                if code == self.current_language:
+                    self.lang_combo.current(i)
+                    break
+        elif language_names:
+            self.lang_combo.current(0)
 
         # Word field (always enabled)
         Label(form_frame, text="Word *", font=Fonts.BODY_BOLD,
@@ -305,6 +333,19 @@ class AddWordDialog:
         self.add_btn.config(state='disabled')
         self.dialog.update()
 
+        # Get selected language
+        selected_name = self.lang_var.get()
+        language_from = 'fr'  # default
+        for name, code in self.available_languages:
+            if name == selected_name:
+                language_from = code
+                break
+
+        # Get mother tongue
+        language_to = 'de'  # default
+        if self.config:
+            language_to = self.config.get_mother_tongue() or 'de'
+
         import threading
 
         def worker():
@@ -313,8 +354,8 @@ class AddWordDialog:
                 word = self.db_manager.add_word(
                     word=word_text,
                     translation=word_text,  # Temporary, will be enhanced
-                    language_from='fr',
-                    language_to='de'
+                    language_from=language_from,
+                    language_to=language_to
                 )
 
                 # Enhance the word (GPT translation, frequency, examples)
@@ -344,6 +385,19 @@ class AddWordDialog:
             messagebox.showerror("Error", "Translation is required", parent=self.dialog)
             return
 
+        # Get selected language
+        selected_name = self.lang_var.get()
+        language_from = 'fr'
+        for name, code in self.available_languages:
+            if name == selected_name:
+                language_from = code
+                break
+
+        # Get mother tongue
+        language_to = 'de'
+        if self.config:
+            language_to = self.config.get_mother_tongue() or 'de'
+
         try:
             self.db_manager.add_word(
                 word=word_text,
@@ -353,8 +407,8 @@ class AddWordDialog:
                 frequency_level=self.freq_var.get() or None,
                 example_sentence_original=self.example_orig_entry.get().strip() or None,
                 example_sentence_translation=self.example_trans_entry.get().strip() or None,
-                language_from='fr',
-                language_to='de'
+                language_from=language_from,
+                language_to=language_to
             )
             self.on_add_success()
         except Exception as e:
@@ -891,7 +945,21 @@ class DatabaseView:
 
     def show_add_dialog(self):
         """Show the Add Word dialog."""
-        AddWordDialog(self.master, self.db_manager, on_success=self.load_words)
+        AddWordDialog(
+            self.master,
+            self.db_manager,
+            config=self.config,
+            current_language=self.current_language,
+            on_success=self.on_word_added
+        )
+
+    def on_word_added(self):
+        """Handle word added - refresh tabs and words."""
+        # Recreate tabs in case a new language was added
+        if hasattr(self, 'tab_frame'):
+            self.tab_frame.destroy()
+        self.create_language_tabs()
+        self.load_words()
 
     def go_back(self):
         """Return to main menu."""
