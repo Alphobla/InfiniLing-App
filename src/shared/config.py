@@ -88,6 +88,19 @@ class ConfigManager:
         # We store it where the app expects it (usually env or passed to classes)
         os.environ['OPENAI_API_KEY'] = api_key
 
+    def save_mother_tongue(self, language_code):
+        """Save mother tongue to user settings."""
+        settings = self.load_user_settings()
+        settings['mother_tongue'] = language_code
+        path = self.get_user_settings_path()
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(settings, f, indent=4)
+
+    def get_mother_tongue(self):
+        """Get mother tongue from user settings."""
+        settings = self.load_user_settings()
+        return settings.get('mother_tongue')
+
     def get_api_key(self):
         """Get API key from ENV or User Settings."""
         # 1. Check ENV (highest priority, from .env file)
