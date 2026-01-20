@@ -409,6 +409,10 @@ class DatabaseView:
         # Header with back button and title
         self.create_header()
 
+        # Language tabs
+        self.current_language = None
+        self.create_language_tabs()
+
         # Toolbar with Add button and word count
         self.create_toolbar()
 
@@ -434,6 +438,58 @@ class DatabaseView:
                              bg=Colors.CONTENT_BG, fg=Colors.MEDIUM_GRAY, relief='flat', bd=0,
                              command=self.show_settings)
         settings_btn.pack(side='right')
+
+    def create_language_tabs(self):
+        """Create horizontal language tabs for filtering."""
+        # Get languages with word counts from database
+        language_counts = self.db_manager.get_language_counts()
+
+        if not language_counts:
+            self.current_language = None
+            return
+
+        # Sort by count descending, select the one with most words
+        sorted_langs = sorted(language_counts.items(), key=lambda x: x[1], reverse=True)
+        if not hasattr(self, 'current_language') or self.current_language is None:
+            self.current_language = sorted_langs[0][0]  # Language code with most words
+
+        # Tab container
+        self.tab_frame = Frame(self.main_frame, bg=Colors.CONTENT_BG)
+        self.tab_frame.pack(fill='x', pady=(0, Spacing.SM))
+
+        # Get language name mapping
+        available_languages = self.config.get('vocabulary.languages.available_languages', [])
+        code_to_name = {code: name for name, code in available_languages}
+
+        self.tab_buttons = {}
+        for lang_code, count in sorted_langs:
+            lang_name = code_to_name.get(lang_code, lang_code.upper())
+            is_active = lang_code == self.current_language
+
+            bg_color = Colors.PRIMARY if is_active else Colors.LIGHT_GRAY
+            fg_color = Colors.WHITE if is_active else Colors.DARK_GRAY
+
+            tab_btn = Button(self.tab_frame, text=f"{lang_name}",
+                            font=Fonts.BODY_BOLD if is_active else Fonts.BODY,
+                            bg=bg_color, fg=fg_color, relief='flat', bd=0,
+                            padx=Spacing.MD, pady=Spacing.XS,
+                            command=lambda lc=lang_code: self.switch_language(lc))
+            tab_btn.pack(side='left', padx=(0, Spacing.XS))
+            self.tab_buttons[lang_code] = tab_btn
+
+    def switch_language(self, language_code):
+        """Switch to a different language tab."""
+        self.current_language = language_code
+
+        # Update tab button styles
+        for code, btn in self.tab_buttons.items():
+            if code == language_code:
+                btn.config(bg=Colors.PRIMARY, fg=Colors.WHITE, font=Fonts.BODY_BOLD)
+            else:
+                btn.config(bg=Colors.LIGHT_GRAY, fg=Colors.DARK_GRAY, font=Fonts.BODY)
+
+        # Reload words with new filter
+        self.load_words()
 
     def create_toolbar(self):
         """Create toolbar with Add button and stats."""
@@ -522,8 +578,12 @@ class DatabaseView:
         for widget in self.table_frame.winfo_children():
             widget.destroy()
 
-        # Get words sorted by date_added descending
-        words = self.db_manager.get_all_words()
+        # Get words filtered by current language
+        if self.current_language:
+            words = self.db_manager.get_words_by_language(self.current_language)
+        else:
+            words = self.db_manager.get_all_words()
+
         words.sort(key=lambda w: w.date_added or '', reverse=True)
 
         self.count_label.config(text=f"Total: {len(words)} words")

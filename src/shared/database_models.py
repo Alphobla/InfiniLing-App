@@ -200,6 +200,27 @@ class DatabaseManager:
             session.expunge_all()  # Detach all objects from session
             return words
 
+    def get_language_counts(self):
+        """Get count of words per source language."""
+        with self.session_scope() as session:
+            from sqlalchemy import func
+            results = session.query(
+                Vocabulary.language_from,
+                func.count(Vocabulary.id)
+            ).group_by(Vocabulary.language_from).all()
+            return {lang: count for lang, count in results if lang}
+
+    def get_words_by_language(self, language_from):
+        """Get all words for a specific source language."""
+        with self.session_scope() as session:
+            words = session.query(Vocabulary).filter(
+                Vocabulary.language_from == language_from
+            ).all()
+            # Detach from session
+            for word in words:
+                session.expunge(word)
+            return words
+
     def delete_word(self, word_id: int) -> bool:
         """Delete a vocabulary word by ID.
 
