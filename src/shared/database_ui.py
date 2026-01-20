@@ -9,6 +9,127 @@ from .style_utils import StyledWidgets, CommonPatterns
 from .database_models import DatabaseManager
 
 
+class SettingsDialog:
+    """Minimal settings dialog for API key and mother tongue."""
+
+    def __init__(self, parent, config, on_save=None):
+        self.parent = parent
+        self.config = config
+        self.on_save = on_save
+
+        self.available_languages = self.config.get('vocabulary.languages.available_languages', [
+            ["English", "en"],
+            ["German", "de"],
+            ["French", "fr"],
+            ["Spanish", "es"]
+        ])
+
+        self.create_dialog()
+
+    def create_dialog(self):
+        """Create the settings dialog."""
+        self.dialog = Toplevel(self.parent)
+        self.dialog.title("Settings")
+        self.dialog.configure(bg=Colors.WHITE)
+        self.dialog.resizable(False, False)
+
+        # Center dialog
+        dialog_width, dialog_height = 350, 250
+        x = self.parent.winfo_x() + (self.parent.winfo_width() // 2) - (dialog_width // 2)
+        y = self.parent.winfo_y() + (self.parent.winfo_height() // 2) - (dialog_height // 2)
+        self.dialog.geometry(f"{dialog_width}x{dialog_height}+{x}+{y}")
+
+        # Make modal
+        self.dialog.transient(self.parent)
+        self.dialog.grab_set()
+
+        # Title
+        title_frame = Frame(self.dialog, bg=Colors.WHITE)
+        title_frame.pack(fill='x', padx=Spacing.LG, pady=Spacing.MD)
+
+        Label(title_frame, text="Settings", font=Fonts.HEADING,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left')
+
+        close_btn = Button(title_frame, text="X", font=Fonts.BODY,
+                          bg=Colors.WHITE, fg=Colors.MEDIUM_GRAY, relief='flat', bd=0,
+                          command=self.dialog.destroy)
+        close_btn.pack(side='right')
+
+        # Form
+        form_frame = Frame(self.dialog, bg=Colors.WHITE)
+        form_frame.pack(fill='both', expand=True, padx=Spacing.LG, pady=Spacing.MD)
+
+        # API Key
+        Label(form_frame, text="OpenAI API Key", font=Fonts.BODY_BOLD,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(anchor='w')
+        self.key_entry = Entry(form_frame, font=Fonts.BODY, width=35)
+        self.key_entry.pack(fill='x', pady=(0, Spacing.MD))
+
+        # Pre-fill current API key
+        current_key = self.config.get_api_key() or ""
+        self.key_entry.insert(0, current_key)
+
+        # Mother Tongue
+        Label(form_frame, text="Native Language", font=Fonts.BODY_BOLD,
+              bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(anchor='w')
+
+        self.language_var = StringVar()
+        language_names = [lang[0] for lang in self.available_languages]
+        self.language_combo = ttk.Combobox(form_frame, textvariable=self.language_var,
+                                           values=language_names, width=32, state='readonly')
+        self.language_combo.pack(fill='x', pady=(0, Spacing.MD))
+
+        # Pre-select current mother tongue
+        current_code = self.config.get_mother_tongue()
+        for i, (name, code) in enumerate(self.available_languages):
+            if code == current_code:
+                self.language_combo.current(i)
+                break
+
+        # Buttons
+        btn_frame = Frame(self.dialog, bg=Colors.WHITE)
+        btn_frame.pack(fill='x', padx=Spacing.LG, pady=Spacing.MD)
+
+        cancel_btn = Button(btn_frame, text="Cancel", font=Fonts.BODY,
+                           bg=Colors.LIGHT_GRAY, fg=Colors.DARK_GRAY, relief='flat', bd=0,
+                           padx=Spacing.LG, pady=Spacing.SM,
+                           command=self.dialog.destroy)
+        cancel_btn.pack(side='left')
+
+        save_btn = Button(btn_frame, text="Save", font=Fonts.BODY_BOLD,
+                         bg=Colors.PRIMARY, fg=Colors.WHITE, relief='flat', bd=0,
+                         padx=Spacing.LG, pady=Spacing.SM,
+                         command=self.save_settings)
+        save_btn.pack(side='right')
+
+    def save_settings(self):
+        """Save settings and close dialog."""
+        api_key = self.key_entry.get().strip()
+        selected_name = self.language_var.get()
+
+        # Find language code
+        language_code = None
+        for name, code in self.available_languages:
+            if name == selected_name:
+                language_code = code
+                break
+
+        # Validate
+        if api_key and not (api_key.startswith("sk-") and len(api_key) > 20):
+            messagebox.showerror("Error", "Invalid API key format", parent=self.dialog)
+            return
+
+        # Save
+        if api_key:
+            self.config.save_api_key(api_key)
+        if language_code:
+            self.config.save_mother_tongue(language_code)
+
+        self.dialog.destroy()
+        if self.on_save:
+            self.on_save()
+
+
 class AddWordDialog:
     """Modal dialog for adding new words."""
 
@@ -307,6 +428,12 @@ class DatabaseView:
         title = Label(header_frame, text="My Database",
                      font=Fonts.TITLE, bg=Colors.CONTENT_BG, fg=Colors.DARK_GRAY)
         title.pack(side='left', padx=(Spacing.LG, 0))
+
+        # Settings button (right side)
+        settings_btn = Button(header_frame, text="\u2699", font=("Segoe UI", 16),
+                             bg=Colors.CONTENT_BG, fg=Colors.MEDIUM_GRAY, relief='flat', bd=0,
+                             command=self.show_settings)
+        settings_btn.pack(side='right')
 
     def create_toolbar(self):
         """Create toolbar with Add button and stats."""
@@ -710,3 +837,7 @@ class DatabaseView:
         """Return to main menu."""
         if self.back_callback:
             self.back_callback()
+
+    def show_settings(self):
+        """Show settings dialog."""
+        SettingsDialog(self.master, self.config)
