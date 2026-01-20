@@ -45,8 +45,8 @@ def main():
         # Initialize main menu with dependency injection
         MainMenu(root, config=config, vocab_service=vocab_service)
 
-    if not api_key:
-        # Launch setup if no key found
+    if not api_key or not config.get_mother_tongue():
+        # Launch setup if no key or mother tongue found
         SetupWindow(root, config, start_app)
     else:
         # Update environment for immediate use
