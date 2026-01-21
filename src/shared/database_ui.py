@@ -749,14 +749,20 @@ class DatabaseView:
         frame.configure(bg=Colors.HOVER)
         for widget in frame.winfo_children():
             if isinstance(widget, (Label, Frame)):
-                widget.configure(bg=Colors.HOVER)
+                # Skip frequency badge (has colored background)
+                current_bg = str(widget.cget('bg'))
+                if current_bg in (Colors.WHITE, Colors.HOVER):
+                    widget.configure(bg=Colors.HOVER)
 
     def on_row_leave(self, frame):
         """Handle mouse leave on row."""
         frame.configure(bg=Colors.WHITE)
         for widget in frame.winfo_children():
             if isinstance(widget, (Label, Frame)):
-                widget.configure(bg=Colors.WHITE)
+                # Skip frequency badge (has colored background)
+                current_bg = str(widget.cget('bg'))
+                if current_bg in (Colors.WHITE, Colors.HOVER):
+                    widget.configure(bg=Colors.WHITE)
 
     def toggle_expand(self, word_id):
         """Toggle row expansion to show example sentences."""
