@@ -1,4 +1,5 @@
 {
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(mv:*)",
@@ -15,9 +16,9 @@
       "Bash(\".venv/Scripts/pytest.exe\" tests/test_frequency_analysis.py -v)",
       "Skill(superpowers:brainstorming)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(python -m py_compile:*)"
     ],
     "deny": []
-  },
-  "includeCoAuthoredBy": false
+  }
 }
