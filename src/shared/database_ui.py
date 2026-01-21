@@ -709,7 +709,7 @@ class DatabaseView:
         actions_frame = Frame(content_frame, bg=Colors.WHITE)
         actions_frame.pack(side='left', padx=Spacing.XS)
 
-        edit_btn = Button(actions_frame, text="✏️", font=Fonts.SMALL,
+        edit_btn = Button(actions_frame, text="✎", font=Fonts.BODY,
                          bg=Colors.WHITE, fg=Colors.PRIMARY, relief='flat', bd=0,
                          command=lambda w=word: self.start_edit(w.id))
         edit_btn.pack(side='left', padx=2)
