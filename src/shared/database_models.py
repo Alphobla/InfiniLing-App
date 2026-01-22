@@ -170,11 +170,9 @@ class DatabaseManager:
                 language_to=language_to,
                 **kwargs
             )
-            # Enhance the word with GPT normalization and frequency data
             session.add(vocab)
             session.flush()  # Get the ID
-
-            
+            session.expunge(vocab)  # Detach from session so it's usable after
             return vocab
     
     def get_word(self, word_id: int):

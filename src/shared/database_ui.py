@@ -167,7 +167,7 @@ class AddWordDialog:
         self.dialog.resizable(False, False)
 
         # Center dialog
-        dialog_width, dialog_height = 400, 480
+        dialog_width, dialog_height = 400, 700
         x = self.parent.winfo_x() + (self.parent.winfo_width() // 2) - (dialog_width // 2)
         y = self.parent.winfo_y() + (self.parent.winfo_height() // 2) - (dialog_height // 2)
         self.dialog.geometry(f"{dialog_width}x{dialog_height}+{x}+{y}")
@@ -329,10 +329,6 @@ class AddWordDialog:
 
     def add_word_auto(self, word_text):
         """Add word using GPT auto-fill."""
-        self.status_label.config(text="Processing with GPT...")
-        self.add_btn.config(state='disabled')
-        self.dialog.update()
-
         # Get selected language
         selected_name = self.lang_var.get()
         language_from = 'fr'  # default
@@ -345,6 +341,17 @@ class AddWordDialog:
         language_to = 'de'  # default
         if self.config:
             language_to = self.config.get_mother_tongue() or 'de'
+
+        # Get API key before starting thread
+        api_key = self.config.get_api_key() if self.config else None
+        if not api_key:
+            messagebox.showerror("Error", "No API key configured. Please add your OpenAI API key in Settings.", parent=self.dialog)
+            return
+
+        # Show processing status
+        self.status_label.config(text="Processing with GPT...")
+        self.add_btn.config(state='disabled')
+        self.dialog.update()
 
         import threading
 
@@ -363,7 +370,7 @@ class AddWordDialog:
                 with self.db_manager.session_scope() as session:
                     vocab = session.query(Vocabulary).filter(Vocabulary.id == word.id).first()
                     if vocab:
-                        enhanced = self.db_manager.enhance_word(vocab)
+                        enhanced = self.db_manager.enhance_word(vocab, api_key=api_key)
                         for attr in ['word', 'primary_translation', 'secondary_translation',
                                    'translation', 'frequency_level', 'frequency_rank',
                                    'example_sentence_original', 'example_sentence_translation']:
@@ -372,7 +379,8 @@ class AddWordDialog:
 
                 self.dialog.after(0, self.on_add_success)
             except Exception as e:
-                self.dialog.after(0, lambda: self.on_add_error(str(e)))
+                err_msg = str(e)
+                self.dialog.after(0, lambda msg=err_msg: self.on_add_error(msg))
 
         thread = threading.Thread(target=worker, daemon=True)
         thread.start()
