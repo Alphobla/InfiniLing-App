@@ -37,8 +37,10 @@ def main():
         except Exception:
             pass
         
-        # Initialize vocabulary service with config
+        # Initialize vocabulary service with config - required, no fallback
         database_url = config.get('vocabulary.database_url')
+        if not database_url:
+            raise KeyError("'vocabulary.database_url' not configured in config.json")
         vocab_service = VocabularyApp(database_url, config=config)
         print("✅ Vocabulary service initialized")
         

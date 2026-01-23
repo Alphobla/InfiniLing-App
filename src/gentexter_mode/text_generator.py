@@ -65,9 +65,15 @@ class TextGenerator:
         try:
             print(f"🎯 Generating dialogue with {len(vocab_list)} vocabulary words...")
             
-            story_model = self.config.get('text_generation.model', 'gpt-4o-mini')
-            story_temp = self.config.get('text_generation.temperature', 0.7)
-            max_factor = self.config.get('text_generation.max_tokens_per_word', 1.5)
+            story_model = self.config.get('text_generation.model')
+            if not story_model:
+                raise KeyError("'text_generation.model' not configured in config.json")
+            story_temp = self.config.get('text_generation.temperature')
+            if story_temp is None:
+                raise KeyError("'text_generation.temperature' not configured in config.json")
+            max_factor = self.config.get('text_generation.max_tokens_per_word')
+            if max_factor is None:
+                raise KeyError("'text_generation.max_tokens_per_word' not configured in config.json")
             
             response = self.client.chat.completions.create(
                 model=story_model,

@@ -83,13 +83,13 @@ class TestWindowSize:
         assert width == 800
         assert height == 600
 
-    def test_get_window_size_default(self, temp_config_file):
-        """Should return default size for unconfigured window."""
+    def test_get_window_size_unconfigured_raises(self, temp_config_file):
+        """Should raise KeyError for unconfigured window type."""
         config = ConfigManager(config_file=temp_config_file)
 
-        width, height = config.get_window_size("nonexistent")
-        assert width == 500  # default
-        assert height == 600  # default
+        with pytest.raises(KeyError) as exc_info:
+            config.get_window_size("nonexistent")
+        assert "nonexistent" in str(exc_info.value)
 
 
 class TestPathResolution:

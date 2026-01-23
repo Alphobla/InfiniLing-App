@@ -41,38 +41,38 @@ class GPTTranslator:
         self.cache = {}  # Simple translation cache
         
     def _call_gpt(self, prompt: str, model: str = None) -> str:
-        """Make API call to GPT."""
-        try:
-            import json
-            # Default values if config fails
-            model_to_use = "gpt-4o-mini"
-            max_tokens = 500
-            temperature = 0.3
+        """Make API call to GPT. Raises on config or API errors."""
+        import json
+        
+        # Load config - required, no fallbacks
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+        
+        enh_config = config.get('word_enhancement')
+        if not enh_config:
+            raise KeyError("'word_enhancement' section not found in config.json")
+        
+        model_to_use = enh_config.get('model')
+        if not model_to_use:
+            raise KeyError("'word_enhancement.model' not configured in config.json")
+        max_tokens = enh_config.get('max_tokens')
+        if max_tokens is None:
+            raise KeyError("'word_enhancement.max_tokens' not configured in config.json")
+        temperature = enh_config.get('temperature')
+        if temperature is None:
+            raise KeyError("'word_enhancement.temperature' not configured in config.json")
+        
+        # Allow override via parameter
+        if model:
+            model_to_use = model
 
-            try:
-                with open('config.json', 'r') as f:
-                    config = json.load(f)
-                enh_config = config.get('word_enhancement', {})
-                model_to_use = enh_config.get('model', model_to_use)
-                max_tokens = enh_config.get('max_tokens', max_tokens)
-                temperature = enh_config.get('temperature', temperature)
-            except Exception as e:
-                print(f"Warning: Could not load config.json for GPTTranslator: {e}")
-            
-            # Allow override via parameter
-            if model:
-                model_to_use = model
-
-            response = self.client.chat.completions.create(
-                model=model_to_use,
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=max_tokens,
-                temperature=temperature
-            )
-            return response.choices[0].message.content.strip()
-        except Exception as e:
-            print(f"GPT API error ({model_to_use if 'model_to_use' in locals() else 'unknown'}): {e}")
-            return None
+        response = self.client.chat.completions.create(
+            model=model_to_use,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=max_tokens,
+            temperature=temperature
+        )
+        return response.choices[0].message.content.strip()
     
     def lemmatize_word(self, word: str, language: str) -> Dict:
         """
@@ -109,14 +109,11 @@ class GPTTranslator:
         
         response = self._call_gpt(prompt)
         if not response:
-            return {"root_word": word}
+            raise ValueError(f"GPT returned empty response for lemmatization of '{word}'")
         
-        try:
-            result = json.loads(response)
-            self.cache[cache_key] = result
-            return result
-        except json.JSONDecodeError:
-            return {"root_word": word}
+        result = json.loads(response)
+        self.cache[cache_key] = result
+        return result
 
     def translate_word(self, word: str, language_from: str, language_to: str, assist_translation: str = None) -> Dict:
         """
@@ -150,14 +147,11 @@ class GPTTranslator:
         
         response = self._call_gpt(prompt)
         if not response:
-            return {"primary_translation": "Translation unavailable", "secondary_translation": None}
+            raise ValueError(f"GPT returned empty response for translation of '{word}'")
         
-        try:
-            result = json.loads(response)
-            self.cache[cache_key] = result
-            return result
-        except json.JSONDecodeError:
-            return {"primary_translation": "Translation error", "secondary_translation": None}
+        result = json.loads(response)
+        self.cache[cache_key] = result
+        return result
     
     def normalize_and_translate(self, word: str, language_from: str, language_to: str, assist_translation: str = None) -> Dict:
         """
@@ -268,33 +262,27 @@ class GPTTranslator:
         
         response = self._call_gpt(prompt)
         if not response:
-            return {"root_word": word, "primary_translation": "Translation unavailable", "secondary_translation": None}
+            raise ValueError(f"GPT returned empty response for normalize_and_translate of '{word}'")
         
-        try:
-            # Clean response from potential markdown code blocks
-            clean_response = response.strip()
-            if clean_response.startswith("```"):
-                # Handle ```json ... ``` or just ``` ... ```
-                lines = clean_response.splitlines()
-                if len(lines) >= 3:
-                    # Remove the first and last lines (the backticks)
-                    clean_response = "\n".join(lines[1:-1]).strip()
-            
-            result = json.loads(clean_response)
-            
-            # Validate root_word - if it's "None", "null", empty, or suspicious, use original
-            root_word = result.get("root_word", word)
-            if not root_word or root_word.lower() in ["none", "null", "aucun", "nul"]:
-                root_word = word
-                print(f"Warning: GPT returned invalid root_word '{result.get('root_word')}' for '{word}', using original")
-            
-            result["root_word"] = root_word
-            self.cache[cache_key] = result
-            return result
-        except (json.JSONDecodeError, AttributeError) as e:
-            print(f"JSON parsing error for '{word}': {e}")
-            print(f"Response was: {response}")
-            return {"root_word": word, "primary_translation": "Translation error", "secondary_translation": None}
+        # Clean response from potential markdown code blocks
+        clean_response = response.strip()
+        if clean_response.startswith("```"):
+            # Handle ```json ... ``` or just ``` ... ```
+            lines = clean_response.splitlines()
+            if len(lines) >= 3:
+                # Remove the first and last lines (the backticks)
+                clean_response = "\n".join(lines[1:-1]).strip()
+        
+        result = json.loads(clean_response)
+        
+        # Validate root_word - if it's "None", "null", empty, or suspicious, raise error
+        root_word = result.get("root_word")
+        if not root_word or root_word.lower() in ["none", "null", "aucun", "nul"]:
+            raise ValueError(f"GPT returned invalid root_word '{result.get('root_word')}' for '{word}'")
+        
+        result["root_word"] = root_word
+        self.cache[cache_key] = result
+        return result
 
     def format_analysis_for_display(self, analysis: WordAnalysis) -> str:
         """
@@ -368,7 +356,7 @@ class GPTTranslator:
             core_word = strip_to_core_word(root_word)
             frequency = get_word_frequency_category(core_word, language_from)
 
-            # Get example sentence with core word
+            # Get example sentence with core word (optional but log errors)
             example_original = None
             example_translation = None
             try:
@@ -376,8 +364,8 @@ class GPTTranslator:
                 if example:
                     example_original = example[0]
                     example_translation = example[1]
-            except:
-                pass
+            except Exception as e:
+                print(f"Warning: Could not get example sentence for '{core_word}': {e}")
             
             # Return complete analysis
             return {
@@ -394,7 +382,7 @@ class GPTTranslator:
             }
             
         except Exception as e:
-            return {"error": f"Error analyzing word '{word_text}': {e}"}
+            raise RuntimeError(f"Error analyzing word '{word_text}': {e}") from e
 # Utility functions for easy integration
 def create_translator(api_key: str) -> GPTTranslator:
     """Create a GPT translator instance."""

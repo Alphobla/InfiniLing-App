@@ -327,10 +327,13 @@ class AddWordDialog:
         if not language_from:
             language_from = self.current_language
 
-        # Get mother tongue
-        language_to = 'de'  # default
-        if self.config:
-            language_to = self.config.get_mother_tongue() or 'de'
+        # Get mother tongue - required, no fallback
+        if not self.config:
+            raise ValueError("ConfigManager is required for add_word_auto")
+        language_to = self.config.get_mother_tongue()
+        if not language_to:
+            messagebox.showerror("Error", "Mother tongue not configured. Please set it in Settings.", parent=self.dialog)
+            return
 
         # Get API key before starting thread
         api_key = self.config.get_api_key() if self.config else None

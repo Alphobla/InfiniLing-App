@@ -34,19 +34,21 @@ class WhisperInterface:
             back_callback: Callback function to return to main menu
         """
         self.master = master
-        self.config = config
         self.back_callback = back_callback
         
-        # Use config for window settings if available
-        if self.config:
-            app_name = self.config.get('app.name', 'InfiniLing')
-            window_width, window_height = self.config.get_window_size('transcriber')
-            bg_color = self.config.get('ui.colors.background', Colors.BACKGROUND)
-        else:
-            # Fallback values
-            app_name = 'InfiniLing'
-            window_width, window_height = 500, 550
-            bg_color = Colors.BACKGROUND
+        # Config is required - no fallbacks
+        if not config:
+            raise ValueError("ConfigManager is required for WhisperInterface")
+        self.config = config
+        
+        # Get config values - will raise if not configured
+        app_name = self.config.get('app.name')
+        if not app_name:
+            raise KeyError("'app.name' not configured in config.json")
+        window_width, window_height = self.config.get_window_size('transcriber')
+        bg_color = self.config.get('ui.colors.background')
+        if not bg_color:
+            raise KeyError("'ui.colors.background' not configured in config.json")
         
         self.master.title(f"🎤 {app_name} - Transcription Mode")
         self.master.configure(bg=bg_color)
@@ -58,7 +60,7 @@ class WhisperInterface:
         self.ui_state = "INITIAL"  # INITIAL, FILE_SELECTED, TRANSCRIBING, COMPLETED
         
         # Initialize language from last used (empty if not set)
-        default_language = self.config.get_last_language() if self.config else None
+        default_language = self.config.get_last_language()
         self.selected_language = StringVar(value=default_language or "")
         
         # UI components references
@@ -366,8 +368,10 @@ class WhisperInterface:
             for widget in self.master.winfo_children():
                 widget.destroy()
             self.setup_ui()
-        # Get target language from config
-        language_to = self.config.get('vocabulary.languages.to', 'de')
+        # Get target language from config - required
+        language_to = self.config.get('vocabulary.languages.to')
+        if not language_to:
+            raise KeyError("'vocabulary.languages.to' not configured in config.json")
         SavedTranscriptionReview(
             self.master, srt_path, mp3_path, 
             config=self.config, 

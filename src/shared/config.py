@@ -55,8 +55,10 @@ class ConfigManager:
         return value
     
     def get_window_size(self, window_type):
-        """Get (width, height) for window type."""
-        window_config = self.get(f'ui.window_sizes.{window_type}', {'width': 500, 'height': 600})
+        """Get (width, height) for window type. Raises KeyError if not configured."""
+        window_config = self.get(f'ui.window_sizes.{window_type}')
+        if window_config is None:
+            raise KeyError(f"Window size not configured for '{window_type}'. Add 'ui.window_sizes.{window_type}' to config.json")
         return window_config['width'], window_config['height']
     
     def get_user_settings_path(self):
@@ -67,14 +69,11 @@ class ConfigManager:
         return os.path.join(settings_dir, 'settings.json')
 
     def load_user_settings(self):
-        """Load user settings from home directory."""
+        """Load user settings from home directory. Raises on corrupt settings file."""
         path = self.get_user_settings_path()
         if os.path.exists(path):
-            try:
-                with open(path, 'r', encoding='utf-8') as f:
-                    return json.load(f)
-            except Exception:
-                return {}
+            with open(path, 'r', encoding='utf-8') as f:
+                return json.load(f)
         return {}
 
     def save_api_key(self, api_key):
