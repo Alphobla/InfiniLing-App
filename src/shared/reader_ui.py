@@ -12,8 +12,8 @@ from .style_utils import CommonPatterns
 class ReaderUI:
     """Shared reader UI with text display and audio controls"""
     
-    def __init__(self, master,  title, service_app=None, audio_path=None, text_content=None, srt_path=None, back_callback=None, 
-                 forward_callback=None, forward_text="Next →", language_from="fr", language_to="de", config=None):
+    def __init__(self, master,  title, service_app=None, audio_path=None, text_content=None, srt_path=None, back_callback=None,
+                 forward_callback=None, forward_text="Next →", language_from=None, language_to=None, config=None):
         """
         Initialize ReaderUI with dependency injection.
         

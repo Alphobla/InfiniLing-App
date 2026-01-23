@@ -7,6 +7,7 @@ import re
 import shutil
 from src.shared.reader_ui import ReaderUI
 from src.shared.styles import center_top_window, Colors
+from src.shared.languages import get_all_languages, get_name
 
 
 def get_transcription_date(srt_path):
@@ -56,9 +57,9 @@ class WhisperInterface:
         self.transcriber = None
         self.ui_state = "INITIAL"  # INITIAL, FILE_SELECTED, TRANSCRIBING, COMPLETED
         
-        # Initialize language from config
-        default_language = self.config.get('transcriber.whisper.language', 'fr') if self.config else 'fr'
-        self.selected_language = StringVar(value=default_language)
+        # Initialize language from last used (empty if not set)
+        default_language = self.config.get_last_language() if self.config else None
+        self.selected_language = StringVar(value=default_language or "")
         
         # UI components references
         self.browse_button = None
@@ -142,7 +143,15 @@ class WhisperInterface:
         if not self.audio_file_path:
             messagebox.showwarning("Warning", "Please select an audio file first.")
             return
-        
+
+        if not self.selected_language.get():
+            messagebox.showwarning("Warning", "Please select a language first.")
+            return
+
+        # Save selected language as last used
+        if self.config:
+            self.config.save_last_language(self.selected_language.get())
+
         # Switch to transcribing state
         self.ui_state = "TRANSCRIBING"
         self.update_ui_state()
@@ -530,12 +539,8 @@ class WhisperInterface:
         options_frame = Frame(lang_frame, bg=Colors.SURFACE)
         options_frame.pack(pady=(0, 15))
 
-        languages = [
-            ("French", "fr"),
-            ("Russian", "ru"),
-            ("Arabic", "ar"),
-            ("English", "en")
-        ]
+        # Get languages from central module
+        languages = get_all_languages()  # [(name, code), ...]
         for lang_desc, lang_code in languages:
             lang_radio = Radiobutton(
                 options_frame,

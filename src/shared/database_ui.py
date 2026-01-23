@@ -7,6 +7,7 @@ from tkinter import Frame, Label, Button, messagebox, Entry, Canvas, Scrollbar, 
 from .styles import Colors, Fonts, Spacing, center_top_window
 from .style_utils import StyledWidgets, CommonPatterns
 from .database_models import DatabaseManager
+from .languages import get_all_languages, get_name, get_code
 
 
 class SettingsDialog:
@@ -17,12 +18,7 @@ class SettingsDialog:
         self.config = config
         self.on_save = on_save
 
-        self.available_languages = self.config.get('vocabulary.languages.available_languages', [
-            ["English", "en"],
-            ["German", "de"],
-            ["French", "fr"],
-            ["Spanish", "es"]
-        ])
+        self.available_languages = get_all_languages()  # [(name, code), ...]
 
         self.create_dialog()
 
@@ -151,11 +147,7 @@ class AddWordDialog:
         self.on_success = on_success
         self.is_auto_mode = True
 
-        self.available_languages = []
-        if config:
-            self.available_languages = config.get('vocabulary.languages.available_languages', [])
-        if not self.available_languages:
-            self.available_languages = [["French", "fr"], ["German", "de"], ["English", "en"], ["Spanish", "es"]]
+        self.available_languages = get_all_languages()  # [(name, code), ...]
 
         self.create_dialog()
 
@@ -331,11 +323,9 @@ class AddWordDialog:
         """Add word using GPT auto-fill."""
         # Get selected language
         selected_name = self.lang_var.get()
-        language_from = 'fr'  # default
-        for name, code in self.available_languages:
-            if name == selected_name:
-                language_from = code
-                break
+        language_from = get_code(selected_name)
+        if not language_from:
+            language_from = self.current_language
 
         # Get mother tongue
         language_to = 'de'  # default
@@ -395,16 +385,12 @@ class AddWordDialog:
 
         # Get selected language
         selected_name = self.lang_var.get()
-        language_from = 'fr'
-        for name, code in self.available_languages:
-            if name == selected_name:
-                language_from = code
-                break
+        language_from = get_code(selected_name)
+        if not language_from:
+            language_from = self.current_language
 
         # Get mother tongue
-        language_to = 'de'
-        if self.config:
-            language_to = self.config.get_mother_tongue() or 'de'
+        language_to = self.config.get_mother_tongue() if self.config else 'de'
 
         try:
             self.db_manager.add_word(
@@ -519,13 +505,9 @@ class DatabaseView:
         self.tab_frame = Frame(self.main_frame, bg=Colors.CONTENT_BG)
         self.tab_frame.pack(fill='x', pady=(0, Spacing.SM))
 
-        # Get language name mapping
-        available_languages = self.config.get('vocabulary.languages.available_languages', [])
-        code_to_name = {code: name for name, code in available_languages}
-
         self.tab_buttons = {}
         for lang_code, count in sorted_langs:
-            lang_name = code_to_name.get(lang_code, lang_code.upper())
+            lang_name = get_name(lang_code)
             is_active = lang_code == self.current_language
 
             bg_color = Colors.PRIMARY if is_active else Colors.LIGHT_GRAY
@@ -542,6 +524,10 @@ class DatabaseView:
     def switch_language(self, language_code):
         """Switch to a different language tab."""
         self.current_language = language_code
+
+        # Save as last used language
+        if self.config:
+            self.config.save_last_language(language_code)
 
         # Update tab button styles
         for code, btn in self.tab_buttons.items():
@@ -991,9 +977,13 @@ class DatabaseView:
             return  # User canceled
 
         try:
-            # Use current language or default to French
-            language_from = self.current_language or 'fr'
-            language_to = self.config.get_mother_tongue() if self.config else 'de'
+            # Use current language or last used language
+            language_from = self.current_language or (self.config.get_last_language() if self.config else None)
+            language_to = self.config.get_mother_tongue() if self.config else None
+
+            if not language_from or not language_to:
+                messagebox.showerror("Error", "Language not configured. Please set up languages first.")
+                return
 
             results = self.db_manager.import_vocabulary_from_csv(
                 file_path,

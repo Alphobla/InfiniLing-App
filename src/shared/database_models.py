@@ -38,7 +38,7 @@ class Vocabulary(Base):
     word = Column(String(255), nullable=False, index=True)
     original_word = Column(String(255), nullable=False, index=True)  # Original word in source language
     translation = Column(String(255), nullable=False)
-    language_from = Column(String(10), nullable=False, default='fr')
+    language_from = Column(String(10), nullable=False)
     language_to = Column(String(10), nullable=False, default='de')
     
     # Optional metadata from GPT translation
@@ -159,7 +159,7 @@ class DatabaseManager:
             session.close()
     
     # CRUD Operations
-    def add_word(self, word: str, translation: str, language_from: str = 'fr', language_to: str = 'de', **kwargs):
+    def add_word(self, word: str, translation: str, language_from: str = None, language_to: str = None, **kwargs):
         """Add a new vocabulary word to the database."""
         with self.session_scope() as session:
             vocab = Vocabulary(
@@ -276,14 +276,14 @@ class DatabaseManager:
             session.expunge_all()
             return  occurences
             
-    def import_vocabulary_from_csv(self, csv_file_path: str, language_from: str = 'fr', language_to: str = 'de'):
+    def import_vocabulary_from_csv(self, csv_file_path: str, language_from: str = None, language_to: str = None):
         """
         Import vocabulary from a CSV file.
-        
+
         Args:
             csv_file_path: Path to the CSV file
-            language_from: Source language (default: 'fr')
-            language_to: Target language (default: 'de')
+            language_from: Source language (required)
+            language_to: Target language (required)
         
         Returns:
             dict: Import results with counts

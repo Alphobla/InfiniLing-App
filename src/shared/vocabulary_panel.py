@@ -14,7 +14,7 @@ from .database_models import DatabaseManager
 class VocabularyPanel:
     """Panel for displaying word translations and frequency analysis."""
     
-    def __init__(self, parent, language_from: str = "fr", language_to: str = "de"):
+    def __init__(self, parent, language_from: str = None, language_to: str = None):
         """
         Initialize vocabulary panel.
         

@@ -10,6 +10,7 @@ import json
 from typing import List, Tuple
 from dotenv import load_dotenv
 import openai
+from src.shared.languages import get_name as get_language_name
 
 # Load environment variables from .env file
 load_dotenv()
@@ -26,14 +27,20 @@ class TextGenerator:
         
         self.client = openai.OpenAI(api_key=self.api_key)
     
-    def generate_story(self, vocab_list: List[dict[str, str,str]], 
-                      language: str = "French", 
+    def generate_story(self, vocab_list: List[dict[str, str,str]],
+                      language: str = None,
                       word_count: int = 300) -> str:
         """Generate a story incorporating the vocabulary words."""
-        
+
         if not vocab_list:
             raise ValueError("No vocabulary words provided for story generation")
-        
+
+        if not language:
+            raise ValueError("No language specified for story generation")
+
+        # Convert language code to name if needed (e.g., "en" -> "English")
+        language_name = get_language_name(language)
+
         # Format vocabulary for the prompt
         vocab_strings = []
         for vocab_entry in vocab_list:
@@ -42,18 +49,18 @@ class TextGenerator:
         
         vocab_list_str = ", ".join(vocab_strings)
         
-        prompt = f"""Write an engaging short dialogue in {language} (about {word_count} words) that naturally incorporates these vocabulary words:
+        prompt = f"""Write an engaging short dialogue in {language_name} (about {word_count} words) that naturally incorporates these vocabulary words:
 
             {vocab_list_str}
 
             Requirements:
             - Use ALL the vocabulary words naturally in context
-            - Make the dialogue interesting and coherent  
-            - Use conversational, modern {language}, dont use rare words
+            - Make the dialogue interesting and coherent
+            - Use conversational, modern {language_name}, dont use rare words
             - The dialogue should help reinforce the meaning of each word through context
             - Make sure the dialogue flows well and is enjoyable to read
 
-            Please write only the dialogue in {language}, no other text."""
+            Please write only the dialogue in {language_name}, no other text."""
 
         try:
             print(f"🎯 Generating dialogue with {len(vocab_list)} vocabulary words...")
@@ -84,8 +91,14 @@ class TextGenerator:
 
     def generate_initial_words(self, language: str, difficulty: str, count: int = 20) -> List[dict]:
         """Generate a list of vocabulary words for a specific language and difficulty."""
-        
-        prompt = f"""Generate a list of exactly {count} common and useful vocabulary words in {language} for a learner at {difficulty} level.
+
+        if not language:
+            raise ValueError("No language specified for word generation")
+
+        # Convert language code to name if needed (e.g., "en" -> "English")
+        language_name = get_language_name(language)
+
+        prompt = f"""Generate a list of exactly {count} common and useful vocabulary words in {language_name} for a learner at {difficulty} level.
         
         Requirements:
         - Words should be appropriate for the {difficulty} (CEFR) level.
@@ -102,7 +115,7 @@ class TextGenerator:
         Provide ONLY the JSON array, no other text."""
 
         try:
-            print(f"🎯 Generating {count} words for {language} ({difficulty})...")
+            print(f"🎯 Generating {count} words for {language_name} ({difficulty})...")
             
             story_model = self.config.get('text_generation.model', 'gpt-4o-mini')
             

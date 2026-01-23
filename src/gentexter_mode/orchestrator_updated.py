@@ -41,7 +41,7 @@ class VocabularyApp:
                            total_words: int = 20,
                            new_word_ratio: float = 0.25,  # 25% new words (5 out of 20)
                            text_length: int = 300,
-                           language: str = "French",
+                           language: str = None,
                            generate_audio: bool = True,
                            progress_callback=None) -> dict:
         """
@@ -158,7 +158,7 @@ class VocabularyApp:
         return self._current_session_data
     
     def run_scratch_session(self, 
-                             language: str = "French",
+                             language: str = None,
                              difficulty: str = "A1",
                              total_words: int = 20,
                              text_length: int = 300,
@@ -239,8 +239,8 @@ class VocabularyApp:
         """Get the total number of words in the database."""
         return len(self.database_manager.get_all_words())
     
-    def add_word_to_database(self, word: str, translation: str, 
-                           language_from: str = 'fr', language_to: str = 'de',
+    def add_word_to_database(self, word: str, translation: str,
+                           language_from: str = None, language_to: str = None,
                            pronunciation: str = None, 
                            example_sentence_original: str = None,
                            example_sentence_translation: str = None) -> bool:

@@ -15,7 +15,7 @@ class Transcriber:
         self.client = OpenAI(api_key=self.api_key)
         print("Initialized OpenAI Whisper API transcriber")
 
-    def transcribe_and_write_srt(self, audio_path, srt_path, language="fr", progress_callback=None):
+    def transcribe_and_write_srt(self, audio_path, srt_path, language=None, progress_callback=None):
         """Transcribe audio using OpenAI API and write SRT file with proper timestamps"""
         try:
             if progress_callback:

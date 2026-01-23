@@ -101,6 +101,19 @@ class ConfigManager:
         settings = self.load_user_settings()
         return settings.get('mother_tongue')
 
+    def save_last_language(self, language_code):
+        """Save last used source language to user settings."""
+        settings = self.load_user_settings()
+        settings['last_language_from'] = language_code
+        path = self.get_user_settings_path()
+        with open(path, 'w', encoding='utf-8') as f:
+            json.dump(settings, f, indent=4)
+
+    def get_last_language(self):
+        """Get last used source language from user settings. Returns None if not set."""
+        settings = self.load_user_settings()
+        return settings.get('last_language_from')
+
     def get_api_key(self):
         """Get API key from ENV or User Settings."""
         # 1. Check ENV (highest priority, from .env file)

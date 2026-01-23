@@ -17,39 +17,7 @@ import random
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple
 from src.shared.database_models import DatabaseManager, Vocabulary, VocabularyOccurrence
-
-# Language name to code mapping
-LANGUAGE_CODE_MAP = {
-    'french': 'fr',
-    'english': 'en',
-    'german': 'de',
-    'spanish': 'es',
-    'italian': 'it',
-    'portuguese': 'pt',
-    'dutch': 'nl',
-    'russian': 'ru',
-    'japanese': 'ja',
-    'chinese': 'zh',
-    'korean': 'ko',
-}
-
-# Valid language codes (for checking if input is already a code)
-VALID_LANGUAGE_CODES = set(LANGUAGE_CODE_MAP.values())
-
-
-def get_language_code(language: str) -> Optional[str]:
-    """Convert language name or code to a valid language code.
-
-    Accepts both language names ('French', 'English') and codes ('fr', 'en').
-    """
-    if not language:
-        return None
-    lang_lower = language.lower()
-    # If it's already a valid code, return it directly
-    if lang_lower in VALID_LANGUAGE_CODES:
-        return lang_lower
-    # Otherwise, look up the name in the map
-    return LANGUAGE_CODE_MAP.get(lang_lower)
+from src.shared.languages import get_code as get_language_code
 
 
 class SpacedRepetitionSelector:

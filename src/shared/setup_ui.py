@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 from .styles import Colors, Fonts, Spacing, center_top_window
+from .languages import get_all_languages, get_code
 
 class SetupWindow:
     def __init__(self, master, config, on_success):
@@ -8,13 +9,8 @@ class SetupWindow:
         self.config = config
         self.on_success = on_success
 
-        # Get available languages from config
-        self.available_languages = self.config.get('vocabulary.languages.available_languages', [
-            ["English", "en"],
-            ["German", "de"],
-            ["French", "fr"],
-            ["Spanish", "es"]
-        ])
+        # Get available languages from central module
+        self.available_languages = get_all_languages()  # [(name, code), ...]
 
         self.setup_ui()
 
@@ -76,11 +72,7 @@ class SetupWindow:
         selected_language_name = self.language_var.get()
 
         # Find language code from name
-        language_code = None
-        for name, code in self.available_languages:
-            if name == selected_language_name:
-                language_code = code
-                break
+        language_code = get_code(selected_language_name)
 
         # Validate API Key
         if not (user_key.startswith("sk-") and len(user_key) > 20):

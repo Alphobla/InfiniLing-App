@@ -10,6 +10,7 @@ from typing import Dict, Optional
 from dataclasses import dataclass
 from dotenv import load_dotenv
 from .frequency_analysis import get_word_frequency_category
+from .languages import get_name as get_language_name
 
 # Load environment variables
 load_dotenv()
@@ -133,14 +134,8 @@ class GPTTranslator:
         if cache_key in self.cache:
             return self.cache[cache_key]
         
-        lang_names = {
-            'en': 'English', 'fr': 'French', 'de': 'German', 'es': 'Spanish',
-            'it': 'Italian', 'pt': 'Portuguese', 'ru': 'Russian', 'ja': 'Japanese',
-            'ko': 'Korean', 'zh': 'Chinese', 'ar': 'Arabic', 'hi': 'Hindi'
-        }
-        
-        from_lang = lang_names.get(language_from, language_from)
-        to_lang = lang_names.get(language_to, language_to)
+        from_lang = get_language_name(language_from)
+        to_lang = get_language_name(language_to)
         
         prompt = f"""
         Translate this {from_lang} word to {to_lang}: "{word}"
@@ -181,14 +176,8 @@ class GPTTranslator:
         if cache_key in self.cache:
             return self.cache[cache_key]
         
-        lang_names = {
-            'en': 'English', 'fr': 'French', 'de': 'German', 'es': 'Spanish',
-            'it': 'Italian', 'pt': 'Portuguese', 'ru': 'Russian', 'ja': 'Japanese',
-            'ko': 'Korean', 'zh': 'Chinese', 'ar': 'Arabic', 'hi': 'Hindi'
-        }
-        
-        from_lang = lang_names.get(language_from, language_from)
-        to_lang = lang_names.get(language_to, language_to)
+        from_lang = get_language_name(language_from)
+        to_lang = get_language_name(language_to)
         
         prompt = f"""
         You are a vocabulary database cleaner for a language learning app.

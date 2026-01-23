@@ -1,11 +1,10 @@
 from tkinter import Frame, Button, Label, messagebox, ttk, Entry, Radiobutton, DoubleVar, IntVar, StringVar
 from ..shared.reader_ui import ReaderUI
-from ..shared.styles import apply_modern_theme, Colors, Fonts, Spacing
-from ..shared.style_utils import StyledWidgets, TileStyles, LayoutHelpers, CommonPatterns
-import os
+from ..shared.styles import Colors, Fonts, Spacing
+from ..shared.style_utils import StyledWidgets, CommonPatterns
+from ..shared.languages import get_all_languages, get_code, get_name
 import threading
 from ..shared.styles import center_top_window
-import json
 
 class GentexterConfig:
     def __init__(self, master, config=None, vocab_service=None, back_callback=None):
@@ -35,10 +34,6 @@ class GentexterConfig:
         # Group all vocabulary config reads together
         self.vocab_defaults = self.config.get('vocabulary')
 
-        # Build language name-to-code mapping for API calls
-        languages = self.vocab_defaults['languages']['available_languages']
-        self.language_code_map = {lang[0]: lang[1] for lang in languages}  # {"French": "fr", ...}
-
         # Determine initial source: Use scratch if databank is empty
         initial_source = "databank"
         try:
@@ -51,7 +46,9 @@ class GentexterConfig:
         self.total_words = IntVar(value=self.vocab_defaults['default_total_words'])
         self.new_word_ratio = DoubleVar(value=self.vocab_defaults['default_new_word_ratio'])
         self.text_length = IntVar(value=self.vocab_defaults['default_text_length'])
-        self.selected_language = StringVar(value="fr")  # Language selection
+        # Use last used language from settings (None if not set)
+        last_lang_code = self.config.get_last_language()
+        self.selected_language = StringVar(value=last_lang_code or "")
         self.selected_difficulty = StringVar(value="A1")  # Difficulty for scratch mode
         self.set_window_size()
         self.setup_ui()
@@ -157,15 +154,21 @@ class GentexterConfig:
         language_frame = Frame(common_frame, bg=Colors.WHITE)
         language_frame.pack(fill='x', pady=Spacing.XS)
 
-        languages = self.vocab_defaults['languages']['available_languages']
+        # Get languages from central module
+        all_languages = get_all_languages()  # [(name, code), ...]
+        language_names = [name for name, code in all_languages]
+
         language_combobox = ttk.Combobox(language_frame,
                                         textvariable=self.selected_language,
-                                        values=[lang[0] for lang in languages],
+                                        values=language_names,
                                         state="readonly",
                                         width=10,
                                         font=Fonts.BODY)
         language_combobox.pack(side='left', padx=Spacing.XS)
-        language_combobox.set("French")
+        # Set to last used language name (if any)
+        last_lang = self.config.get_last_language()
+        if last_lang:
+            language_combobox.set(get_name(last_lang))
 
         Label(language_frame, text="Generated language",
               font=Fonts.BODY,
@@ -197,9 +200,14 @@ class GentexterConfig:
     def generate_wordtext(self):
         """Generate wordtext using the modern backend"""
         try:
+            # Validate language selection
+            if not self.selected_language.get():
+                messagebox.showerror("Error", "Please select a language first.")
+                return
+
             # Check selected vocabulary source
             vocab_source = self.vocab_source.get()
-            
+
             if vocab_source == "scratch":
                 # scratch mode logic will be handled in separate thread
                 pass
@@ -209,7 +217,6 @@ class GentexterConfig:
             elif vocab_source != "databank":
                 print("❌ Please select a vocabulary source")
                 return
-            
 
             # Disable generate button during processing
             self.generate_button.config(state='disabled', text="Generating...")
@@ -220,6 +227,8 @@ class GentexterConfig:
                 try:
                     # Get selected language code (convert display name to code)
                     lang_code = self.get_selected_language_code()
+                    # Save as last used language
+                    self.config.save_last_language(lang_code)
 
                     if vocab_source == "scratch":
                         # For scratch mode, word count is derived from text length
@@ -379,4 +388,5 @@ class GentexterConfig:
     def get_selected_language_code(self) -> str:
         """Convert selected language display name to code for API calls."""
         display_name = self.selected_language.get()
-        return self.language_code_map.get(display_name, display_name.lower()[:2])
+        code = get_code(display_name)
+        return code if code else display_name.lower()[:2]
