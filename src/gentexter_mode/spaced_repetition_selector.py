@@ -10,12 +10,46 @@ Key features:
 - Database integration for word selection and tracking
 - Proper difficulty adjustment based on performance
 - Review scheduling based on forgetting curves
+- Language filtering for multi-language vocabulary
 """
 
 import random
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Tuple
 from src.shared.database_models import DatabaseManager, Vocabulary, VocabularyOccurrence
+
+# Language name to code mapping
+LANGUAGE_CODE_MAP = {
+    'french': 'fr',
+    'english': 'en',
+    'german': 'de',
+    'spanish': 'es',
+    'italian': 'it',
+    'portuguese': 'pt',
+    'dutch': 'nl',
+    'russian': 'ru',
+    'japanese': 'ja',
+    'chinese': 'zh',
+    'korean': 'ko',
+}
+
+# Valid language codes (for checking if input is already a code)
+VALID_LANGUAGE_CODES = set(LANGUAGE_CODE_MAP.values())
+
+
+def get_language_code(language: str) -> Optional[str]:
+    """Convert language name or code to a valid language code.
+
+    Accepts both language names ('French', 'English') and codes ('fr', 'en').
+    """
+    if not language:
+        return None
+    lang_lower = language.lower()
+    # If it's already a valid code, return it directly
+    if lang_lower in VALID_LANGUAGE_CODES:
+        return lang_lower
+    # Otherwise, look up the name in the map
+    return LANGUAGE_CODE_MAP.get(lang_lower)
 
 
 class SpacedRepetitionSelector:
@@ -117,75 +151,90 @@ class SpacedRepetitionSelector:
 
         return last_review + timedelta(days=interval_days)
     
-    def get_due_words(self, limit: int = 20) -> List[Dict]:
+    def get_due_words(self, limit: int = 20, language: str = None) -> List[Dict]:
         """
         Get words that are due for review.
-        
+
         Args:
             limit: Maximum number of words to return
-        
+            language: Language name to filter by (e.g., 'French', 'English')
+
         Returns:
             List of word dictionaries sorted by urgency
         """
-        all_words = self.db_manager.get_all_words()
+        # Get words filtered by language if specified
+        lang_code = get_language_code(language) if language else None
+        if lang_code:
+            all_words = self.db_manager.get_words_by_language(lang_code)
+        else:
+            all_words = self.db_manager.get_all_words()
+
         due_words = []
         now = datetime.now()
-        
+
         for word in all_words:
             next_review = self.get_next_review_date(word.id)
             if next_review <= now:
                 word.next_review = next_review  # Add as attribute
                 due_words.append(word)
-        
+
         # Sort by urgency (most overdue first)
         due_words.sort(key=lambda w: w.next_review)
-        
+
         return due_words[:limit]
     
-    def get_new_words(self, limit: int = 5) -> List[Dict]:
+    def get_new_words(self, limit: int = 5, language: str = None) -> List[Dict]:
         """
         Get new words that haven't been reviewed yet.
-        
+
         Args:
             limit: Maximum number of new words to return
-        
+            language: Language name to filter by (e.g., 'French', 'English')
+
         Returns:
             List of word dictionaries for new words
         """
-        all_words = self.db_manager.get_all_words()
+        # Get words filtered by language if specified
+        lang_code = get_language_code(language) if language else None
+        if lang_code:
+            all_words = self.db_manager.get_words_by_language(lang_code)
+        else:
+            all_words = self.db_manager.get_all_words()
+
         new_words = []
-        
+
         for word in all_words:
             occurrences = self.db_manager.get_word_occurrences(word.id)
             if not occurrences:
                 new_words.append(word)
-        
+
         # Randomize new words to avoid always getting the same ones
         random.shuffle(new_words)
         return new_words[:limit]
     
-    def select_words_for_review(self, target_count: int = 20, new_word_ratio: float = 0.2) -> List[Dict]:
+    def select_words_for_review(self, target_count: int = 20, new_word_ratio: float = 0.2, language: str = None) -> List[Dict]:
         """
         Select words for review session combining due words and new words.
-        
+
         Args:
             target_count: Target number of words for review
             new_word_ratio: Ratio of new words to include (0.0 to 1.0)
-        
+            language: Language name to filter by (e.g., 'French', 'English')
+
         Returns:
             List of word dictionaries for review session
         """
         new_word_count = int(target_count * new_word_ratio)
         due_word_count = target_count - new_word_count
-        
-        # Get due words and new words
-        due_words = self.get_due_words(due_word_count)
-        new_words = self.get_new_words(new_word_count)
-        
+
+        # Get due words and new words filtered by language
+        due_words = self.get_due_words(due_word_count, language=language)
+        new_words = self.get_new_words(new_word_count, language=language)
+
         # Combine and shuffle
         review_words = due_words + new_words
         random.shuffle(review_words)
-        
+
         return review_words[:target_count]
     
     def mark_word_reviewed(self, word_id: int, feedback_score: int) -> None:
@@ -227,25 +276,33 @@ class SpacedRepetitionSelector:
             )
             session.add(occurrence)
     
-    def get_review_statistics(self) -> Dict[str, int]:
+    def get_review_statistics(self, language: str = None) -> Dict[str, int]:
         """
         Get statistics about the current review state.
-        
+
+        Args:
+            language: Language name to filter by (e.g., 'French', 'English')
+
         Returns:
             Dictionary with review statistics
         """
-        all_words = self.db_manager.get_all_words()
-        
+        # Get words filtered by language if specified
+        lang_code = get_language_code(language) if language else None
+        if lang_code:
+            all_words = self.db_manager.get_words_by_language(lang_code)
+        else:
+            all_words = self.db_manager.get_all_words()
+
         total_words = len(all_words)
         new_words = 0
         due_words = 0
         future_words = 0
-        
+
         now = datetime.now()
-        
+
         for word in all_words:
             occurrences = self.db_manager.get_word_occurrences(word.id)
-            
+
             if not occurrences:
                 new_words += 1
             else:
@@ -254,7 +311,7 @@ class SpacedRepetitionSelector:
                     due_words += 1
                 else:
                     future_words += 1
-        
+
         return {
             'total_words': total_words,
             'new_words': new_words,

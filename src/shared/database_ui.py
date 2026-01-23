@@ -3,7 +3,7 @@ Database View UI for browsing and managing vocabulary words.
 """
 
 import tkinter as tk
-from tkinter import Frame, Label, Button, messagebox, Entry, Canvas, Scrollbar, ttk, Toplevel, StringVar
+from tkinter import Frame, Label, Button, messagebox, Entry, Canvas, Scrollbar, ttk, Toplevel, StringVar, filedialog
 from .styles import Colors, Fonts, Spacing, center_top_window
 from .style_utils import StyledWidgets, CommonPatterns
 from .database_models import DatabaseManager
@@ -566,6 +566,14 @@ class DatabaseView:
                         command=self.show_add_dialog)
         add_btn.pack(side='left')
 
+        # Add List button (secondary style)
+        add_list_btn = Button(toolbar_frame, text="+ Add List",
+                             font=Fonts.BODY, bg=Colors.CONTENT_BG, fg=Colors.PRIMARY,
+                             activebackground=Colors.LIGHT_GRAY, relief='flat', bd=0,
+                             pady=Spacing.XS, padx=Spacing.SM,
+                             command=self.import_list)
+        add_list_btn.pack(side='left', padx=(Spacing.SM, 0))
+
         # Word count label
         self.count_label = Label(toolbar_frame, text="Total: 0 words",
                                 font=Fonts.BODY, bg=Colors.CONTENT_BG, fg=Colors.MEDIUM_GRAY)
@@ -966,6 +974,49 @@ class DatabaseView:
             current_language=self.current_language,
             on_success=self.on_word_added
         )
+
+    def import_list(self):
+        """Import vocabulary from a CSV file."""
+        filetypes = [
+            ("CSV Files", "*.csv"),
+            ("All Files", "*.*")
+        ]
+
+        file_path = filedialog.askopenfilename(
+            title="Select Vocabulary File to Import",
+            filetypes=filetypes
+        )
+
+        if not file_path:
+            return  # User canceled
+
+        try:
+            # Use current language or default to French
+            language_from = self.current_language or 'fr'
+            language_to = self.config.get_mother_tongue() if self.config else 'de'
+
+            results = self.db_manager.import_vocabulary_from_csv(
+                file_path,
+                language_from=language_from,
+                language_to=language_to
+            )
+
+            if results['imported'] > 0:
+                messagebox.showinfo("Import Successful",
+                                  f"Total rows: {results['total_rows']}\n"
+                                  f"Imported: {results['imported']} new words!\n\n"
+                                  f"Skipped the rest (already exist).")
+            else:
+                messagebox.showinfo("Import Complete",
+                                  f"No new words to import.\n\n"
+                                  f"Total rows: {results['total_rows']}\n"
+                                  f"All words already exist in database.")
+
+            # Refresh the view
+            self.on_word_added()
+
+        except Exception as e:
+            messagebox.showerror("Import Error", f"Import failed: {str(e)}")
 
     def on_word_added(self):
         """Handle word added - refresh tabs and words."""

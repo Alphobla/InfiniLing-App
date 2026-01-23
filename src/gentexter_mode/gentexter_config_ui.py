@@ -1,4 +1,4 @@
-from tkinter import Frame, Button, Label, filedialog, messagebox, ttk, Entry, Checkbutton, Radiobutton, DoubleVar, BooleanVar, IntVar, StringVar
+from tkinter import Frame, Button, Label, messagebox, ttk, Entry, Radiobutton, DoubleVar, IntVar, StringVar
 from ..shared.reader_ui import ReaderUI
 from ..shared.styles import apply_modern_theme, Colors, Fonts, Spacing
 from ..shared.style_utils import StyledWidgets, TileStyles, LayoutHelpers, CommonPatterns
@@ -46,9 +46,8 @@ class GentexterConfig:
                 initial_source = "scratch"
         except Exception:
             pass
-            
-        self.vocab_source = StringVar(value=initial_source)  # Radio button group: "databank", "scratch", "last_text"
-        self.import_new_list = BooleanVar(value=False)  # Sub-option for databank
+
+        self.vocab_source = StringVar(value=initial_source)  # Radio button group: "scratch", "last_text", "databank"
         self.total_words = IntVar(value=self.vocab_defaults['default_total_words'])
         self.new_word_ratio = DoubleVar(value=self.vocab_defaults['default_new_word_ratio'])
         self.text_length = IntVar(value=self.vocab_defaults['default_text_length'])
@@ -76,61 +75,30 @@ class GentexterConfig:
         vocab_source_frame = Frame(config_content, bg=Colors.WHITE)
         vocab_source_frame.pack(fill='x', padx=Spacing.LG, pady=(0, 2))
 
-        # Main radio button options
-        databank_radio = Radiobutton(vocab_source_frame, 
-                                    text="Use vocabulary databank", 
-                                    variable=self.vocab_source,
-                                    value="databank",
-                                    font=Fonts.BODY,
-                                    bg=Colors.WHITE, fg=Colors.DARK_GRAY,
-                                    activebackground=Colors.WHITE)
-        databank_radio.pack(anchor='w', pady=2)
-
-        # Sub-option for databank (indented)
-        import_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
-        import_frame.pack(fill='x', padx=(20, 0), pady=(0, 2))
-        
-        import_check = Checkbutton(import_frame, 
-                                  text="📥 Import new list to databank", 
-                                  variable=self.import_new_list,
-                                  command=self.new_list_importer,
-                                  font=Fonts.BODY,
-                                  bg=Colors.WHITE, fg=Colors.DARK_GRAY,
-                                  activebackground=Colors.WHITE)
-        import_check.pack(anchor='w')
-
-        test_radio = Radiobutton(vocab_source_frame, 
-                                text="✨ Start from scratch (generate new words)", 
-                                variable=self.vocab_source,
-                                value="scratch",
-                                font=Fonts.BODY,
-                                bg=Colors.WHITE, fg=Colors.PRIMARY,
-                                activebackground=Colors.WHITE)
-        test_radio.pack(anchor='w', pady=2)
+        # Option 1: Start from scratch
+        scratch_radio = Radiobutton(vocab_source_frame,
+                                   text="Start from scratch (generate new words)",
+                                   variable=self.vocab_source,
+                                   value="scratch",
+                                   font=Fonts.BODY,
+                                   bg=Colors.WHITE, fg=Colors.PRIMARY,
+                                   activebackground=Colors.WHITE)
+        scratch_radio.pack(anchor='w', pady=2)
 
         # Difficulty selection for scratch mode (hidden by default)
         self.difficulty_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
         Label(self.difficulty_frame, text="Difficulty:", font=Fonts.BODY, bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left', padx=(20, 5))
-        difficulty_combo = ttk.Combobox(self.difficulty_frame, 
+        difficulty_combo = ttk.Combobox(self.difficulty_frame,
                                        textvariable=self.selected_difficulty,
                                        values=["A1", "A2", "B1", "B2", "C1", "C2"],
                                        state="readonly",
                                        width=5,
                                        font=Fonts.BODY)
         difficulty_combo.pack(side='left')
-        
-        # Trace to show/hide difficulty
-        def on_source_change(*args):
-            if self.vocab_source.get() == "scratch":
-                self.difficulty_frame.pack(anchor='w', pady=2, after=test_radio)
-            else:
-                self.difficulty_frame.pack_forget()
-        
-        self.vocab_source.trace_add("write", on_source_change)
-        on_source_change() # Initial state
 
-        last_text_radio = Radiobutton(vocab_source_frame, 
-                                      text="📄 Use last generated text", 
+        # Option 2: Use last generated text
+        last_text_radio = Radiobutton(vocab_source_frame,
+                                      text="Use last generated text",
                                       variable=self.vocab_source,
                                       value="last_text",
                                       font=Fonts.BODY,
@@ -138,45 +106,59 @@ class GentexterConfig:
                                       activebackground=Colors.WHITE)
         last_text_radio.pack(anchor='w', pady=2)
 
+        # Option 3: Use vocabulary database
+        databank_radio = Radiobutton(vocab_source_frame,
+                                    text="Use vocabulary database",
+                                    variable=self.vocab_source,
+                                    value="databank",
+                                    font=Fonts.BODY,
+                                    bg=Colors.WHITE, fg=Colors.DARK_GRAY,
+                                    activebackground=Colors.WHITE)
+        databank_radio.pack(anchor='w', pady=2)
+
+        # Databank-specific options (hidden by default)
+        self.databank_options_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
+
         # Total words to learn
-        tot_words_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
-        tot_words_frame.pack(fill='x', pady=Spacing.XS)
-        tot_words_entry = Entry(tot_words_frame, textvariable=self.total_words, 
+        tot_words_frame = Frame(self.databank_options_frame, bg=Colors.WHITE)
+        tot_words_frame.pack(fill='x', pady=Spacing.XS, padx=(20, 0))
+        tot_words_entry = Entry(tot_words_frame, textvariable=self.total_words,
                            font=Fonts.BODY, width=5, justify='center')
         tot_words_entry.pack(side='left', padx=Spacing.XS)
-        Label(tot_words_frame, text="Total words to learn", 
-              font=Fonts.BODY, 
+        Label(tot_words_frame, text="Total words to learn",
+              font=Fonts.BODY,
               bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left')
-
 
         # New word ratio
-        new_ratio_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
-        new_ratio_frame.pack(fill='x', pady=Spacing.XS)
-        new_ratio_entry = Entry(new_ratio_frame, textvariable=self.new_word_ratio, 
+        new_ratio_frame = Frame(self.databank_options_frame, bg=Colors.WHITE)
+        new_ratio_frame.pack(fill='x', pady=Spacing.XS, padx=(20, 0))
+        new_ratio_entry = Entry(new_ratio_frame, textvariable=self.new_word_ratio,
                            font=Fonts.BODY, width=5, justify='center')
         new_ratio_entry.pack(side='left', padx=Spacing.XS)
-        Label(new_ratio_frame, text="New words ratio (0-1)", 
-              font=Fonts.BODY, 
+        Label(new_ratio_frame, text="New words ratio (0-1)",
+              font=Fonts.BODY,
               bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left')
 
+        # Common options (always visible)
+        common_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
+        common_frame.pack(fill='x', pady=(Spacing.SM, 0))
+
         # Text length
-        text_length_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
+        text_length_frame = Frame(common_frame, bg=Colors.WHITE)
         text_length_frame.pack(fill='x', pady=Spacing.XS)
-        text_length_entry = Entry(text_length_frame, textvariable=self.text_length, 
+        text_length_entry = Entry(text_length_frame, textvariable=self.text_length,
                            font=Fonts.BODY, width=5, justify='center')
         text_length_entry.pack(side='left', padx=Spacing.XS)
-        Label(text_length_frame, text="Text length (words)", 
-              font=Fonts.BODY, 
+        Label(text_length_frame, text="Text length (words)",
+              font=Fonts.BODY,
               bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left')
 
         # Language selection
-        language_frame = Frame(vocab_source_frame, bg=Colors.WHITE)
+        language_frame = Frame(common_frame, bg=Colors.WHITE)
         language_frame.pack(fill='x', pady=Spacing.XS)
 
-        # Get language options from config
         languages = self.vocab_defaults['languages']['available_languages']
-
-        language_combobox = ttk.Combobox(language_frame, 
+        language_combobox = ttk.Combobox(language_frame,
                                         textvariable=self.selected_language,
                                         values=[lang[0] for lang in languages],
                                         state="readonly",
@@ -185,9 +167,26 @@ class GentexterConfig:
         language_combobox.pack(side='left', padx=Spacing.XS)
         language_combobox.set("French")
 
-        Label(language_frame, text="Generated language", 
-              font=Fonts.BODY, 
+        Label(language_frame, text="Generated language",
+              font=Fonts.BODY,
               bg=Colors.WHITE, fg=Colors.DARK_GRAY).pack(side='left', padx=(0, Spacing.XS))
+
+        # Trace to show/hide conditional options
+        def on_source_change(*args):
+            source = self.vocab_source.get()
+            # Show difficulty only for scratch mode
+            if source == "scratch":
+                self.difficulty_frame.pack(anchor='w', pady=2, after=scratch_radio)
+            else:
+                self.difficulty_frame.pack_forget()
+            # Show databank options only for databank mode
+            if source == "databank":
+                self.databank_options_frame.pack(fill='x', after=databank_radio)
+            else:
+                self.databank_options_frame.pack_forget()
+
+        self.vocab_source.trace_add("write", on_source_change)
+        on_source_change()  # Initial state
         
 
         # Generate button (using shared utility for large square button)
@@ -223,10 +222,12 @@ class GentexterConfig:
                     lang_code = self.get_selected_language_code()
 
                     if vocab_source == "scratch":
+                        # For scratch mode, word count is derived from text length
+                        scratch_word_count = max(5, self.text_length.get() // 20)
                         result = self.vocab_app.run_scratch_session(
                             language=lang_code,
                             difficulty=self.selected_difficulty.get(),
-                            total_words=self.total_words.get(),
+                            total_words=scratch_word_count,
                             text_length=self.text_length.get(),
                             generate_audio=True,
                             progress_callback=lambda msg: print(f"✨ {msg}"),
@@ -252,48 +253,6 @@ class GentexterConfig:
             print(f"❌ Error starting generation: {str(e)}")
             self.generate_button.config(state='normal', text="📖\nGenerate\nText")
 
-    def new_list_importer(self):
-        """Handle import new list checkbox"""
-        if self.import_new_list.get():
-            # Open file browser
-            filetypes = [
-                ("CSV Files", "*.csv"),
-                ("Excel Files", "*.xlsx"),
-                ("Text Files", "*.txt"),
-                ("All Files", "*.*")
-            ]
-            
-            file_path = filedialog.askopenfilename(
-                title="Select Vocabulary File to Import",
-                filetypes=filetypes
-            )
-            
-            if file_path:
-                try:
-                    # Use the database manager to import vocabulary
-                    results = self.vocab_app.database_manager.import_vocabulary_from_csv(file_path)
-                    
-                    if results['imported'] > 0:
-                        messagebox.showinfo("Import Successful", 
-                                          f"Total rows: {results['total_rows']}\n"
-                                          f"✅ Imported: {results['imported']} new words!\n\n"
-                                          f"⏭️ Skipped the rest (already exist).\n")
-                    else:
-                        messagebox.showinfo("Import Complete", 
-                                          f"No new words to import.\n\n"
-                                          f"Total rows: {results['total_rows']}\n"
-                                          f"All words already exist in database.")
-                    
-                except Exception as e:
-                    error_msg = f"Import failed: {str(e)}"
-                    print(f"❌ {error_msg}")
-                    messagebox.showerror("Import Error", error_msg)
-                    self.import_new_list.set(False)
-            else:
-                # User canceled file selection
-                self.import_new_list.set(False)
-
-    
     def load_last_text_mode(self):
         """Load last generated text mode for offline use"""
         try:

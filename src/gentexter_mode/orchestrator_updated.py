@@ -58,17 +58,18 @@ class VocabularyApp:
             dict: Session results with words, text, audio_path, and session_info
         """
         
-        # Get database statistics
-        stats = self.spaced_repetition_selector.get_review_statistics()
+        # Get database statistics for the selected language
+        stats = self.spaced_repetition_selector.get_review_statistics(language=language)
         vocab_count = stats['total_words']
-        progress_callback(f"📊 Database: {vocab_count} total words, {stats['due_words']} due, {stats['new_words']} new") if progress_callback else None
+        progress_callback(f"📊 Database ({language}): {vocab_count} total words, {stats['due_words']} due, {stats['new_words']} new") if progress_callback else None
 
         # Check if we have enough vocabulary
-        progress_callback(f"❌ Not enough vocabulary words. Need at least {total_words}, have {vocab_count}") if progress_callback and vocab_count < total_words else None
-        
+        progress_callback(f"❌ Not enough {language} vocabulary words. Need at least {total_words}, have {vocab_count}") if progress_callback and vocab_count < total_words else None
+
         words_objects = self.spaced_repetition_selector.select_words_for_review(
             target_count=total_words,
-            new_word_ratio=new_word_ratio
+            new_word_ratio=new_word_ratio,
+            language=language
         )
         
         if not words_objects:
