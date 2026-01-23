@@ -1,4 +1,5 @@
 {
+  "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Bash(mv:*)",
@@ -9,7 +10,16 @@
       "Bash(claude)",
       "Bash(tree:*)",
       "Skill(superpowers:brainstorming)",
-      "Skill(superpowers:brainstorming:*)"
+      "Skill(superpowers:brainstorming:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(.venvScriptsactivate)",
+      "Bash(\".venv/Scripts/python.exe\" -m pytest tests/test_frequency_analysis.py -v)",
+      "Bash(\".venv/Scripts/pytest.exe\" tests/test_frequency_analysis.py -v)",
+      "Skill(superpowers:brainstorming)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(python -m py_compile:*)"
     ],
     "deny": []
   },

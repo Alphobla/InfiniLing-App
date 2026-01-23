@@ -24,9 +24,8 @@ def get_word_frequency_rank(word: str, language: str) -> Optional[int]:
         
         # Convert Zipf frequency to approximate rank
         # Zipf 7+ ≈ top 100, 6+ ≈ top 1000, 5+ ≈ top 10000, etc.
-        if zipf_freq >= 7.0:
-            return int(10 ** (8 - zipf_freq))
-        elif zipf_freq >= 3.0:
+        # zipf_freq of 0 means word not found in corpus
+        if zipf_freq > 0:
             return int(10 ** (8 - zipf_freq))
         else:
             return None
@@ -57,39 +56,30 @@ def get_word_frequency_category(word: str, language: str) -> Dict[str, any]:
         if rank and rank <= 100:
             category = "top_100"
             level = "Top 100"
-            color = "#1B5E20"  # Dark green
         elif rank and rank <= 1000:
             category = "top_1000"
             level = "Top 1,000"
-            color = "#2E7D32"  # Green
         elif rank and rank <= 5000:
             category = "top_5000"
             level = "Top 5,000"
-            color = "#388E3C"  # Light green
         elif rank and rank <= 10000:
             category = "top_10000"
             level = "Top 10,000"
-            color = "#689F38"  # Light green
         elif rank and rank <= 20000:
             category = "top_20000"
             level = "Top 20,000"
-            color = "#FBC02D"  # Yellow
         elif rank and rank <= 50000:
             category = "top_50000"
             level = "Top 50,000"
-            color = "#FF8F00"  # Orange
         elif rank and rank <= 100000:
             category = "top_100000"
             level = "Top 100,000"
-            color = "#F57C00"  # Dark orange
         elif rank and rank <= 100000000:
             category = "rare"
             level = "Rare"
-            color = "#D32F2F"  # Red
         else:
             category = "unknown"
             level = "Unknown"
-            color = "#757575"
         
         return {
             "word": word,
@@ -99,7 +89,6 @@ def get_word_frequency_category(word: str, language: str) -> Dict[str, any]:
             "rank": rank,
             "zipf_frequency": round(zipf_freq, 2),
             "raw_frequency": raw_freq,
-            "color": color,
             "found": True
         }
         
@@ -112,7 +101,6 @@ def get_word_frequency_category(word: str, language: str) -> Dict[str, any]:
             "rank": None,
             "zipf_frequency": 0,
             "raw_frequency": 0,
-            "color": "#757575",  # Gray
             "found": False,
             "error": str(e)
         }

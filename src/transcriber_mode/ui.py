@@ -1,11 +1,26 @@
 from tkinter import Tk, Frame, Label, Button, filedialog, messagebox, ttk, Text, Scrollbar, Canvas, Radiobutton, StringVar
 import os
 import threading
+from datetime import datetime
 from .transcriber import Transcriber
 import re
 import shutil
 from src.shared.reader_ui import ReaderUI
 from src.shared.styles import center_top_window, Colors
+
+
+def get_transcription_date(srt_path):
+    """Extract transcription date from SRT file, fallback to file modification time."""
+    try:
+        with open(srt_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                if line.startswith('# TRANSCRIBED:'):
+                    date_str = line.replace('# TRANSCRIBED:', '').strip()
+                    return datetime.fromisoformat(date_str)
+    except Exception:
+        pass
+    # Fallback to file modification time
+    return datetime.fromtimestamp(os.path.getmtime(srt_path))
 
 class WhisperInterface:
     def __init__(self, master, config=None, back_callback=None):
@@ -41,18 +56,14 @@ class WhisperInterface:
         self.transcriber = None
         self.ui_state = "INITIAL"  # INITIAL, FILE_SELECTED, TRANSCRIBING, COMPLETED
         
-        # Initialize model and language from config
-        default_model = self.config.get('transcriber.whisper.model', 'base') if self.config else 'base'
+        # Initialize language from config
         default_language = self.config.get('transcriber.whisper.language', 'fr') if self.config else 'fr'
-        
-        self.selected_model = StringVar(value=default_model)
         self.selected_language = StringVar(value=default_language)
         
         # UI components references
         self.browse_button = None
         self.transcribe_button = None
         self.saved_frame = None
-        self.model_frame = None
         self.progress_frame = None
         
         self.setup_styles()
@@ -153,22 +164,18 @@ class WhisperInterface:
             # Update status on main thread
             self.master.after(0, lambda: self.update_progress_status("Initializing transcriber..."))
             
-            # Initialize transcriber with selected model
-            model_size = self.selected_model.get()
+            # Initialize transcriber with OpenAI API
             language_code = self.selected_language.get()  # Get selected language
-            self.master.after(0, lambda: self.update_progress_status(f"Loading {model_size} model ..."))
-            
+            self.master.after(0, lambda: self.update_progress_status("Connecting to OpenAI Whisper API..."))
+
             # Create new transcriber instance for this transcription
-            print(f"Creating transcriber with model: {model_size}")  # Debug log
-            
-            # Show more detailed status during model loading
-            self.master.after(0, lambda: self.update_progress_status(f"Loading {model_size} model ..."))
-            
-            transcriber = Transcriber(model_size=model_size)
+            print("Creating transcriber with OpenAI API")  # Debug log
+
+            transcriber = Transcriber()
             self.current_transcriber = transcriber  # Store for SRT creation
             print("Transcriber created successfully")  # Debug log
             
-            self.master.after(0, lambda: self.update_progress_status(f"Model loaded! Starting transcription..."))
+            self.master.after(0, lambda: self.update_progress_status("Connected! Starting transcription..."))
             self.master.after(0, lambda: self.update_progress_bar(1))
             # Determine where to save the new transcription
             # We always save to the writable user directory in packaged mode
@@ -303,35 +310,45 @@ class WhisperInterface:
         for f in [bundled_folder, user_folder]:
             if os.path.exists(f):
                 mp3_files.extend(glob.glob(os.path.join(f, '*.mp3')))
-        
+
         srt_files = set()
         for f in [bundled_folder, user_folder]:
             if os.path.exists(f):
                 srt_files.update(os.path.splitext(f_path)[0] for f_path in glob.glob(os.path.join(f, '*.srt')))
-        for widget in self.saved_tiles_frame.winfo_children():
-            widget.destroy()
+
+        # Collect valid pairs (mp3, srt)
+        valid_pairs = []
         for mp3_path in mp3_files:
             base = os.path.splitext(mp3_path)[0]
             srt_path = base + '.srt'
             if base in srt_files and os.path.exists(srt_path):
-                # Try to get title from MP3 metadata
-                try:
-                    audio = MP3(mp3_path, ID3=EasyID3)
-                    title_list = audio.get('title', [])
-                    title = title_list[0] if title_list else None
-                    if not title:
-                        title = os.path.basename(base)
-                except Exception:
+                valid_pairs.append((mp3_path, srt_path))
+
+        # Sort by transcription date (newest first)
+        valid_pairs.sort(key=lambda pair: get_transcription_date(pair[1]), reverse=True)
+
+        for widget in self.saved_tiles_frame.winfo_children():
+            widget.destroy()
+        for mp3_path, srt_path in valid_pairs:
+            base = os.path.splitext(mp3_path)[0]
+            # Try to get title from MP3 metadata
+            try:
+                audio = MP3(mp3_path, ID3=EasyID3)
+                title_list = audio.get('title', [])
+                title = title_list[0] if title_list else None
+                if not title:
                     title = os.path.basename(base)
-                # Create tile/button
-                btn = Button(
-                    self.saved_tiles_frame, text=title, font=("Segoe UI", 11),
-                    bg=Colors.SURFACE, fg=Colors.DARK_GRAY, relief='flat', bd=1, padx=5, pady=4,
-                    anchor='w', justify='left',  # Align text to the left
-                    activebackground=Colors.LIGHT_GRAY,
-                    command=lambda m=mp3_path, s=srt_path: self.load_saved_transcription(m, s)
-                )
-                btn.pack(side='top', padx=8, pady=2, fill='x', expand=False)
+            except Exception:
+                title = os.path.basename(base)
+            # Create tile/button
+            btn = Button(
+                self.saved_tiles_frame, text=title, font=("Segoe UI", 11),
+                bg=Colors.SURFACE, fg=Colors.DARK_GRAY, relief='flat', bd=1, padx=5, pady=4,
+                anchor='w', justify='left',  # Align text to the left
+                activebackground=Colors.LIGHT_GRAY,
+                command=lambda m=mp3_path, s=srt_path: self.load_saved_transcription(m, s)
+            )
+            btn.pack(side='top', padx=8, pady=2, fill='x', expand=False)
 
     def load_saved_transcription(self, mp3_path, srt_path):
         """Show the modern review UI for the selected saved transcription and audio."""
@@ -450,8 +467,9 @@ class WhisperInterface:
         )
         self.transcribe_button.grid(row=0, column=1, sticky='nsew', padx=(8, 0))
 
-        # Model selection frame instead of saved transcriptions
-        self.build_model_selection()
+        # Language selection and saved transcriptions
+        self.build_language_selection()
+        self.build_saved_transcriptions()
     
     def build_transcribing_ui(self):
         """Build UI for transcribing state (progress bar)"""
@@ -500,48 +518,18 @@ class WhisperInterface:
         # Saved transcriptions still available for study
         self.build_saved_transcriptions()
     
-    def build_model_selection(self):
-        """Build model selection frame"""
-        # Get audio file duration for time estimates
-        audio_duration = self.get_audio_duration()
-        
-        # Model options: (description, time_factor, model_name)
-        models = [
-            ("Blitz guess", 0.6, "tiny"),
-            ("Hurried estimate", 1, "base"),
-            ("Measured notion", 1.6, "small"),
-            ("Careful take", 2.4, "medium"),
-            ("Deliberate precision", 4.0, "large")
-        ]
-        self.model_frame = Frame(self.content_frame, bg=Colors.SURFACE, relief='raised', bd=1)
-        self.model_frame.pack(fill='both', expand=True, pady=(0, 10), padx=10)
-        # Use a grid layout for better alignment
-        selection_container = Frame(self.model_frame, bg=Colors.SURFACE)
-        selection_container.pack(fill='both', expand=True, padx=10, pady=(0, 20))
+    def build_language_selection(self):
+        """Build language selection frame"""
+        lang_frame = Frame(self.content_frame, bg=Colors.SURFACE, relief='raised', bd=1)
+        lang_frame.pack(fill='x', pady=(0, 10), padx=10)
 
-        # Model selection column
-        model_col = Frame(selection_container, bg=Colors.SURFACE)
-        model_col.grid(row=0, column=0, sticky='n', padx=(0, 40))
-        Label(model_col, text="Transcription Model", font=("Segoe UI", 12, "bold"), bg=Colors.SURFACE, fg=Colors.DARK_GRAY).pack(pady=(20, 15))
-        for description, time_factor, model_name in models:
-            estimated_time = self.format_estimated_time(audio_duration * time_factor)
-            radio = Radiobutton(
-                model_col,
-                text=f"{description} (≈{estimated_time})",
-                variable=self.selected_model,
-                value=model_name,
-                font=("Segoe UI", 11),
-                bg=Colors.SURFACE,
-                fg=Colors.DARK_GRAY,
-                activebackground=Colors.SURFACE,
-                selectcolor=Colors.SURFACE
-            )
-            radio.pack(anchor='w', pady=2)
+        Label(lang_frame, text="Audio Language", font=("Segoe UI", 12, "bold"),
+              bg=Colors.SURFACE, fg=Colors.DARK_GRAY).pack(pady=(15, 10))
 
-        # Language selection column
-        lang_col = Frame(selection_container, bg=Colors.SURFACE)
-        lang_col.grid(row=0, column=1, sticky='n')
-        Label(lang_col, text="Language", font=("Segoe UI", 12, "bold"), bg=Colors.SURFACE, fg=Colors.DARK_GRAY).pack(pady=(20, 15))
+        # Horizontal layout for language options
+        options_frame = Frame(lang_frame, bg=Colors.SURFACE)
+        options_frame.pack(pady=(0, 15))
+
         languages = [
             ("French", "fr"),
             ("Russian", "ru"),
@@ -550,7 +538,7 @@ class WhisperInterface:
         ]
         for lang_desc, lang_code in languages:
             lang_radio = Radiobutton(
-                lang_col,
+                options_frame,
                 text=lang_desc,
                 variable=self.selected_language,
                 value=lang_code,
@@ -560,7 +548,7 @@ class WhisperInterface:
                 activebackground=Colors.SURFACE,
                 selectcolor=Colors.SURFACE
             )
-            lang_radio.pack(anchor='w', pady=2)
+            lang_radio.pack(side='left', padx=10)
 
     def build_saved_transcriptions(self):
         """Build saved transcriptions area"""
@@ -589,76 +577,6 @@ class WhisperInterface:
         
         # Set initial state to no file selected
         self.ui_state = "INITIAL"
-
-    def get_audio_duration(self):
-        """Get duration of the selected audio file in seconds"""
-        if not self.audio_file_path or not os.path.exists(self.audio_file_path):
-            return 300  # Default to 5 minutes if file not accessible
-        
-        try:
-            # Try using mutagen to get duration
-            from mutagen.mp3 import MP3
-            from mutagen.wave import WAVE
-            from mutagen.mp4 import MP4
-            
-            file_ext = os.path.splitext(self.audio_file_path)[1].lower()
-            
-            if file_ext == '.mp3':
-                audio = MP3(self.audio_file_path)
-                return audio.info.length
-            elif file_ext == '.wav':
-                audio = WAVE(self.audio_file_path)
-                return audio.info.length
-            elif file_ext in ['.m4a', '.mp4']:
-                audio = MP4(self.audio_file_path)
-                return audio.info.length
-            else:
-                # For other formats, estimate based on file size (rough approximation)
-                file_size = os.path.getsize(self.audio_file_path)
-                # Assume ~1MB per minute for compressed audio
-                return (file_size / (1024 * 1024)) * 60
-                
-        except Exception:
-            # If duration detection fails, estimate based on file size
-            try:
-                file_size = os.path.getsize(self.audio_file_path)
-                return (file_size / (1024 * 1024)) * 60  # Rough estimate
-            except:
-                return 300  # Default fallback
-    
-    def format_estimated_time(self, seconds):
-        """Format estimated processing time in a human-readable format"""
-        if seconds < 60:
-            return f"{int(seconds)}s"
-        elif seconds < 3600:
-            minutes = int(seconds / 60)
-            return f"{minutes}m"
-        else:
-            hours = int(seconds / 3600)
-            remaining_minutes = int((seconds % 3600) / 60)
-            if remaining_minutes > 0:
-                return f"{hours}h {remaining_minutes}m"
-            else:
-                return f"{hours}h"
-    
-    def format_duration(self, seconds):
-        """Format audio duration in a human-readable format"""
-        if seconds < 60:
-            return f"{int(seconds)}s"
-        elif seconds < 3600:
-            minutes = int(seconds / 60)
-            remaining_seconds = int(seconds % 60)
-            if remaining_seconds > 0:
-                return f"{minutes}m {remaining_seconds}s"
-            else:
-                return f"{minutes}m"
-        else:
-            hours = int(seconds / 3600)
-            remaining_minutes = int((seconds % 3600) / 60)
-            if remaining_minutes > 0:
-                return f"{hours}h {remaining_minutes}m"
-            else:
-                return f"{hours}h"
 
     def setup_styles(self):
         """Configure modern styling for progress bar and other elements"""

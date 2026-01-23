@@ -367,19 +367,22 @@ class GPTTranslator:
             
             # Get frequency data
             root_word = analysis.get('root_word', word_text)
-            frequency = get_word_frequency_category(root_word, language_from)
-            
-            # Get example sentence with core word
+
+            # Helper to strip articles and gender markers for lookups
             def strip_to_core_word(word_form):
                 """Strip articles and gender markers."""
                 import re
                 core = re.sub(r'\s*\([mf]\.\)$', '', word_form)
                 return core.strip()
-            
+
+            # Use stripped word for frequency lookup (wordfreq won't find "chien (m.)")
+            core_word = strip_to_core_word(root_word)
+            frequency = get_word_frequency_category(core_word, language_from)
+
+            # Get example sentence with core word
             example_original = None
             example_translation = None
             try:
-                core_word = strip_to_core_word(root_word)
                 example = get_sentence_example(core_word, language_from, language_to)
                 if example:
                     example_original = example[0]

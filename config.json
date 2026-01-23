@@ -13,8 +13,28 @@
       "to": "de",
       "available_languages": [
         [
+          "German",
+          "de"
+        ],
+        [
+          "English",
+          "en"
+        ],
+        [
           "French",
           "fr"
+        ],
+        [
+          "Spanish",
+          "es"
+        ],
+        [
+          "Italian",
+          "it"
+        ],
+        [
+          "Portuguese",
+          "pt"
         ],
         [
           "Russian",
@@ -25,12 +45,20 @@
           "ar"
         ],
         [
-          "English",
-          "en"
+          "Japanese",
+          "ja"
+        ],
+        [
+          "Korean",
+          "ko"
+        ],
+        [
+          "Chinese",
+          "zh"
         ]
       ]
     },
-    "database_url": null
+    "database_url": "sqlite:///./src/vocabulary.db"
   },
   "audio": {
     "voice": "onyx",
@@ -57,7 +85,7 @@
   "ui": {
     "window_sizes": {
       "main_menu": {
-        "width": 500,
+        "width": 700,
         "height": 350
       },
       "transcriber": {

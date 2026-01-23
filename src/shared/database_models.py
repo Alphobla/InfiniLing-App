@@ -131,7 +131,7 @@ class DatabaseManager:
     Handles database connection, session management, and basic operations.
     """
     
-    def __init__(self, database_url: str = None):
+    def __init__(self, database_url: str = "sqlite:///./src/vocabulary.db"):
         """Initialize database manager with connection."""
         print(f"Initializing database manager with URL: {database_url}")
         self.engine = create_database_engine(database_url)
@@ -170,11 +170,9 @@ class DatabaseManager:
                 language_to=language_to,
                 **kwargs
             )
-            # Enhance the word with GPT normalization and frequency data
             session.add(vocab)
             session.flush()  # Get the ID
-
-            
+            session.expunge(vocab)  # Detach from session so it's usable after
             return vocab
     
     def get_word(self, word_id: int):
@@ -199,6 +197,65 @@ class DatabaseManager:
             words = session.query(Vocabulary).all()
             session.expunge_all()  # Detach all objects from session
             return words
+
+    def get_language_counts(self):
+        """Get count of words per source language."""
+        with self.session_scope() as session:
+            from sqlalchemy import func
+            results = session.query(
+                Vocabulary.language_from,
+                func.count(Vocabulary.id)
+            ).group_by(Vocabulary.language_from).all()
+            return {lang: count for lang, count in results if lang}
+
+    def get_words_by_language(self, language_from):
+        """Get all words for a specific source language."""
+        with self.session_scope() as session:
+            words = session.query(Vocabulary).filter(
+                Vocabulary.language_from == language_from
+            ).all()
+            # Detach from session
+            for word in words:
+                session.expunge(word)
+            return words
+
+    def delete_word(self, word_id: int) -> bool:
+        """Delete a vocabulary word by ID.
+
+        Args:
+            word_id: ID of the word to delete
+
+        Returns:
+            True if deleted, False if not found
+        """
+        with self.session_scope() as session:
+            word = session.query(Vocabulary).filter(Vocabulary.id == word_id).first()
+            if not word:
+                return False
+            session.delete(word)
+            return True
+
+    def update_word(self, word_id: int, **kwargs) -> bool:
+        """Update a vocabulary word's fields.
+
+        Args:
+            word_id: ID of the word to update
+            **kwargs: Fields to update (word, translation, etc.)
+
+        Returns:
+            True if updated, False if not found
+        """
+        with self.session_scope() as session:
+            word = session.query(Vocabulary).filter(Vocabulary.id == word_id).first()
+            if not word:
+                return False
+
+            for key, value in kwargs.items():
+                if hasattr(word, key):
+                    setattr(word, key, value)
+
+            word.date_modified = utc_now()
+            return True
 
     def add_occurrence(self, vocabulary_id: int, feedback_score: int):
         """Add an occurrence record for a vocabulary word."""
@@ -345,16 +402,17 @@ class DatabaseManager:
                 return new_word_due_days
             
             last_occurrence = occurrences[0]
+            now = datetime.utcnow()  # Use naive datetime to match SQLite storage
             
             # Try to use next_review_date first
             if last_occurrence.next_review_date:
-                days = (last_occurrence.next_review_date - utc_now()).days
+                days = (last_occurrence.next_review_date - now).days
                 return max(0, days)  # Don't return negative days (overdue = 0)
             
             # Fallback to interval_days if available
             if last_occurrence.interval_days:
                 # Calculate days since last review + interval
-                days_since = (utc_now() - last_occurrence.date).days
+                days_since = (now - last_occurrence.date).days
                 remaining = last_occurrence.interval_days - days_since
                 return max(0, remaining)
             
@@ -406,24 +464,22 @@ class DatabaseManager:
             word.word = root_word
             word.primary_translation = analysis.get("primary_translation", "")
             word.secondary_translation = analysis.get("secondary_translation")
-            
-            # Add frequency data
-            frequency = get_word_frequency_category(word.word, word.language_from)
+
+            # Helper to strip articles and gender markers for lookups
+            def strip_to_core_word(word_form):
+                """Strip articles, gender markers, and extra formatting from word."""
+                import re
+                core = re.sub(r'\s*\([mf]\.\)$', '', word_form)
+                return core.strip()
+
+            # Add frequency data (use stripped word - wordfreq won't find "chien (m.)")
+            core_word = strip_to_core_word(root_word)
+            frequency = get_word_frequency_category(core_word, word.language_from)
             word.frequency_level = frequency.get('level')
             word.frequency_rank = frequency.get('rank')
 
-            
             # Get example sentence (optional - don't fail if this errors)
             try:
-                # Strip root word to core form for sentence search
-                def strip_to_core_word(word_form):
-                    """Strip articles, gender markers, and extra formatting from word."""
-                    import re
-                    # Remove gender markers like (m.), (f.)
-                    core = re.sub(r'\s*\([mf]\.\)$', '', word_form)
-                    return core.strip()
-                
-                core_word = strip_to_core_word(root_word)
                 example = get_sentence_example(core_word, word.language_from, word.language_to)
                 if example:
                     word.example_sentence_original = example[0]
