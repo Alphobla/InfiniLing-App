@@ -7,8 +7,11 @@
       "Bash(./venv/Scripts/python.exe:*)",
       "mcp__ide__getDiagnostics",
       "Bash(claude)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Skill(superpowers:brainstorming)",
+      "Skill(superpowers:brainstorming:*)"
     ],
     "deny": []
-  }
+  },
+  "includeCoAuthoredBy": false
 }
