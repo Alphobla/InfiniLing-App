@@ -22,6 +22,5 @@
       "Bash(python -m py_compile:*)"
     ],
     "deny": []
-  },
-  "includeCoAuthoredBy": false
+  }
 }
