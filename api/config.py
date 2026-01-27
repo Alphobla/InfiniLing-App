@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     # OpenAI
     openai_api_key: str
 
+    # Word enhancement settings
+    enhance_max_tokens: int = 200
+    enhance_temperature: float = 0.3
+
     # Token limits
     default_token_limit: int = 100000
 

@@ -7,6 +7,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from supabase import Client
 from api.dependencies import get_supabase, get_current_user_id
+from api.services.openai_service import OpenAIService
+from api.services.token_tracker import TokenTracker
+from api.config import get_settings
 
 router = APIRouter(prefix="/api/vocabulary", tags=["vocabulary"])
 
@@ -138,3 +141,76 @@ def delete_vocabulary(
         raise HTTPException(status_code=404, detail="Vocabulary not found")
 
     return {"message": "Deleted successfully"}
+
+class EnhanceRequest(BaseModel):
+    """Schema for word enhancement request."""
+    word: str
+    language_from: str
+    language_to: str
+    existing_translation: Optional[str] = None
+
+
+class EnhanceResponse(BaseModel):
+    """Schema for word enhancement response."""
+    lemma: str
+    translation: str
+    secondary_translation: Optional[str]
+    frequency_rank: Optional[int]
+    frequency_level: str
+    enhancement_failed: bool = False
+
+
+@router.post("/enhance", response_model=EnhanceResponse)
+def enhance_word(
+    request: EnhanceRequest,
+    user_id: str = Depends(get_current_user_id),
+    db: Client = Depends(get_supabase)
+):
+    """Enhance a word with lemmatization, translation, and frequency."""
+    settings = get_settings()
+
+    # Check token limit
+    tracker = TokenTracker(db, user_id)
+    tracker.check_limit()
+
+    # Get user's API key or use default
+    user_settings = tracker.get_user_settings()
+    api_key = settings.openai_api_key
+    if user_settings and user_settings.get("openai_api_key_encrypted"):
+        # TODO: Decrypt user's key
+        pass
+
+    # Enhance word
+    service = OpenAIService(
+        api_key,
+        settings.enhance_max_tokens,
+        settings.enhance_temperature
+    )
+    result = service.enhance_word(
+        request.word,
+        request.language_from,
+        request.language_to,
+        request.existing_translation
+    )
+
+    # Track tokens
+    tracker.add_tokens(result.get("tokens_used", 0))
+
+    # Handle enhancement failure
+    if result.get("enhancement_failed"):
+        return EnhanceResponse(
+            lemma=request.word,
+            translation="Unknown",
+            secondary_translation=None,
+            frequency_rank=None,
+            frequency_level="Unknown",
+            enhancement_failed=True
+        )
+
+    return EnhanceResponse(
+        lemma=result["lemma"],
+        translation=result["translation"],
+        secondary_translation=result.get("secondary_translation"),
+        frequency_rank=result.get("frequency_rank"),
+        frequency_level=result.get("frequency_level", "Unknown"),
+    )
