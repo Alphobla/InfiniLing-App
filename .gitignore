@@ -13,3 +13,4 @@ wsl_venv/
 .claude/
 package-lock.json
 package.json
+.worktrees/
