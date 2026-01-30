@@ -10,7 +10,25 @@
 
 ---
 
-## Task 1: Project Structure Setup
+## Progress Summary
+
+| Task | Status |
+|------|--------|
+| Task 1: Project Structure Setup | ✅ DONE |
+| Task 2: Supabase Auth Middleware | ✅ DONE |
+| Task 3: Database Models (SQL) | ✅ DONE |
+| Task 4: Vocabulary CRUD Endpoints | ✅ DONE |
+| Task 5: Word Enhancement Service | ✅ DONE |
+| Task 6: Spaced Repetition Endpoints | ❌ TODO |
+| Task 7: User Settings Endpoints | ❌ TODO |
+| Task 8: Story Generation Endpoints | ❌ TODO |
+| Task 9: Import/Export Endpoints | ❌ TODO |
+| Task 10: Starter Words Endpoint | ❌ TODO |
+| Task 11: Environment Setup | ❌ TODO |
+
+---
+
+## Task 1: Project Structure Setup ✅ DONE
 
 **Files:**
 - Create: `api/__init__.py`
@@ -46,6 +64,10 @@ class Settings(BaseSettings):
 
     # OpenAI
     openai_api_key: str
+
+    # Word enhancement settings
+    enhance_max_tokens: int = 200
+    enhance_temperature: float = 0.3
 
     # Token limits
     default_token_limit: int = 100000
@@ -131,7 +153,7 @@ git commit -m "feat: add FastAPI project structure for PWA backend"
 
 ---
 
-## Task 2: Supabase Auth Middleware
+## Task 2: Supabase Auth Middleware ✅ DONE
 
 **Files:**
 - Create: `api/auth.py`
@@ -213,7 +235,7 @@ git commit -m "feat: add Supabase auth middleware and dependencies"
 
 ---
 
-## Task 3: Database Models (Supabase SQL)
+## Task 3: Database Models (Supabase SQL) ✅ DONE
 
 **Files:**
 - Create: `api/schema.sql`
@@ -236,7 +258,6 @@ CREATE TABLE vocabulary (
     frequency_level TEXT,
     example_sentence_original TEXT,
     example_sentence_translation TEXT,
-    primary_translation TEXT,
     secondary_translation TEXT,
     next_review_date DATE,
     review_interval_days INTEGER DEFAULT 1,
@@ -271,7 +292,7 @@ CREATE TABLE user_settings (
     tokens_used_this_month INTEGER DEFAULT 0,
     token_limit INTEGER DEFAULT 100000,
     mother_tongue TEXT NOT NULL,
-    last_language_pair TEXT,
+    last_language TEXT,
     reset_date DATE DEFAULT (date_trunc('month', NOW()) + INTERVAL '1 month')::DATE,
     has_seen_intro BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -327,7 +348,7 @@ git commit -m "docs: add Supabase database schema with RLS policies"
 
 ---
 
-## Task 4: Vocabulary CRUD Endpoints
+## Task 4: Vocabulary CRUD Endpoints ✅ DONE
 
 **Files:**
 - Create: `api/routes/vocabulary.py`
@@ -362,7 +383,6 @@ class VocabularyUpdate(BaseModel):
     word: Optional[str] = None
     lemma: Optional[str] = None
     translation: Optional[str] = None
-    primary_translation: Optional[str] = None
     secondary_translation: Optional[str] = None
     example_sentence_original: Optional[str] = None
     example_sentence_translation: Optional[str] = None
@@ -380,7 +400,6 @@ class VocabularyResponse(BaseModel):
     frequency_level: Optional[str]
     example_sentence_original: Optional[str]
     example_sentence_translation: Optional[str]
-    primary_translation: Optional[str]
     secondary_translation: Optional[str]
     next_review_date: Optional[str]
     review_interval_days: Optional[int]
@@ -523,7 +542,7 @@ git commit -m "feat: add vocabulary CRUD endpoints"
 
 ---
 
-## Task 5: Word Enhancement Service
+## Task 5: Word Enhancement Service ✅ DONE
 
 **Files:**
 - Create: `api/services/openai_service.py`
@@ -567,8 +586,10 @@ def get_frequency_info(word: str, language: str) -> Dict:
 class OpenAIService:
     """Service for OpenAI API calls."""
 
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str, max_tokens: int, temperature: float):
         self.client = OpenAI(api_key=api_key)
+        self.max_tokens = max_tokens
+        self.temperature = temperature
 
     def enhance_word(
         self,
@@ -580,35 +601,37 @@ class OpenAIService:
         """
         Enhance a word with lemmatization, translation, and frequency.
 
-        Returns dict with: lemma, primary_translation, secondary_translation,
-        frequency_rank, frequency_level
+        Returns dict with: lemma, translation, secondary_translation,
+        frequency_rank, frequency_level, tokens_used
+
+        If enhancement fails, returns dict with "enhancement_failed": True
         """
-        prompt = f"""You are a vocabulary database cleaner for a language learning app.
+        prompt = f"""You are a professional lexicographer normalizing vocabulary entries.
 
-INPUT: Raw {language_from} word "{word}"
-{f'HINT: Existing translation is "{existing_translation}"' if existing_translation else ''}
+INPUT: {language_from} word "{word}"
+{f'CONTEXT: Existing translation "{existing_translation}" may help disambiguate meaning.' if existing_translation else ''}
 
-TASK: Normalize to dictionary form, then translate to {language_to}.
+TASK: Convert to standard dictionary headword form (lemma), then translate to {language_to}.
 
-RULES:
-- Verbs → infinitive (parlais → parler)
-- Nouns → with article (chien → le chien)
-- Adjectives → masculine singular (belle → beau)
-- Keep reflexive verbs reflexive (se lève → se lever)
-- Keep compound expressions (à peu près → à peu près)
+LEMMATIZATION STANDARDS:
+- Verbs: infinitive form (e.g., "played" -> "play", "ging" -> "gehen")
+- Nouns: singular form with definite article ONLY if the language uses gendered articles to convey grammatical gender (e.g., "der Hund" for German, "le chien" for French). For languages without grammatical gender like English, use bare noun without article.
+- Adjectives: citation form (typically masculine singular, e.g., "belle" -> "beau")
+- Reflexive/pronominal verbs: retain reflexive marker (e.g., "sich freuen", "se lever")
+- Fixed expressions/idioms: preserve complete phrase (e.g., "ins Gras beissen", "casser les pieds")
 
-OUTPUT JSON only:
+OUTPUT: JSON only, no markdown formatting.
 {{
-  "lemma": "<normalized {language_from} word>",
-  "primary_translation": "<best {language_to} translation>",
-  "secondary_translation": "<alternative or null>"
+  "lemma": "<dictionary headword in {language_from}>",
+  "translation": "<{language_to} equivalent>",
+  "secondary_translation": "<alternative meaning if common, otherwise null>"
 }}"""
 
         response = self.client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=200,
-            temperature=0.3
+            max_tokens=self.max_tokens,
+            temperature=self.temperature
         )
 
         content = response.choices[0].message.content.strip()
@@ -620,8 +643,15 @@ OUTPUT JSON only:
 
         result = json.loads(content)
 
+        # Validate that lemma was identified
+        lemma = result.get("lemma")
+        if not lemma or lemma.lower() in ["none", "null", ""]:
+            return {
+                "enhancement_failed": True,
+                "tokens_used": response.usage.total_tokens
+            }
+
         # Add frequency info
-        lemma = result.get("lemma", word)
         # Strip articles for frequency lookup
         core_word = lemma.split()[-1] if " " in lemma else lemma
         freq_info = get_frequency_info(core_word, language_from)
@@ -640,7 +670,7 @@ OUTPUT JSON only:
 ```python
 """Token usage tracking service."""
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from supabase import Client
 from fastapi import HTTPException
 
@@ -688,9 +718,21 @@ class TokenTracker:
         if settings.get("openai_api_key_encrypted"):
             return True
 
-        # Check limit
-        used = settings.get("tokens_used_this_month", 0)
-        limit = settings.get("token_limit", 100000)
+        # Check limit - require these fields to exist
+        used = settings.get("tokens_used_this_month")
+        limit = settings.get("token_limit")
+
+        if used is None:
+            raise HTTPException(
+                status_code=500,
+                detail="User settings missing 'tokens_used_this_month' field"
+            )
+
+        if limit is None:
+            raise HTTPException(
+                status_code=500,
+                detail="User settings missing 'token_limit' field"
+            )
 
         if used >= limit:
             raise HTTPException(
@@ -711,7 +753,13 @@ class TokenTracker:
         if settings.get("openai_api_key_encrypted"):
             return
 
-        current = settings.get("tokens_used_this_month", 0)
+        current = settings.get("tokens_used_this_month")
+        if current is None:
+            raise HTTPException(
+                status_code=500,
+                detail="User settings missing 'tokens_used_this_month' field"
+            )
+
         self.db.table("user_settings").update({
             "tokens_used_this_month": current + count
         }).eq("user_id", self.user_id).execute()
@@ -741,10 +789,11 @@ class EnhanceRequest(BaseModel):
 class EnhanceResponse(BaseModel):
     """Schema for word enhancement response."""
     lemma: str
-    primary_translation: str
+    translation: str
     secondary_translation: Optional[str]
     frequency_rank: Optional[int]
     frequency_level: str
+    enhancement_failed: bool = False
 
 
 @router.post("/enhance", response_model=EnhanceResponse)
@@ -768,7 +817,11 @@ def enhance_word(
         pass
 
     # Enhance word
-    service = OpenAIService(api_key)
+    service = OpenAIService(
+        api_key,
+        settings.enhance_max_tokens,
+        settings.enhance_temperature
+    )
     result = service.enhance_word(
         request.word,
         request.language_from,
@@ -779,12 +832,23 @@ def enhance_word(
     # Track tokens
     tracker.add_tokens(result.get("tokens_used", 0))
 
+    # Handle enhancement failure
+    if result.get("enhancement_failed"):
+        return EnhanceResponse(
+            lemma=request.word,
+            translation="Unknown",
+            secondary_translation=None,
+            frequency_rank=None,
+            frequency_level="Unknown",
+            enhancement_failed=True
+        )
+
     return EnhanceResponse(
         lemma=result["lemma"],
-        primary_translation=result["primary_translation"],
+        translation=result["translation"],
         secondary_translation=result.get("secondary_translation"),
         frequency_rank=result.get("frequency_rank"),
-        frequency_level=result.get("frequency_level", "Unknown")
+        frequency_level=result.get("frequency_level", "Unknown"),
     )
 ```
 
@@ -1108,7 +1172,7 @@ router = APIRouter(prefix="/api/user", tags=["user"])
 class UserSettingsResponse(BaseModel):
     """Schema for user settings response."""
     mother_tongue: str
-    last_language_pair: Optional[str]
+    last_language: Optional[str]
     has_seen_intro: bool
     has_own_api_key: bool
     tokens_used_this_month: int
@@ -1118,7 +1182,7 @@ class UserSettingsResponse(BaseModel):
 class UserSettingsUpdate(BaseModel):
     """Schema for updating user settings."""
     mother_tongue: Optional[str] = None
-    last_language_pair: Optional[str] = None
+    last_language: Optional[str] = None
     has_seen_intro: Optional[bool] = None
 
 
@@ -1150,7 +1214,7 @@ def get_user_settings(
 
     return UserSettingsResponse(
         mother_tongue=settings["mother_tongue"],
-        last_language_pair=settings.get("last_language_pair"),
+        last_language=settings.get("last_language"),
         has_seen_intro=settings.get("has_seen_intro", False),
         has_own_api_key=bool(settings.get("openai_api_key_encrypted")),
         tokens_used_this_month=settings.get("tokens_used_this_month", 0),
@@ -1186,7 +1250,7 @@ def create_user_settings(
     s = result.data[0]
     return UserSettingsResponse(
         mother_tongue=s["mother_tongue"],
-        last_language_pair=s.get("last_language_pair"),
+        last_language=s.get("last_language"),
         has_seen_intro=s.get("has_seen_intro", False),
         has_own_api_key=False,
         tokens_used_this_month=0,
@@ -1212,7 +1276,7 @@ def update_user_settings(
     s = result.data[0]
     return UserSettingsResponse(
         mother_tongue=s["mother_tongue"],
-        last_language_pair=s.get("last_language_pair"),
+        last_language=s.get("last_language"),
         has_seen_intro=s.get("has_seen_intro", False),
         has_own_api_key=bool(s.get("openai_api_key_encrypted")),
         tokens_used_this_month=s.get("tokens_used_this_month", 0),
