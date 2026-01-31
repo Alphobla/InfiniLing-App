@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import vocabulary
+from api.routes import vocabulary, user
 
 app = FastAPI(
     title="InfiniLing API",
@@ -22,6 +22,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(vocabulary.router)
+app.include_router(user.router)
 
 
 @app.get("/api/health")

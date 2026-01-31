@@ -20,6 +20,11 @@ class Settings(BaseSettings):
     enhance_max_tokens: int = 200
     enhance_temperature: float = 0.3
 
+    # Story generation settings
+    story_max_tokens: int = 800
+    story_temperature: float = 0.7
+    story_word_multiplier: int = 20  # Story words per vocabulary word
+
     # Token limits
     default_token_limit: int = 100000
 

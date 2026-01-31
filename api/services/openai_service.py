@@ -1,7 +1,7 @@
 """OpenAI service for word enhancement and generation."""
 
 import json
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 from openai import OpenAI
 from wordfreq import zipf_frequency
 
@@ -109,3 +109,67 @@ OUTPUT: JSON only, no markdown formatting.
         result["tokens_used"] = response.usage.total_tokens
 
         return result
+
+    def generate_story(
+        self,
+        words: List[str],
+        language: str,
+        difficulty: str = "intermediate",
+        word_multiplier: int = 20,
+        max_tokens: int = 800,
+        temperature: float = 0.7
+    ) -> Dict:
+        """
+        Generate a story using the provided vocabulary words.
+
+        Args:
+            words: Vocabulary words to include
+            language: Target language for the story
+            difficulty: Learner level (beginner, intermediate, advanced)
+            word_multiplier: Story words per vocabulary word (e.g., 20 = 200 words for 10 vocab words)
+            max_tokens: Max tokens for API response
+            temperature: Creativity setting
+
+        Returns dict with: story, words_used, tokens_used
+        """
+        words_str = ", ".join(words)
+        target_words = len(words) * word_multiplier
+
+        prompt = f"""Write a short story (around {target_words} words) in {language} that naturally incorporates these vocabulary words: {words_str}
+
+Requirements:
+- Use simple, clear sentences appropriate for {difficulty} learners
+- Incorporate all the words naturally (don't force them)
+- Make it engaging and memorable
+- The story should make sense and flow well
+
+Write only the story, no explanations."""
+
+        response = self.client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=max_tokens,
+            temperature=temperature
+        )
+
+        story = response.choices[0].message.content.strip()
+
+        return {
+            "story": story,
+            "words_used": words,
+            "tokens_used": response.usage.total_tokens
+        }
+
+    def generate_audio(self, text: str, voice: str = "alloy") -> bytes:
+        """
+        Generate TTS audio for text.
+
+        Returns audio bytes (mp3 format).
+        """
+        response = self.client.audio.speech.create(
+            model="tts-1",
+            voice=voice,
+            input=text
+        )
+
+        return response.content

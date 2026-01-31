@@ -19,8 +19,8 @@
 | Task 3: Database Models (SQL) | ✅ DONE |
 | Task 4: Vocabulary CRUD Endpoints | ✅ DONE |
 | Task 5: Word Enhancement Service | ✅ DONE |
-| Task 6: Spaced Repetition Endpoints | ❌ TODO |
-| Task 7: User Settings Endpoints | ❌ TODO |
+| Task 6: Spaced Repetition Endpoints | ✅ DONE |
+| Task 7: User Settings Endpoints | ✅ DONE |
 | Task 8: Story Generation Endpoints | ❌ TODO |
 | Task 9: Import/Export Endpoints | ❌ TODO |
 | Task 10: Starter Words Endpoint | ❌ TODO |
