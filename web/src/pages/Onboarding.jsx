@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 
 const LANGUAGES = [
@@ -9,10 +9,25 @@ const LANGUAGES = [
 
 export default function Onboarding() {
   const navigate = useNavigate()
-  const { createSettings } = useAuthStore()
+  const { user, settings, loading, createSettings } = useAuthStore()
   const [step, setStep] = useState(1)
   const [motherTongue, setMotherTongue] = useState('')
   const [saving, setSaving] = useState(false)
+
+  // If still loading, show loading state
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+  }
+
+  // If not logged in, redirect to login
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+
+  // If already has settings, redirect to dashboard
+  if (settings) {
+    return <Navigate to="/" replace />
+  }
 
   const handleNext = () => {
     if (step === 1 && motherTongue) {

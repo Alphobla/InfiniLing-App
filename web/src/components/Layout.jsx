@@ -10,7 +10,7 @@ const navItems = [
 ]
 
 export default function Layout() {
-  const { user, loading, signOut } = useAuthStore()
+  const { user, settings, loading, signOut } = useAuthStore()
   const location = useLocation()
 
   if (loading) {
@@ -19,6 +19,11 @@ export default function Layout() {
 
   if (!user) {
     return <Navigate to="/login" replace />
+  }
+
+  // Redirect to onboarding if settings don't exist
+  if (!settings) {
+    return <Navigate to="/onboarding" replace />
   }
 
   return (

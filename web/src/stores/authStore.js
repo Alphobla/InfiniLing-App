@@ -2,6 +2,9 @@ import { create } from 'zustand'
 import { supabase } from '../services/supabase'
 import { userApi } from '../services/api'
 
+let initialized = false
+let authListener = null
+
 export const useAuthStore = create((set) => ({
   user: null,
   session: null,
@@ -9,6 +12,10 @@ export const useAuthStore = create((set) => ({
   loading: true,
 
   initialize: async () => {
+    // Prevent multiple initializations
+    if (initialized) return
+    initialized = true
+
     try {
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
@@ -24,17 +31,21 @@ export const useAuthStore = create((set) => ({
       set({ loading: false })
     }
 
-    supabase.auth.onAuthStateChange(async (event, session) => {
-      set({ user: session?.user || null, session })
-      if (session) {
-        try {
-          const { data } = await userApi.getSettings()
-          set({ settings: data })
-        } catch (e) {}
-      } else {
-        set({ settings: null })
-      }
-    })
+    // Only set up listener once
+    if (!authListener) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        set({ user: session?.user || null, session })
+        if (session) {
+          try {
+            const { data } = await userApi.getSettings()
+            set({ settings: data })
+          } catch (e) {}
+        } else {
+          set({ settings: null })
+        }
+      })
+      authListener = subscription
+    }
   },
 
   signUp: async (email, password) => {

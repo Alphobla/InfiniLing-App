@@ -1,0 +1,15 @@
+{
+  "testUser": {
+    "email": "test@infinilig.dev",
+    "password": "TestPassword123!"
+  },
+  "newUser": {
+    "emailPrefix": "newuser",
+    "password": "NewUserPass123!"
+  },
+  "words": [
+    { "word": "hola", "translation": "hello", "languageFrom": "Spanish", "languageTo": "English" },
+    { "word": "gracias", "translation": "thank you", "languageFrom": "Spanish", "languageTo": "English" },
+    { "word": "agua", "translation": "water", "languageFrom": "Spanish", "languageTo": "English" }
+  ]
+}

@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     default_token_limit: int = 100000
 
     class Config:
-        env_file = ".env"
+        env_file = "api/.env"
 
 
 @lru_cache
