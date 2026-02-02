@@ -1,0 +1,69 @@
+import axios from 'axios'
+import { supabase } from './supabase'
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+})
+
+// Add auth token to requests
+api.interceptors.request.use(async (config) => {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session?.access_token) {
+    config.headers.Authorization = `Bearer ${session.access_token}`
+  }
+  return config
+})
+
+// Vocabulary
+export const vocabularyApi = {
+  list: (params) => api.get('/api/vocabulary', { params }),
+  get: (id) => api.get(`/api/vocabulary/${id}`),
+  create: (data) => api.post('/api/vocabulary', data),
+  update: (id, data) => api.put(`/api/vocabulary/${id}`, data),
+  delete: (id) => api.delete(`/api/vocabulary/${id}`),
+  enhance: (data) => api.post('/api/vocabulary/enhance', data),
+  getDue: (params) => api.get('/api/vocabulary/due', { params }),
+  getStatistics: (params) => api.get('/api/vocabulary/statistics', { params }),
+  submitReview: (id, score) => api.post(`/api/vocabulary/${id}/review`, { score }),
+}
+
+// User
+export const userApi = {
+  getSettings: () => api.get('/api/user/settings'),
+  createSettings: (data) => api.post('/api/user/settings', data),
+  updateSettings: (data) => api.put('/api/user/settings', data),
+  getUsage: () => api.get('/api/user/usage'),
+  setApiKey: (apiKey) => api.put('/api/user/api-key', { api_key: apiKey }),
+  removeApiKey: () => api.delete('/api/user/api-key'),
+}
+
+// Generate
+export const generateApi = {
+  story: (data) => api.post('/api/generate/story', data),
+  audio: (data) => api.post('/api/generate/audio', data, { responseType: 'blob' }),
+}
+
+// Starter words
+export const starterWordsApi = {
+  getLanguages: () => api.get('/api/starter-words/languages'),
+  getWords: (language, difficulty) =>
+    api.get(`/api/starter-words/${language}`, { params: { difficulty } }),
+}
+
+// Import/Export
+export const importExportApi = {
+  export: (format, languageFrom) =>
+    api.get('/api/export', {
+      params: { format, language_from: languageFrom },
+      responseType: 'blob'
+    }),
+  import: (file, languageFrom, languageTo, conflictResolution = 'skip') => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return api.post('/api/import', formData, {
+      params: { language_from: languageFrom, language_to: languageTo, conflict_resolution: conflictResolution }
+    })
+  },
+}
+
+export default api

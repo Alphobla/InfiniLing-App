@@ -21,10 +21,10 @@
 | Task 5: Word Enhancement Service | ✅ DONE |
 | Task 6: Spaced Repetition Endpoints | ✅ DONE |
 | Task 7: User Settings Endpoints | ✅ DONE |
-| Task 8: Story Generation Endpoints | ❌ TODO |
-| Task 9: Import/Export Endpoints | ❌ TODO |
-| Task 10: Starter Words Endpoint | ❌ TODO |
-| Task 11: Environment Setup | ❌ TODO |
+| Task 8: Story Generation Endpoints | ✅ DONE |
+| Task 9: Import/Export Endpoints | ✅ DONE |
+| Task 10: Starter Words Endpoint | ✅ DONE |
+| Task 11: Environment Setup | ✅ DONE |
 
 ---
 
