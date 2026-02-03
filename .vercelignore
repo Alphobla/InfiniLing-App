@@ -24,8 +24,8 @@ tests/
 cypress/
 
 # Old desktop app (not needed for web)
-src/
-data/
+/src/
+/data/
 /main.py
 /main.spec
 /config.json
