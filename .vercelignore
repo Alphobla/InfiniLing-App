@@ -29,3 +29,5 @@ data/
 /main.py
 /main.spec
 /config.json
+/pyproject.toml
+/uv.lock
