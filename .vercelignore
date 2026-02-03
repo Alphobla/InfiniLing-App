@@ -22,11 +22,10 @@ node_modules/
 .claude/
 tests/
 cypress/
-*.spec
 
 # Old desktop app (not needed for web)
 src/
 data/
-main.py
-main.spec
-config.json
+/main.py
+/main.spec
+/config.json
