@@ -15,6 +15,17 @@ LANGUAGE_MAP = {
     "ru": "rus",
     "ja": "jpn",
     "zh": "cmn",
+    # Also map full language names (in case stored as names instead of codes)
+    "english": "eng",
+    "german": "deu",
+    "french": "fra",
+    "spanish": "spa",
+    "italian": "ita",
+    "portuguese": "por",
+    "dutch": "nld",
+    "russian": "rus",
+    "japanese": "jpn",
+    "chinese": "cmn",
 }
 
 
@@ -34,51 +45,62 @@ def get_example_sentence(
     Returns:
         Dict with "original" and "translation" keys, or None if not found
     """
-    # Convert to Tatoeba language codes
-    from_code = LANGUAGE_MAP.get(language_from, language_from)
-    to_code = LANGUAGE_MAP.get(language_to, language_to)
+    # Convert to Tatoeba language codes (case-insensitive lookup)
+    from_code = LANGUAGE_MAP.get(language_from.lower(), language_from)
+    to_code = LANGUAGE_MAP.get(language_to.lower(), language_to)
 
     # Strip articles for search (e.g., "der Hund" -> "Hund")
     search_word = word.split()[-1] if " " in word else word
 
-    url = "https://tatoeba.org/en/api_v0/search"
+    # Use the unstable API with trans:lang filter to only get sentences
+    # that have translations in the target language
+    search_url = "https://api.tatoeba.org/unstable/sentences"
     params = {
-        "from": from_code,
-        "to": to_code,
-        "query": search_word,
-        "limit": 10,
+        "lang": from_code,
+        "trans:lang": to_code,  # Only sentences with translations in target lang
+        "word_count": "4-12",   # Reasonable sentence length
+        "q": search_word,
+        "sort": "random",       # Required parameter
+        "limit": 5,
     }
 
     try:
-        # Use longer timeout for serverless cold starts
         with httpx.Client(timeout=15.0) as client:
-            response = client.get(url, params=params)
+            # Search for sentences
+            response = client.get(search_url, params=params)
             response.raise_for_status()
-            data = response.json()
+            results = response.json().get("data", [])
 
-        results = data.get("results", [])
-        if not results:
-            return None
+            if not results:
+                return None
 
-        # Find a sentence with a translation in the target language
-        for sentence in results:
-            text = sentence.get("text", "")
-            translations = sentence.get("translations", [])
-
-            # translations is a list of lists - iterate through all groups
-            for translation_group in translations:
-                if not isinstance(translation_group, list):
+            # Fetch details for each result to get the translation
+            for entry in results:
+                sentence_id = entry.get("id")
+                if not sentence_id:
                     continue
-                for translation in translation_group:
-                    if not isinstance(translation, dict):
-                        continue
-                    if translation.get("lang") == to_code:
-                        return {
-                            "original": text,
-                            "translation": translation.get("text", "")
-                        }
 
-        # No translation found in target language
+                detail_url = f"https://api.tatoeba.org/unstable/sentences/{sentence_id}"
+                detail_resp = client.get(detail_url, timeout=10.0)
+                if not detail_resp.is_success:
+                    continue
+
+                data = detail_resp.json()
+                sentence = data.get("data", data) if isinstance(data, dict) else {}
+
+                original_text = sentence.get("text", "")
+                translations = sentence.get("translations", [])
+
+                # Find the first translation in the target language
+                for item in translations:
+                    group = item if isinstance(item, list) else [item]
+                    for trans in group:
+                        if isinstance(trans, dict) and trans.get("lang") == to_code:
+                            return {
+                                "original": original_text,
+                                "translation": trans.get("text", "")
+                            }
+
         return None
 
     except httpx.TimeoutException:

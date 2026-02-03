@@ -316,9 +316,8 @@ def enhance_word(
         if example:
             example_original = example.get("original")
             example_translation = example.get("translation")
-    except Exception as e:
-        # Log but don't fail the entire request
-        print(f"Tatoeba error in enhance: {type(e).__name__}: {e}")
+    except Exception:
+        pass  # Don't fail the request if Tatoeba fails
 
     return EnhanceResponse(
         lemma=result["lemma"],
