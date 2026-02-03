@@ -30,15 +30,8 @@ describe('Vocabulary Management', () => {
       expect(translationInput.length).to.be.greaterThan(0)
     })
 
-    // Check that example sentence was fetched from Tatoeba
-    cy.get('input[placeholder="Example sentence (optional)"]').invoke('val').then((val) => {
-      // Log whether example was found (may or may not be present)
-      if (val && val.length > 0) {
-        cy.log('Tatoeba example found:', val)
-      } else {
-        cy.log('No Tatoeba example found (this is OK)')
-      }
-    })
+    // Verify example sentence was fetched from Tatoeba
+    cy.get('input[placeholder="Example sentence (optional)"]').invoke('val').should('not.be.empty')
 
     // Save the word
     cy.contains('button', 'Save').click()
