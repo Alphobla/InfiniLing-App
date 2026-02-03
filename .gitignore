@@ -10,7 +10,6 @@ build/
 dist/
 node_modules
 wsl_venv/
-.claude/
 /package-lock.json
 /package.json
 .worktrees/
