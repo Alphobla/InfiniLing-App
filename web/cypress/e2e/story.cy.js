@@ -19,7 +19,7 @@ describe('Story Generator', () => {
         cy.get('button').contains(/^(?!Generate|Select|Clear|Listen).+/).first().click()
 
         // Click generate - find button with "Generate" text
-        cy.contains('button', /generate/i).click()
+        cy.contains('button', /generate/i).should('be.visible').and('not.be.disabled').click()
 
         // Wait for story (API call)
         cy.contains('Your Story', { timeout: 30000 }).should('be.visible')
@@ -37,7 +37,7 @@ describe('Story Generator', () => {
       } else {
         // Select word and generate
         cy.get('button').contains(/^(?!Generate|Select|Clear|Listen).+/).first().click()
-        cy.contains('button', /generate/i).click()
+        cy.contains('button', /generate/i).should('be.visible').and('not.be.disabled').click()
         cy.contains('Your Story', { timeout: 30000 }).should('be.visible')
 
         // Click listen button
