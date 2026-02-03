@@ -10,6 +10,7 @@ from api.dependencies import get_supabase, get_current_user_id
 from api.services.openai_service import OpenAIService
 from api.services.token_tracker import TokenTracker
 from api.services.srs_service import SRSService
+from api.services.tatoeba_service import get_example_sentence
 from api.config import get_settings
 
 router = APIRouter(prefix="/api/vocabulary", tags=["vocabulary"])
@@ -71,6 +72,8 @@ class EnhanceResponse(BaseModel):
     secondary_translation: Optional[str]
     frequency_rank: Optional[int]
     frequency_level: str
+    example_sentence_original: Optional[str] = None
+    example_sentence_translation: Optional[str] = None
     enhancement_failed: bool = False
 
 
@@ -301,12 +304,21 @@ def enhance_word(
             enhancement_failed=True
         )
 
+    # Fetch example sentence from Tatoeba
+    example = get_example_sentence(
+        result["lemma"],
+        request.language_from,
+        request.language_to
+    )
+
     return EnhanceResponse(
         lemma=result["lemma"],
         translation=result["translation"],
         secondary_translation=result.get("secondary_translation"),
         frequency_rank=result.get("frequency_rank"),
         frequency_level=result.get("frequency_level", "Unknown"),
+        example_sentence_original=example.get("original") if example else None,
+        example_sentence_translation=example.get("translation") if example else None,
     )
 
 

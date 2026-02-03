@@ -528,8 +528,8 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
         lemma: data.lemma || word,
         translation: data.translation || '',
         secondary_translation: data.secondary_translation || '',
-        example_sentence_original: '',
-        example_sentence_translation: '',
+        example_sentence_original: data.example_sentence_original || '',
+        example_sentence_translation: data.example_sentence_translation || '',
       })
     } catch (err) {
       alert('Failed to translate: ' + (err.response?.data?.detail || err.message))
