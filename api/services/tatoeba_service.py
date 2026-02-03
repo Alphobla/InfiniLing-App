@@ -41,16 +41,17 @@ def get_example_sentence(
     # Strip articles for search (e.g., "der Hund" -> "Hund")
     search_word = word.split()[-1] if " " in word else word
 
-    try:
-        url = "https://tatoeba.org/en/api_v0/search"
-        params = {
-            "from": from_code,
-            "to": to_code,
-            "query": search_word,
-            "limit": 10,
-        }
+    url = "https://tatoeba.org/en/api_v0/search"
+    params = {
+        "from": from_code,
+        "to": to_code,
+        "query": search_word,
+        "limit": 10,
+    }
 
-        with httpx.Client(timeout=5.0) as client:
+    try:
+        # Use longer timeout for serverless cold starts
+        with httpx.Client(timeout=15.0) as client:
             response = client.get(url, params=params)
             response.raise_for_status()
             data = response.json()
@@ -64,9 +65,13 @@ def get_example_sentence(
             text = sentence.get("text", "")
             translations = sentence.get("translations", [])
 
-            # translations is a list of lists
+            # translations is a list of lists - iterate through all groups
             for translation_group in translations:
+                if not isinstance(translation_group, list):
+                    continue
                 for translation in translation_group:
+                    if not isinstance(translation, dict):
+                        continue
                     if translation.get("lang") == to_code:
                         return {
                             "original": text,
@@ -76,6 +81,12 @@ def get_example_sentence(
         # No translation found in target language
         return None
 
+    except httpx.TimeoutException:
+        print(f"Tatoeba timeout for '{search_word}'")
+        return None
+    except httpx.HTTPStatusError as e:
+        print(f"Tatoeba HTTP error for '{search_word}': {e.response.status_code}")
+        return None
     except Exception as e:
-        print(f"Tatoeba API error: {e}")
+        print(f"Tatoeba error for '{search_word}': {type(e).__name__}: {e}")
         return None
