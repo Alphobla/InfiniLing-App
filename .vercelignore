@@ -1,0 +1,32 @@
+# Python virtual environments
+.venv/
+venv/
+wsl_venv/
+venv_wsl/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Node
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+
+# Local env files
+.env
+.env.local
+
+# Dev/test files
+.claude/
+tests/
+cypress/
+*.spec
+
+# Old desktop app (not needed for web)
+src/
+data/
+main.py
+main.spec
+config.json
