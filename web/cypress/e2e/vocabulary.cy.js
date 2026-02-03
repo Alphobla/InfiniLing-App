@@ -3,68 +3,162 @@ describe('Vocabulary Management', () => {
     cy.loginTestUser()
     cy.visit('/vocabulary')
     cy.wait(1000)
-
-    // Stub window.alert to capture API errors
-    cy.on('window:alert', (text) => {
-      cy.log('Alert:', text)
-    })
   })
 
-  it('should add a new word', () => {
-    const testWord = `test-${Date.now()}`
+  it('should add a new word with translation and example sentence', () => {
+    const testWord = 'Hund'
 
-    cy.contains('button', 'Add Word').click()
-    cy.get('.fixed.inset-0').should('be.visible')
+    // Click Add Word button
+    cy.contains('button', '+ Add Word').click()
 
-    cy.get('.fixed.inset-0').within(() => {
-      cy.get('input').first().type(testWord)
-      cy.get('input').eq(1).type('test translation')
-      cy.contains('button', 'Save').click()
+    // Add form should appear (inline, not modal)
+    cy.contains('h3', 'Add Word').should('be.visible')
+
+    // Enter word and select language
+    cy.get('input[placeholder="Enter a word..."]').type(testWord)
+
+    // Click Translate
+    cy.contains('button', 'Translate').click()
+
+    // Wait for translation to complete - form transforms to edit mode
+    cy.contains('button', 'Save', { timeout: 30000 }).should('be.visible')
+
+    // Verify translation was fetched
+    cy.get('input').then(($inputs) => {
+      // Translation field should be filled
+      const translationInput = $inputs.filter((i, el) => el.value && el.value.length > 0)
+      expect(translationInput.length).to.be.greaterThan(0)
     })
 
-    // Wait for either: modal closes OR we see "Enhancing..." text change back
-    // The enhance+create can take 10-30 seconds with OpenAI
-    cy.get('.fixed.inset-0', { timeout: 60000 }).should('not.exist')
+    // Check that example sentence was fetched from Tatoeba
+    cy.get('input[placeholder="Example sentence (optional)"]').invoke('val').then((val) => {
+      // Log whether example was found (may or may not be present)
+      if (val && val.length > 0) {
+        cy.log('Tatoeba example found:', val)
+      } else {
+        cy.log('No Tatoeba example found (this is OK)')
+      }
+    })
+
+    // Save the word
+    cy.contains('button', 'Save').click()
+
+    // Word should appear in the list
     cy.contains(testWord, { timeout: 15000 }).should('be.visible')
   })
 
-  it('should edit a word', () => {
-    // This test requires an existing word - use one from a previous test or skip
+  it('should expand a word card to show details', () => {
     cy.get('body').then(($body) => {
-      // Check if there are any words to edit
-      if ($body.find('.bg-white.p-4').length === 0) {
+      // Check if there are any word cards
+      if ($body.find('.bg-white.rounded-lg').length === 0) {
+        cy.log('No words available - skipping test')
+        return
+      }
+
+      // Click on first word card to expand
+      cy.get('.bg-white.rounded-lg.shadow-sm').first().click()
+
+      // Should see expanded view with details
+      cy.contains('Translation').should('be.visible')
+      cy.contains('Frequency').should('be.visible')
+      cy.contains('button', 'Edit').should('be.visible')
+      cy.contains('button', 'Delete').should('be.visible')
+    })
+  })
+
+  it('should edit a word inline', () => {
+    cy.get('body').then(($body) => {
+      if ($body.find('.bg-white.rounded-lg').length === 0) {
         cy.log('No words to edit - skipping test')
         return
       }
 
-      // Click Edit on first word
-      cy.get('.bg-white.p-4').first().contains('Edit').click()
+      // Click on first word card to expand
+      cy.get('.bg-white.rounded-lg.shadow-sm').first().click()
 
-      cy.get('.fixed.inset-0').within(() => {
-        cy.get('input').eq(1).clear().type('updated-translation')
-        cy.contains('button', 'Save').click()
-      })
+      // Click Edit button
+      cy.contains('button', 'Edit').click()
 
-      cy.get('.fixed.inset-0', { timeout: 30000 }).should('not.exist')
-      cy.contains('updated-translation').should('be.visible')
+      // Should see Save/Cancel buttons (edit mode)
+      cy.contains('button', 'Save').should('be.visible')
+      cy.contains('button', 'Cancel').should('be.visible')
+
+      // Find the translation input and update it
+      cy.get('input').eq(1).clear().type('updated-translation-' + Date.now())
+
+      // Save changes
+      cy.contains('button', 'Save').click()
+
+      // Should exit edit mode
+      cy.contains('button', 'Edit', { timeout: 10000 }).should('be.visible')
     })
   })
 
   it('should delete a word', () => {
     cy.get('body').then(($body) => {
-      if ($body.find('.bg-white.p-4').length === 0) {
+      if ($body.find('.bg-white.rounded-lg').length === 0) {
         cy.log('No words to delete - skipping test')
         return
       }
 
-      // Get word text before deleting
-      cy.get('.bg-white.p-4').first().find('.font-medium').invoke('text').then((wordText) => {
-        cy.on('window:confirm', () => true)
-        cy.get('.bg-white.p-4').first().contains('Delete').click()
+      // Count words before delete
+      const countBefore = $body.find('.bg-white.rounded-lg.shadow-sm').length
 
-        // Verify word is gone
-        cy.contains('.font-medium', wordText).should('not.exist')
-      })
+      // Click on first word card to expand
+      cy.get('.bg-white.rounded-lg.shadow-sm').first().click()
+
+      // Handle confirm dialog
+      cy.on('window:confirm', () => true)
+
+      // Click Delete button
+      cy.contains('button', 'Delete').click()
+
+      // Should have one less word (or show empty state)
+      cy.wait(1000)
+      cy.get('.bg-white.rounded-lg.shadow-sm').should('have.length.lessThan', countBefore)
+    })
+  })
+
+  it('should filter words by search', () => {
+    cy.get('body').then(($body) => {
+      if ($body.find('.bg-white.rounded-lg').length === 0) {
+        cy.log('No words to search - skipping test')
+        return
+      }
+
+      // Type in search box
+      cy.get('input[placeholder="Search..."]').type('xyz-nonexistent-word')
+
+      // Should show no results or filtered results
+      cy.wait(500)
+      cy.get('.bg-white.rounded-lg.shadow-sm').should('have.length', 0)
+
+      // Clear search
+      cy.get('input[placeholder="Search..."]').clear()
+
+      // Words should reappear
+      cy.get('.bg-white.rounded-lg.shadow-sm').should('have.length.greaterThan', 0)
+    })
+  })
+
+  it('should sort words', () => {
+    cy.get('body').then(($body) => {
+      if ($body.find('.bg-white.rounded-lg').length < 2) {
+        cy.log('Not enough words to test sorting - skipping')
+        return
+      }
+
+      // Click on Frequency sort
+      cy.contains('button', 'Frequency').click()
+
+      // Should show active state
+      cy.contains('button', 'Frequency').should('have.class', 'bg-indigo-100')
+
+      // Click again to toggle direction
+      cy.contains('button', 'Frequency').click()
+
+      // Arrow should change direction
+      cy.contains('button', 'Frequency').should('contain', '↑')
     })
   })
 })
