@@ -58,3 +58,39 @@ def debug_tatoeba(word: str = "Hund", lang_from: str = "de", lang_to: str = "en"
             "error_type": type(e).__name__,
             "elapsed_seconds": round(elapsed, 2)
         }
+
+
+@app.get("/api/debug/tatoeba-with-lemma")
+def debug_tatoeba_with_lemma(word: str = "der Hund", lang_from: str = "de", lang_to: str = "en"):
+    """Debug: test Tatoeba with a lemma (like after GPT enhancement)."""
+    from api.services.tatoeba_service import get_example_sentence
+    import time
+
+    start = time.time()
+    try:
+        # This is exactly what happens in the enhance endpoint
+        result = get_example_sentence(word, lang_from, lang_to)
+        elapsed = time.time() - start
+
+        example_original = None
+        example_translation = None
+        if result:
+            example_original = result.get("original")
+            example_translation = result.get("translation")
+
+        return {
+            "input_word": word,
+            "lang_from": lang_from,
+            "lang_to": lang_to,
+            "raw_result": result,
+            "example_original": example_original,
+            "example_translation": example_translation,
+            "elapsed_seconds": round(elapsed, 2)
+        }
+    except Exception as e:
+        elapsed = time.time() - start
+        return {
+            "error": str(e),
+            "error_type": type(e).__name__,
+            "elapsed_seconds": round(elapsed, 2)
+        }

@@ -305,11 +305,20 @@ def enhance_word(
         )
 
     # Fetch example sentence from Tatoeba
-    example = get_example_sentence(
-        result["lemma"],
-        request.language_from,
-        request.language_to
-    )
+    example_original = None
+    example_translation = None
+    try:
+        example = get_example_sentence(
+            result["lemma"],
+            request.language_from,
+            request.language_to
+        )
+        if example:
+            example_original = example.get("original")
+            example_translation = example.get("translation")
+    except Exception as e:
+        # Log but don't fail the entire request
+        print(f"Tatoeba error in enhance: {type(e).__name__}: {e}")
 
     return EnhanceResponse(
         lemma=result["lemma"],
@@ -317,8 +326,8 @@ def enhance_word(
         secondary_translation=result.get("secondary_translation"),
         frequency_rank=result.get("frequency_rank"),
         frequency_level=result.get("frequency_level", "Unknown"),
-        example_sentence_original=example.get("original") if example else None,
-        example_sentence_translation=example.get("translation") if example else None,
+        example_sentence_original=example_original,
+        example_sentence_translation=example_translation,
     )
 
 
