@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 
 export default function Signup() {
@@ -7,7 +7,7 @@ export default function Signup() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
+  const [success, setSuccess] = useState(false)
   const signUp = useAuthStore((s) => s.signUp)
 
   const handleSubmit = async (e) => {
@@ -16,12 +16,63 @@ export default function Signup() {
     setError('')
     try {
       await signUp(email, password)
-      navigate('/onboarding')
+      setSuccess(true)
     } catch (err) {
       setError(err.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  // Show confirmation message after successful signup
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bg p-6">
+        <div className="fixed top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        
+        <div className="max-w-sm w-full relative">
+          <div className="text-center mb-10 animate-fade-up">
+            <Link to="/" className="inline-flex items-center gap-1 mb-4">
+              <img 
+                src="/zoom_logo.png" 
+                alt="InfiniLing" 
+                className="w-14 h-14 rounded-xl"
+              />
+              <span className="text-3xl tracking-tight">
+                <span className="font-semibold text-text">Infini</span>
+                <span className="font-light text-muted">Ling</span>
+              </span>
+            </Link>
+          </div>
+
+          <div className="bg-surface rounded-2xl shadow-medium p-8 animate-fade-up delay-1 text-center">
+            <div className="w-16 h-16 bg-success-light rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl">📬</span>
+            </div>
+            
+            <h1 className="text-xl font-semibold text-text mb-3">Check your inbox</h1>
+            
+            <p className="text-muted text-sm mb-6 leading-relaxed">
+              I've sent a confirmation link to <span className="font-medium text-text">{email}</span>. 
+              Click it to activate your account.
+            </p>
+            
+            <div className="bg-warning-light border border-warning/20 rounded-xl p-4 mb-6">
+              <p className="text-sm text-warning font-medium">
+                📁 Don't see it? Check your spam folder!
+              </p>
+            </div>
+            
+            <Link 
+              to="/login" 
+              className="text-accent font-medium hover:underline underline-offset-2 text-sm"
+            >
+              Go to login →
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
