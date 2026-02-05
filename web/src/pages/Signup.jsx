@@ -33,9 +33,11 @@ export default function Signup() {
         {/* Logo */}
         <div className="text-center mb-10 animate-fade-up">
           <Link to="/" className="inline-flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">∞</span>
-            </div>
+            <img 
+              src="/zoom_logo.png" 
+              alt="InfiniLing" 
+              className="w-12 h-12 rounded-xl"
+            />
             <span className="text-3xl tracking-tight">
               <span className="font-semibold text-text">Infini</span>
               <span className="font-light text-muted">Ling</span>

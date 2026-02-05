@@ -40,9 +40,11 @@ export default function Layout() {
             {/* Logo & Nav */}
             <div className="flex items-center gap-12">
               <Link to="/" className="flex items-center gap-2.5 group">
-                <div className="w-9 h-9 bg-accent rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
-                  <span className="text-white font-bold text-lg">∞</span>
-                </div>
+                <img 
+                  src="/zoom_logo.png" 
+                  alt="InfiniLing" 
+                  className="w-9 h-9 rounded-xl transition-transform group-hover:scale-105"
+                />
                 <span className="text-xl tracking-tight">
                   <span className="font-semibold text-text">Infini</span>
                   <span className="font-light text-muted">Ling</span>
