@@ -34,7 +34,7 @@ export default function Layout() {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link to="/" className="flex items-center gap-2">
-                <img src="/pwa-192x192.png" alt="" className="w-8 h-8" />
+                <img src="/png_cropped.png" alt="" className="w-10 h-10" />
                 <span className="text-xl font-bold text-primary-600">InfiniLing</span>
               </Link>
               <div className="hidden md:flex ml-10 space-x-4">

@@ -29,9 +29,9 @@ export default function Login() {
       <div className="max-w-sm w-full">
         {/* Logo & Tagline */}
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-3">
-            <img src="/pwa-192x192.png" alt="" className="w-12 h-12" />
-            <span className="text-2xl font-bold text-primary-600">InfiniLing</span>
+          <Link to="/" className="inline-flex items-center gap-3 mb-3">
+            <img src="/png_cropped.png" alt="" className="w-14 h-14" />
+            <span className="text-3xl font-bold text-primary-600">InfiniLing</span>
           </Link>
           <p className="text-gray-500">Learn languages through stories</p>
         </div>

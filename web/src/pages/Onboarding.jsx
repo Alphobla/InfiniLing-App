@@ -49,10 +49,18 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-gray-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <div className="flex items-center gap-3">
+            <img src="/png_cropped.png" alt="" className="w-12 h-12" />
+            <span className="text-2xl font-bold text-primary-600">InfiniLing</span>
+          </div>
+        </div>
+
         {/* Progress indicator */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <div className="flex items-center gap-2">
             <div className={`w-3 h-3 rounded-full ${step >= 1 ? 'bg-primary-600' : 'bg-gray-300'}`} />
             <div className={`w-8 h-0.5 ${step >= 2 ? 'bg-primary-600' : 'bg-gray-300'}`} />
@@ -60,7 +68,7 @@ export default function Onboarding() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-8 shadow-sm">
+        <div className="bg-white rounded-2xl p-8 shadow-xl">
           {step === 1 && (
             <>
               <h1 className="text-2xl font-bold text-center mb-2">Welcome 👋</h1>
