@@ -41,12 +41,15 @@ export default function Onboarding() {
   const handleComplete = async () => {
     setSaving(true)
     try {
+      console.log('Creating settings with motherTongue:', motherTongue)
       await createSettings(motherTongue)
+      console.log('Settings created successfully')
+      // Navigation should happen automatically via the settings check above
     } catch (err) {
+      console.error('Failed to save settings:', err)
       // Ignore abort errors — they mean navigation already happened (settings were created)
       if (err instanceof DOMException && err.name === 'AbortError') return
-      console.error('Failed to save settings:', err)
-      alert('Failed to complete setup. Please try again.')
+      alert('Failed to complete setup: ' + (err.response?.data?.detail || err.message || 'Unknown error'))
     } finally {
       setSaving(false)
     }
