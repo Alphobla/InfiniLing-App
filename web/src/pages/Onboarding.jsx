@@ -64,11 +64,11 @@ export default function Onboarding() {
       <div className="max-w-md w-full relative">
         {/* Logo */}
         <div className="flex justify-center mb-8 animate-fade-up">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
             <img 
               src="/zoom_logo.png" 
               alt="InfiniLing" 
-              className="w-11 h-11 rounded-xl"
+              className="w-12 h-12 rounded-xl"
             />
             <span className="text-2xl tracking-tight">
               <span className="font-semibold text-text">Infini</span>

@@ -32,11 +32,11 @@ export default function Login() {
       <div className="max-w-sm w-full relative">
         {/* Logo & Tagline */}
         <div className="text-center mb-10 animate-fade-up">
-          <Link to="/" className="inline-flex items-center gap-3 mb-4">
+          <Link to="/" className="inline-flex items-center gap-1 mb-4">
             <img 
               src="/zoom_logo.png" 
               alt="InfiniLing" 
-              className="w-12 h-12 rounded-xl"
+              className="w-14 h-14 rounded-xl"
             />
             <span className="text-3xl tracking-tight">
               <span className="font-semibold text-text">Infini</span>

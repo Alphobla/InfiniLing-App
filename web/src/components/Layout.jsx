@@ -39,11 +39,11 @@ export default function Layout() {
           <div className="flex justify-between h-16">
             {/* Logo & Nav */}
             <div className="flex items-center gap-12">
-              <Link to="/" className="flex items-center gap-2.5 group">
+              <Link to="/" className="flex items-center gap-0.8 group">
                 <img 
                   src="/zoom_logo.png" 
                   alt="InfiniLing" 
-                  className="w-9 h-9 rounded-xl transition-transform group-hover:scale-105"
+                  className="w-10 h-10 rounded-xl transition-transform group-hover:scale-105"
                 />
                 <span className="text-xl tracking-tight">
                   <span className="font-semibold text-text">Infini</span>
