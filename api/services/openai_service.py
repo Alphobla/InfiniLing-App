@@ -4,33 +4,7 @@ import json
 from typing import Optional, Dict, List
 from openai import OpenAI
 from wordfreq import zipf_frequency
-
-
-# Words to strip from the beginning of lemmas for frequency lookup
-# These are articles, infinitive markers, reflexive pronouns, etc.
-STRIP_PREFIXES = {
-    "en": {"the", "a", "an", "to"},
-    "de": {"der", "die", "das", "ein", "eine", "einen", "einem", "einer", "eines", "sich", "zu"},
-    "fr": {"le", "la", "les", "l'", "un", "une", "des", "se", "s'"},
-    "es": {"el", "la", "los", "las", "un", "una", "unos", "unas"},
-    "it": {"il", "lo", "la", "i", "gli", "le", "un", "uno", "una"},
-    "pt": {"o", "a", "os", "as", "um", "uma", "uns", "umas"},
-    "nl": {"de", "het", "een"},
-}
-
-
-def strip_prefix_words(lemma: str, language: str) -> str:
-    """Strip known prefix words (articles, etc.) from the beginning of a lemma."""
-    prefixes = STRIP_PREFIXES.get(language, set())
-    if not prefixes:
-        return lemma
-
-    words = lemma.split()
-    # Strip prefix words from the beginning only
-    while words and words[0].lower() in prefixes:
-        words = words[1:]
-
-    return " ".join(words) if words else lemma
+from api.services.text_utils import strip_prefix_words
 
 
 def get_frequency_info(word: str, language: str) -> Dict:

@@ -2,6 +2,7 @@
 
 import httpx
 from typing import Optional, Dict
+from api.services.text_utils import strip_prefix_words
 
 # Map language codes to Tatoeba language codes
 LANGUAGE_MAP = {
@@ -50,7 +51,7 @@ def get_example_sentence(
     to_code = LANGUAGE_MAP.get(language_to.lower(), language_to)
 
     # Strip articles for search (e.g., "der Hund" -> "Hund")
-    search_word = word.split()[-1] if " " in word else word
+    search_word = strip_prefix_words(word, language_from)
 
     # Use the unstable API with trans:lang filter to only get sentences
     # that have translations in the target language
