@@ -260,6 +260,13 @@ export default function SettingsModal({ onClose }) {
               />
             </div>
           </div>
+
+          {/* Feedback */}
+          <div className="pt-2 border-t border-border">
+            <p className="text-center text-xs text-muted">
+              Grateful for any feedback — <a href="mailto:valentinmaissen@gmail.com" className="text-accent hover:underline underline-offset-2">contact me</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

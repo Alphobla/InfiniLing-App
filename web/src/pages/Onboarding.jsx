@@ -120,17 +120,17 @@ export default function Onboarding() {
 
           {step === 2 && (
             <>
-              <h1 className="text-2xl font-semibold text-center text-text mb-8">How it works</h1>
+              <h1 className="text-2xl font-semibold text-center text-text mb-6">How does this app work?</h1>
               
-              <div className="space-y-8 mb-10">
+              <div className="space-y-5 mb-8">
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <span className="text-xl">📝</span>
                   </div>
                   <div>
-                    <p className="font-medium text-text mb-1">Add words</p>
-                    <p className="text-sm text-muted">
-                      Add words in any language you're learning. We'll handle translations automatically.
+                    <p className="font-medium text-text mb-1">Build your vocabulary</p>
+                    <p className="text-sm text-muted leading-relaxed">
+                      Whenever you come across a new word in a language you're learning, simply add it to your personal vocabulary database.
                     </p>
                   </div>
                 </div>
@@ -140,9 +140,21 @@ export default function Onboarding() {
                     <span className="text-xl">✨</span>
                   </div>
                   <div>
-                    <p className="font-medium text-text mb-1">Generate stories</p>
-                    <p className="text-sm text-muted">
-                      Create infinite stories using your vocabulary. Context is how we actually learn.
+                    <p className="font-medium text-text mb-1">Learn in context</p>
+                    <p className="text-sm text-muted leading-relaxed">
+                      A generative AI will create unique texts using the words you've collected, helping you see them in real context.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl">🧠</span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-text mb-1">Spaced repetition</p>
+                    <p className="text-sm text-muted leading-relaxed">
+                      Review words as flashcards and rate how difficult they feel. The easier a word is for you, the longer the app waits before bringing it back—both in new stories and for review.
                     </p>
                   </div>
                 </div>
