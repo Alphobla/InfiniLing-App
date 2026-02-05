@@ -33,7 +33,10 @@ export default function Layout() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link to="/" className="text-xl font-bold text-primary-600">InfiniLing</Link>
+              <Link to="/" className="flex items-center gap-2">
+                <img src="/pwa-192x192.png" alt="" className="w-8 h-8" />
+                <span className="text-xl font-bold text-primary-600">InfiniLing</span>
+              </Link>
               <div className="hidden md:flex ml-10 space-x-4">
                 {navItems.map((item) => (
                   <Link

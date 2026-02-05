@@ -126,7 +126,7 @@ export default function Onboarding() {
                 disabled={saving}
                 className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50"
               >
-                {saving ? 'Setting up...' : 'Let's go'}
+                {saving ? 'Setting up...' : "Let's go"}
               </button>
             </>
           )}
