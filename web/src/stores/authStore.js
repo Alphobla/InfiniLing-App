@@ -26,7 +26,12 @@ export const useAuthStore = create((set) => ({
         } catch (e) { /* Settings might not exist yet */ }
       }
     } catch (e) {
-      console.error('Auth initialization failed:', e)
+      // Ignore AbortError from Web Locks API - this is a known Supabase issue
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        console.warn('Auth initialization aborted (harmless Web Locks issue)')
+      } else {
+        console.error('Auth initialization failed:', e)
+      }
     } finally {
       set({ loading: false })
     }
