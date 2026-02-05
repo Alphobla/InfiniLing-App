@@ -6,6 +6,33 @@ from openai import OpenAI
 from wordfreq import zipf_frequency
 
 
+# Words to strip from the beginning of lemmas for frequency lookup
+# These are articles, infinitive markers, reflexive pronouns, etc.
+STRIP_PREFIXES = {
+    "en": {"the", "a", "an", "to"},
+    "de": {"der", "die", "das", "ein", "eine", "einen", "einem", "einer", "eines", "sich", "zu"},
+    "fr": {"le", "la", "les", "l'", "un", "une", "des", "se", "s'"},
+    "es": {"el", "la", "los", "las", "un", "una", "unos", "unas"},
+    "it": {"il", "lo", "la", "i", "gli", "le", "un", "uno", "una"},
+    "pt": {"o", "a", "os", "as", "um", "uma", "uns", "umas"},
+    "nl": {"de", "het", "een"},
+}
+
+
+def strip_prefix_words(lemma: str, language: str) -> str:
+    """Strip known prefix words (articles, etc.) from the beginning of a lemma."""
+    prefixes = STRIP_PREFIXES.get(language, set())
+    if not prefixes:
+        return lemma
+
+    words = lemma.split()
+    # Strip prefix words from the beginning only
+    while words and words[0].lower() in prefixes:
+        words = words[1:]
+
+    return " ".join(words) if words else lemma
+
+
 def get_frequency_info(word: str, language: str) -> Dict:
     """Get word frequency information using wordfreq."""
     zipf_freq = zipf_frequency(word.lower(), language)
@@ -97,10 +124,9 @@ OUTPUT: JSON only, no markdown formatting.
                 "tokens_used": response.usage.total_tokens
             }
 
-        # Add frequency info
-        # Strip articles for frequency lookup
-        core_word = lemma.split()[-1] if " " in lemma else lemma
-        freq_info = get_frequency_info(core_word, language_from)
+        # Add frequency info (strip prefix words like articles for lookup)
+        core_expression = strip_prefix_words(lemma, language_from)
+        freq_info = get_frequency_info(core_expression, language_from)
 
         result["frequency_rank"] = freq_info["rank"]
         result["frequency_level"] = freq_info["level"]

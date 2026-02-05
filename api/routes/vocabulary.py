@@ -26,6 +26,13 @@ class VocabularyCreate(BaseModel):
     translation: str
     language_from: str
     language_to: str
+    # Enhanced fields (optional, populated after enhance call)
+    lemma: Optional[str] = None
+    secondary_translation: Optional[str] = None
+    frequency_rank: Optional[int] = None
+    frequency_level: Optional[str] = None
+    example_sentence_original: Optional[str] = None
+    example_sentence_translation: Optional[str] = None
 
 
 class VocabularyUpdate(BaseModel):
@@ -151,9 +158,10 @@ def create_vocabulary(
     db: Client = Depends(get_supabase)
 ):
     """Add a new vocabulary word."""
-    data = vocab.model_dump()
+    data = vocab.model_dump(exclude_none=True)
     data["user_id"] = user_id
-    data["lemma"] = vocab.word  # Default lemma to word, enhance later
+    if "lemma" not in data:
+        data["lemma"] = vocab.word  # Default lemma to word if not provided
 
     result = db.table("vocabulary").insert(data).execute()
 
