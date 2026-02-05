@@ -30,6 +30,9 @@ LANGUAGE_MAP = {
 }
 
 
+from typing import Dict, Optional
+import httpx
+
 def get_example_sentence(
     word: str,
     language_from: str,
@@ -53,56 +56,47 @@ def get_example_sentence(
     # Strip articles for search (e.g., "der Hund" -> "Hund")
     search_word = strip_prefix_words(word, language_from)
 
-    # Use the unstable API with trans:lang filter to only get sentences
-    # that have translations in the target language
+    # One-call approach: ask for sentences in from_code that contain the query,
+    # and request translations in to_code in the SAME response.
     search_url = "https://api.tatoeba.org/unstable/sentences"
     params = {
-        "lang": from_code,
-        "trans:lang": to_code,  # Only sentences with translations in target lang
-        "word_count": "4-12",   # Reasonable sentence length
-        "q": search_word,
-        "sort": "random",       # Required parameter
-        "limit": 5,
+        "from": from_code,
+        "query": search_word,
+        "trans": to_code,     # <-- include translations in the response
+        "limit": 30,          # fetch a small batch then filter locally
     }
+
+    def _word_count_ok(text: str) -> bool:
+        # split on whitespace; good enough for a 4–12 word heuristic
+        n = len(text.split())
+        return 4 <= n <= 12
 
     try:
         with httpx.Client(timeout=15.0) as client:
-            # Search for sentences
-            response = client.get(search_url, params=params)
-            response.raise_for_status()
-            results = response.json().get("data", [])
+            resp = client.get(search_url, params=params)
+            resp.raise_for_status()
 
+            results = resp.json().get("data", [])
             if not results:
                 return None
 
-            # Fetch details for each result to get the translation
-            for entry in results:
-                sentence_id = entry.get("id")
-                if not sentence_id:
+            for s in results:
+                original = (s.get("text") or "").strip()
+                if not original or not _word_count_ok(original):
                     continue
 
-                detail_url = f"https://api.tatoeba.org/unstable/sentences/{sentence_id}"
-                detail_resp = client.get(detail_url, timeout=10.0)
-                if not detail_resp.is_success:
-                    continue
+                # Tatoeba often returns translations as list-of-lists grouped by language.
+                translations = s.get("translations") or []
+                for group in translations:
+                    if not isinstance(group, list):
+                        continue
+                    for t in group:
+                        if isinstance(t, dict) and t.get("lang") == to_code:
+                            translation = (t.get("text") or "").strip()
+                            if translation:
+                                return {"original": original, "translation": translation}
 
-                data = detail_resp.json()
-                sentence = data.get("data", data) if isinstance(data, dict) else {}
-
-                original_text = sentence.get("text", "")
-                translations = sentence.get("translations", [])
-
-                # Find the first translation in the target language
-                for item in translations:
-                    group = item if isinstance(item, list) else [item]
-                    for trans in group:
-                        if isinstance(trans, dict) and trans.get("lang") == to_code:
-                            return {
-                                "original": original_text,
-                                "translation": trans.get("text", "")
-                            }
-
-        return None
+            return None
 
     except httpx.TimeoutException:
         print(f"Tatoeba timeout for '{search_word}'")
