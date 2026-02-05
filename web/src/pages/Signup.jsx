@@ -32,7 +32,7 @@ export default function Signup() {
       <div className="max-w-sm w-full relative">
         {/* Logo */}
         <div className="text-center mb-10 animate-fade-up">
-          <Link to="/" className="inline-flex items-center gap-2.5 mb-4">
+          <Link to="/" className="inline-flex items-center gap-1 mb-4">
             <img 
               src="/zoom_logo.png" 
               alt="InfiniLing" 
