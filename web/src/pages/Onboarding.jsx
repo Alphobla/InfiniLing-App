@@ -54,8 +54,8 @@ export default function Onboarding() {
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <div className="flex items-center gap-3">
-            <img src="/png_cropped.png" alt="" className="w-12 h-12" />
-            <span className="text-2xl font-bold text-primary-600">InfiniLing</span>
+            <img src="/png_cropped.png" alt="" className="w-12 h-12 rounded-xl" />
+            <span className="text-2xl text-primary-600"><span className="font-black">Infini</span><span className="font-medium text-primary-400">Ling</span></span>
           </div>
         </div>
 

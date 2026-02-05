@@ -30,8 +30,8 @@ export default function Login() {
         {/* Logo & Tagline */}
         <div className="text-center mb-8">
           <Link to="/" className="inline-flex items-center gap-3 mb-3">
-            <img src="/png_cropped.png" alt="" className="w-14 h-14" />
-            <span className="text-3xl font-bold text-primary-600">InfiniLing</span>
+            <img src="/png_cropped.png" alt="" className="w-14 h-14 rounded-2xl" />
+            <span className="text-3xl text-primary-600"><span className="font-black">Infini</span><span className="font-medium text-primary-400">Ling</span></span>
           </Link>
           <p className="text-gray-500">Learn languages through stories</p>
         </div>

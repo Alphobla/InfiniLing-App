@@ -34,8 +34,8 @@ export default function Layout() {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link to="/" className="flex items-center gap-2">
-                <img src="/png_cropped.png" alt="" className="w-10 h-10" />
-                <span className="text-xl font-bold text-primary-600">InfiniLing</span>
+                <img src="/png_cropped.png" alt="" className="w-10 h-10 rounded-xl" />
+                <span className="text-xl text-primary-600"><span className="font-black">Infini</span><span className="font-medium text-primary-400">Ling</span></span>
               </Link>
               <div className="hidden md:flex ml-10 space-x-4">
                 {navItems.map((item) => (

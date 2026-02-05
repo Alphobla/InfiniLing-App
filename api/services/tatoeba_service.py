@@ -74,7 +74,7 @@ def get_example_sentence(
         return 2 <= n <= 15
 
     try:
-        with httpx.Client(timeout=15.0) as client:
+        with httpx.Client(timeout=3.0) as client:
             resp = client.get(search_url, params=params)
             resp.raise_for_status()
 
