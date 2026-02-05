@@ -63,15 +63,12 @@ export default function Onboarding() {
         <div className="bg-white rounded-xl p-8 shadow-sm">
           {step === 1 && (
             <>
-              <h1 className="text-2xl font-bold text-center mb-2">Welcome to InfiniLing</h1>
+              <h1 className="text-2xl font-bold text-center mb-2">Welcome 👋</h1>
               <p className="text-gray-600 text-center mb-8">
-                Let's get you set up. First, what's your native language?
+                First things first — what's your native language?
               </p>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Mother Tongue
-                </label>
                 <select
                   value={motherTongue}
                   onChange={(e) => setMotherTongue(e.target.value)}
@@ -96,27 +93,32 @@ export default function Onboarding() {
 
           {step === 2 && (
             <>
-              <h1 className="text-2xl font-bold text-center mb-2">You're all set!</h1>
-              <p className="text-gray-600 text-center mb-8">
-                Here's how InfiniLing helps you learn:
-              </p>
+              <h1 className="text-2xl font-bold text-center mb-3">Here's how it works</h1>
+              
+              <div className="space-y-6 mb-8">
+                <div className="text-center">
+                  <div className="text-3xl mb-2">📝</div>
+                  <p className="text-gray-700">
+                    <span className="font-medium">Add words</span> in any language you're learning.
+                    <br />
+                    <span className="text-gray-500 text-sm">We'll handle translations automatically.</span>
+                  </p>
+                </div>
 
-              <div className="space-y-4 mb-8">
-                <Feature
-                  icon="📚"
-                  title="Build Your Vocabulary"
-                  description="Add words you encounter and we'll help you remember them."
-                />
-                <Feature
-                  icon="🔄"
-                  title="Smart Reviews"
-                  description="Our spaced repetition system optimizes when you review each word."
-                />
-                <Feature
-                  icon="📖"
-                  title="Learn in Context"
-                  description="Generate stories using your vocabulary to see words in action."
-                />
+                <div className="flex justify-center">
+                  <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </div>
+
+                <div className="text-center">
+                  <div className="text-3xl mb-2">✨</div>
+                  <p className="text-gray-700">
+                    <span className="font-medium">Generate infinite stories</span> using your personal word bank.
+                    <br />
+                    <span className="text-gray-500 text-sm">Context is how we actually learn — not flashcards.</span>
+                  </p>
+                </div>
               </div>
 
               <button
@@ -124,23 +126,11 @@ export default function Onboarding() {
                 disabled={saving}
                 className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50"
               >
-                {saving ? 'Setting up...' : 'Get Started'}
+                {saving ? 'Setting up...' : 'Let's go'}
               </button>
             </>
           )}
         </div>
-      </div>
-    </div>
-  )
-}
-
-function Feature({ icon, title, description }) {
-  return (
-    <div className="flex gap-4">
-      <div className="text-2xl">{icon}</div>
-      <div>
-        <h3 className="font-medium">{title}</h3>
-        <p className="text-sm text-gray-600">{description}</p>
       </div>
     </div>
   )

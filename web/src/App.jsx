@@ -8,7 +8,6 @@ import Dashboard from './pages/Dashboard'
 import VocabularyList from './pages/VocabularyList'
 import Review from './pages/Review'
 import StoryGenerator from './pages/StoryGenerator'
-import Settings from './pages/Settings'
 import Onboarding from './pages/Onboarding'
 
 function App() {
@@ -29,7 +28,6 @@ function App() {
           <Route path="/vocabulary" element={<VocabularyList />} />
           <Route path="/review" element={<Review />} />
           <Route path="/story" element={<StoryGenerator />} />
-          <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
     </BrowserRouter>
