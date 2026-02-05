@@ -60,10 +60,12 @@ def get_example_sentence(
     # and request translations in to_code in the SAME response.
     search_url = "https://api.tatoeba.org/unstable/sentences"
     params = {
-        "from": from_code,
-        "query": search_word,
-        "trans": to_code,     # <-- include translations in the response
-        "limit": 30,          # fetch a small batch then filter locally
+        "lang": from_code,
+        "q": search_word,
+        "trans:lang": to_code,   # filter by translation language
+        "showtrans": "matching", # only show matching translations
+        "sort": "relevance",     # required parameter
+        "limit": 30,
     }
 
     def _word_count_ok(text: str) -> bool:
