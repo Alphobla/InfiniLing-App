@@ -15,7 +15,11 @@ export default function Onboarding() {
 
   // If still loading, show loading state
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bg">
+        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
   }
 
   // If not logged in, redirect to login
@@ -49,38 +53,48 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-gray-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-bg flex items-center justify-center p-6">
+      {/* Decorative elements */}
+      <div className="fixed top-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2" />
+      <div className="fixed bottom-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl translate-y-1/2 translate-x-1/2" />
+
+      <div className="max-w-md w-full relative">
         {/* Logo */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-8 animate-fade-up">
           <div className="flex items-center gap-3">
-            <img src="/zoom_logo.png" alt="" className="w-12 h-12 rounded-xl" />
-            <span className="text-2xl text-primary-600"><span className="font-black">Infini</span><span className="font-medium text-primary-400">Ling</span></span>
+            <div className="w-11 h-11 bg-accent rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-xl">∞</span>
+            </div>
+            <span className="text-2xl tracking-tight">
+              <span className="font-semibold text-text">Infini</span>
+              <span className="font-light text-muted">Ling</span>
+            </span>
           </div>
         </div>
 
         {/* Progress indicator */}
-        <div className="flex justify-center mb-6">
-          <div className="flex items-center gap-2">
-            <div className={`w-3 h-3 rounded-full ${step >= 1 ? 'bg-primary-600' : 'bg-gray-300'}`} />
-            <div className={`w-8 h-0.5 ${step >= 2 ? 'bg-primary-600' : 'bg-gray-300'}`} />
-            <div className={`w-3 h-3 rounded-full ${step >= 2 ? 'bg-primary-600' : 'bg-gray-300'}`} />
+        <div className="flex justify-center mb-8 animate-fade-up delay-1">
+          <div className="flex items-center gap-3">
+            <div className={`w-2.5 h-2.5 rounded-full transition-colors ${step >= 1 ? 'bg-accent' : 'bg-border'}`} />
+            <div className={`w-10 h-0.5 transition-colors ${step >= 2 ? 'bg-accent' : 'bg-border'}`} />
+            <div className={`w-2.5 h-2.5 rounded-full transition-colors ${step >= 2 ? 'bg-accent' : 'bg-border'}`} />
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-8 shadow-xl">
+        <div className="bg-surface rounded-2xl p-8 shadow-medium border border-border animate-fade-up delay-2">
           {step === 1 && (
             <>
-              <h1 className="text-2xl font-bold text-center mb-2">Welcome 👋</h1>
-              <p className="text-gray-600 text-center mb-8">
+              <h1 className="text-2xl font-semibold text-center text-text mb-2">Welcome</h1>
+              <p className="text-muted text-center mb-8">
                 First things first — what's your native language?
               </p>
 
-              <div className="mb-6">
+              <div className="mb-8">
                 <select
                   value={motherTongue}
                   onChange={(e) => setMotherTongue(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
+                  className="w-full px-4 py-3.5 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer"
+                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
                 >
                   <option value="">Select your language</option>
                   {LANGUAGES.map(lang => (
@@ -92,7 +106,7 @@ export default function Onboarding() {
               <button
                 onClick={handleNext}
                 disabled={!motherTongue}
-                className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3.5 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
               >
                 Continue
               </button>
@@ -101,40 +115,47 @@ export default function Onboarding() {
 
           {step === 2 && (
             <>
-              <h1 className="text-2xl font-bold text-center mb-3">Here's how it works</h1>
+              <h1 className="text-2xl font-semibold text-center text-text mb-8">How it works</h1>
               
-              <div className="space-y-6 mb-8">
-                <div className="text-center">
-                  <div className="text-3xl mb-2">📝</div>
-                  <p className="text-gray-700">
-                    <span className="font-medium">Add words</span> in any language you're learning.
-                    <br />
-                    <span className="text-gray-500 text-sm">We'll handle translations automatically.</span>
-                  </p>
+              <div className="space-y-8 mb-10">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl">📝</span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-text mb-1">Add words</p>
+                    <p className="text-sm text-muted">
+                      Add words in any language you're learning. We'll handle translations automatically.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex justify-center">
-                  <svg className="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                </div>
-
-                <div className="text-center">
-                  <div className="text-3xl mb-2">✨</div>
-                  <p className="text-gray-700">
-                    <span className="font-medium">Generate infinite stories</span> using your personal word bank.
-                    <br />
-                    <span className="text-gray-500 text-sm">Context is how we actually learn — not flashcards.</span>
-                  </p>
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <span className="text-xl">✨</span>
+                  </div>
+                  <div>
+                    <p className="font-medium text-text mb-1">Generate stories</p>
+                    <p className="text-sm text-muted">
+                      Create infinite stories using your vocabulary. Context is how we actually learn.
+                    </p>
+                  </div>
                 </div>
               </div>
 
               <button
                 onClick={handleComplete}
                 disabled={saving}
-                className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50"
+                className="w-full py-3.5 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover disabled:opacity-50 transition-all hover:-translate-y-0.5"
               >
-                {saving ? 'Setting up...' : "Let's go"}
+                {saving ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Setting up...
+                  </span>
+                ) : (
+                  "Let's go"
+                )}
               </button>
             </>
           )}

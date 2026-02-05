@@ -2,15 +2,15 @@ import { useState, useEffect, useMemo } from 'react'
 import { vocabularyApi } from '../services/api'
 import { useAuthStore } from '../stores/authStore'
 
-// Frequency badge colors
+// Frequency badge colors - more refined palette
 const FREQUENCY_COLORS = {
-  'Top 1,000': { bg: '#2E7D32', text: 'white' },
-  'Top 5,000': { bg: '#388E3C', text: 'white' },
-  'Top 10,000': { bg: '#689F38', text: 'white' },
-  'Top 20,000': { bg: '#FBC02D', text: '#1a1a1a' },
-  'Top 50,000': { bg: '#FF8F00', text: 'white' },
-  'Rare': { bg: '#D32F2F', text: 'white' },
-  'Unknown': { bg: '#757575', text: 'white' },
+  'Top 1,000': { bg: '#2D8A7B', text: 'white' },
+  'Top 5,000': { bg: '#3D9E8C', text: 'white' },
+  'Top 10,000': { bg: '#5AAF8F', text: 'white' },
+  'Top 20,000': { bg: '#D4880F', text: 'white' },
+  'Top 50,000': { bg: '#E69B3A', text: 'white' },
+  'Rare': { bg: '#C53030', text: 'white' },
+  'Unknown': { bg: '#78756F', text: 'white' },
 }
 
 const LANGUAGES = {
@@ -168,18 +168,22 @@ export default function VocabularyList() {
   }
 
   if (loading) {
-    return <div className="text-center py-8">Loading...</div>
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
   }
 
   return (
-    <div>
+    <div className="animate-fade-up">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">My Words</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold text-text">My Words</h1>
         <button
           onClick={() => setShowAddForm(true)}
           disabled={showAddForm}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+          className="bg-accent text-white px-5 py-2.5 rounded-xl font-medium hover:bg-accent-hover disabled:opacity-50 transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
         >
           + Add Word
         </button>
@@ -187,15 +191,15 @@ export default function VocabularyList() {
 
       {/* Language Tabs */}
       {Object.keys(languages).length > 0 && (
-        <div className="flex gap-2 mb-4 border-b border-gray-200">
+        <div className="flex gap-1 mb-6 border-b border-border">
           {Object.entries(languages).map(([lang, count]) => (
             <button
               key={lang}
               onClick={() => setActiveTab(lang)}
-              className={`px-4 py-2 font-medium transition-colors ${
+              className={`nav-link px-5 py-3 font-medium transition-colors ${
                 activeTab === lang
-                  ? 'text-indigo-600 border-b-2 border-indigo-600'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'text-accent active'
+                  : 'text-muted hover:text-text'
               }`}
             >
               {LANGUAGES[lang] || lang} ({count})
@@ -205,11 +209,11 @@ export default function VocabularyList() {
       )}
 
       {/* Sort Controls & Search */}
-      <div className="flex flex-wrap gap-4 mb-4 items-center">
-        <div className="flex gap-2">
-          <span className="text-gray-500 text-sm self-center">Sort:</span>
+      <div className="flex flex-wrap gap-4 mb-6 items-center">
+        <div className="flex gap-2 items-center">
+          <span className="text-muted text-sm">Sort:</span>
           <SortButton active={sortBy === 'date'} asc={sortAsc} onClick={() => handleSort('date')}>
-            Date added
+            Date
           </SortButton>
           <SortButton active={sortBy === 'frequency'} asc={sortAsc} onClick={() => handleSort('frequency')}>
             Frequency
@@ -221,7 +225,7 @@ export default function VocabularyList() {
         <input
           type="text"
           placeholder="Search..."
-          className="flex-1 min-w-[200px] px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          className="flex-1 min-w-[200px] px-4 py-2 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted/60"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -238,12 +242,17 @@ export default function VocabularyList() {
 
       {/* Word List */}
       {filteredWords.length === 0 ? (
-        <p className="text-center py-8 text-gray-500">
-          {words.length === 0 ? 'No words yet. Add your first word!' : 'No words match your search.'}
-        </p>
+        <div className="text-center py-16">
+          <div className="w-16 h-16 bg-bg rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span className="text-2xl">📝</span>
+          </div>
+          <p className="text-muted">
+            {words.length === 0 ? 'No words yet. Add your first word!' : 'No words match your search.'}
+          </p>
+        </div>
       ) : (
         <div className="space-y-2">
-          {filteredWords.map((word) => (
+          {filteredWords.map((word, index) => (
             <WordCard
               key={word.id}
               word={word}
@@ -254,6 +263,7 @@ export default function VocabularyList() {
               onCancelEdit={() => setEditingId(null)}
               onSave={(updates) => handleSave(word.id, updates)}
               onDelete={() => handleDelete(word.id)}
+              style={{ animationDelay: `${Math.min(index * 0.03, 0.3)}s` }}
             />
           ))}
         </div>
@@ -266,10 +276,10 @@ function SortButton({ children, active, asc, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+      className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
         active
-          ? 'bg-indigo-100 text-indigo-700 font-medium'
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          ? 'border-accent bg-accent-light text-accent font-medium'
+          : 'border-border text-muted hover:border-muted'
       }`}
     >
       {children}
@@ -295,7 +305,7 @@ function FrequencyBadge({ level }) {
 function DueIndicator({ nextReviewDate }) {
   if (!nextReviewDate) {
     return (
-      <span className="px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">
+      <span className="px-2 py-0.5 rounded text-xs font-medium bg-success-light text-success border border-success/20">
         New
       </span>
     )
@@ -303,13 +313,13 @@ function DueIndicator({ nextReviewDate }) {
 
   const today = new Date().toISOString().split('T')[0]
   if (nextReviewDate <= today) {
-    return <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" title="Due" />
+    return <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block" title="Due" />
   }
 
   return null
 }
 
-function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onSave, onDelete }) {
+function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onSave, onDelete, style }) {
   const [form, setForm] = useState({})
 
   useEffect(() => {
@@ -334,13 +344,14 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
     return (
       <div
         onClick={onExpand}
-        className="bg-white p-4 rounded-lg shadow-sm flex justify-between items-center cursor-pointer hover:shadow-md transition-shadow"
+        style={style}
+        className="bg-surface p-4 rounded-xl border border-border flex justify-between items-center cursor-pointer card-hover animate-fade-up"
       >
         <div className="flex items-center gap-4">
           <div>
-            <span className="font-medium">{word.lemma || word.word}</span>
-            <span className="text-gray-400 mx-2">—</span>
-            <span className="text-gray-600">{word.translation}</span>
+            <span className="font-medium text-text">{word.lemma || word.word}</span>
+            <span className="text-border mx-3">—</span>
+            <span className="text-muted">{word.translation}</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -353,97 +364,97 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
 
   // Expanded view
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-soft animate-scale-in">
       <form onSubmit={handleSubmit}>
         {/* Header */}
-        <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+        <div className="p-4 border-b border-border flex justify-between items-center">
           {editing ? (
             <input
-              className="text-lg font-semibold bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="text-lg font-semibold bg-bg border border-border rounded-lg px-3 py-1.5 text-text"
               value={form.lemma}
               onChange={(e) => setForm({ ...form, lemma: e.target.value })}
             />
           ) : (
-            <h3 className="text-lg font-semibold">{word.lemma || word.word}</h3>
+            <h3 className="text-lg font-semibold text-text">{word.lemma || word.word}</h3>
           )}
           <div className="flex gap-2">
             {editing ? (
               <>
-                <button type="submit" className="px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                <button type="submit" className="px-4 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors">
                   Save
                 </button>
-                <button type="button" onClick={onCancelEdit} className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+                <button type="button" onClick={onCancelEdit} className="px-4 py-1.5 text-sm bg-bg text-muted border border-border rounded-lg hover:bg-border/50 transition-colors">
                   Cancel
                 </button>
               </>
             ) : (
               <>
-                <button type="button" onClick={onEdit} className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+                <button type="button" onClick={onEdit} className="px-4 py-1.5 text-sm bg-bg text-muted border border-border rounded-lg hover:bg-border/50 transition-colors">
                   Edit
                 </button>
               </>
             )}
-            <button type="button" onClick={onDelete} className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded">
+            <button type="button" onClick={onDelete} className="px-4 py-1.5 text-sm text-accent hover:bg-accent-light rounded-lg transition-colors">
               Delete
             </button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-4">
+        <div className="p-5 space-y-4">
           {/* Translation */}
-          <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
-            <span className="text-gray-500 text-sm">Translation</span>
+          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+            <span className="text-muted text-sm">Translation</span>
             {editing ? (
               <input
-                className="bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
                 value={form.translation}
                 onChange={(e) => setForm({ ...form, translation: e.target.value })}
               />
             ) : (
-              <span>{word.translation}</span>
+              <span className="text-text">{word.translation}</span>
             )}
           </div>
 
           {/* Secondary Translation */}
-          <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
-            <span className="text-gray-500 text-sm">Secondary</span>
+          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+            <span className="text-muted text-sm">Secondary</span>
             {editing ? (
               <input
-                className="bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
                 value={form.secondary_translation}
                 onChange={(e) => setForm({ ...form, secondary_translation: e.target.value })}
                 placeholder="Alternative meaning"
               />
             ) : (
-              <span className="text-gray-600">{word.secondary_translation || '—'}</span>
+              <span className="text-muted">{word.secondary_translation || '—'}</span>
             )}
           </div>
 
           {/* Frequency */}
-          <div className="grid grid-cols-[120px_1fr] gap-2 items-center">
-            <span className="text-gray-500 text-sm">Frequency</span>
+          <div className="grid grid-cols-[120px_1fr] gap-3 items-center">
+            <span className="text-muted text-sm">Frequency</span>
             <div className="flex items-center gap-2">
               <FrequencyBadge level={word.frequency_level} />
               {word.frequency_rank && (
-                <span className="text-gray-500 text-sm">(#{word.frequency_rank.toLocaleString()})</span>
+                <span className="text-muted text-sm">(#{word.frequency_rank.toLocaleString()})</span>
               )}
             </div>
           </div>
 
           {/* Example Sentence */}
-          <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
-            <span className="text-gray-500 text-sm">Example</span>
+          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+            <span className="text-muted text-sm">Example</span>
             {editing ? (
               <div className="space-y-2">
                 <input
-                  className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
                   value={form.example_sentence_original}
                   onChange={(e) => setForm({ ...form, example_sentence_original: e.target.value })}
                   placeholder="Example sentence"
                 />
                 <input
-                  className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm text-gray-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-muted"
                   value={form.example_sentence_translation}
                   onChange={(e) => setForm({ ...form, example_sentence_translation: e.target.value })}
                   placeholder="Translation"
@@ -453,23 +464,23 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
               <div>
                 {word.example_sentence_original ? (
                   <>
-                    <p className="italic">{word.example_sentence_original}</p>
+                    <p className="italic text-text">{word.example_sentence_original}</p>
                     {word.example_sentence_translation && (
-                      <p className="text-gray-500 text-sm">{word.example_sentence_translation}</p>
+                      <p className="text-muted text-sm mt-1">{word.example_sentence_translation}</p>
                     )}
                   </>
                 ) : (
-                  <span className="text-gray-400">—</span>
+                  <span className="text-muted/50">—</span>
                 )}
               </div>
             )}
           </div>
 
           {/* Divider */}
-          <hr className="border-gray-100" />
+          <hr className="border-border" />
 
           {/* Stats */}
-          <div className="text-sm text-gray-500 space-y-1">
+          <div className="text-sm text-muted space-y-1">
             <p>Added: {new Date(word.created_at).toLocaleDateString()}</p>
             {word.next_review_date ? (
               <p>
@@ -568,20 +579,20 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
   // Initial form - just word and language
   if (!enhanced) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+      <div className="bg-surface rounded-xl border border-border p-5 mb-6 animate-scale-in">
         <form onSubmit={handleTranslate}>
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold">Add Word</h3>
-            <button type="button" onClick={handleCancel} className="text-gray-500 hover:text-gray-700">
+          <div className="flex justify-between items-center mb-5">
+            <h3 className="font-semibold text-text">Add Word</h3>
+            <button type="button" onClick={handleCancel} className="text-muted hover:text-text transition-colors">
               Cancel
             </button>
           </div>
-          <div className="grid grid-cols-[1fr_150px] gap-4 mb-4">
+          <div className="grid grid-cols-[1fr_150px] gap-4 mb-5">
             <div>
-              <label className="block text-sm text-gray-500 mb-1">Word</label>
+              <label className="block text-sm text-muted mb-2">Word</label>
               <input
                 type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60"
                 value={word}
                 onChange={(e) => setWord(e.target.value)}
                 placeholder="Enter a word..."
@@ -590,9 +601,10 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-500 mb-1">Language</label>
+              <label className="block text-sm text-muted mb-2">Language</label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer"
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px' }}
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
               >
@@ -605,9 +617,16 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
           <button
             type="submit"
             disabled={loading || !word.trim()}
-            className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+            className="w-full bg-accent text-white py-2.5 rounded-xl font-medium hover:bg-accent-hover disabled:opacity-50 transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
           >
-            {loading ? 'Translating...' : 'Translate'}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Translating...
+              </span>
+            ) : (
+              'Translate'
+            )}
           </button>
         </form>
       </div>
@@ -616,70 +635,67 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
 
   // Edit form after translation
   return (
-    <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-4">
+    <div className="bg-surface rounded-xl border border-border overflow-hidden mb-6 shadow-soft animate-scale-in">
       <form onSubmit={handleSave}>
         {/* Header */}
-        <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+        <div className="p-4 border-b border-border flex justify-between items-center">
           <input
-            className="text-lg font-semibold bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            className="text-lg font-semibold bg-bg border border-border rounded-lg px-3 py-1.5 text-text"
             value={form.lemma}
             onChange={(e) => setForm({ ...form, lemma: e.target.value })}
           />
           <div className="flex gap-2">
-            <button type="submit" disabled={loading} className="px-3 py-1 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 disabled:opacity-50">
+            <button type="submit" disabled={loading} className="px-4 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent-hover disabled:opacity-50 transition-colors">
               {loading ? 'Saving...' : 'Save'}
             </button>
-            <button type="button" onClick={handleCancel} className="px-3 py-1 text-sm bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+            <button type="button" onClick={handleCancel} className="px-4 py-1.5 text-sm bg-bg text-muted border border-border rounded-lg hover:bg-border/50 transition-colors">
               Cancel
-            </button>
-            <button type="button" onClick={handleCancel} className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 rounded">
-              Delete
             </button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-4">
-          <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
-            <span className="text-gray-500 text-sm">Translation</span>
+        <div className="p-5 space-y-4">
+          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+            <span className="text-muted text-sm">Translation</span>
             <input
-              className="bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
               value={form.translation}
               onChange={(e) => setForm({ ...form, translation: e.target.value })}
             />
           </div>
 
-          <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
-            <span className="text-gray-500 text-sm">Secondary</span>
+          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+            <span className="text-muted text-sm">Secondary</span>
             <input
-              className="bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+              className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
               value={form.secondary_translation}
               onChange={(e) => setForm({ ...form, secondary_translation: e.target.value })}
               placeholder="Alternative meaning"
             />
           </div>
 
-          <div className="grid grid-cols-[120px_1fr] gap-2 items-center">
-            <span className="text-gray-500 text-sm">Frequency</span>
+          <div className="grid grid-cols-[120px_1fr] gap-3 items-center">
+            <span className="text-muted text-sm">Frequency</span>
             <div className="flex items-center gap-2">
               <FrequencyBadge level={enhanced.frequency_level} />
               {enhanced.frequency_rank && (
-                <span className="text-gray-500 text-sm">(#{enhanced.frequency_rank.toLocaleString()})</span>
+                <span className="text-muted text-sm">(#{enhanced.frequency_rank.toLocaleString()})</span>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-[120px_1fr] gap-2 items-start">
-            <span className="text-gray-500 text-sm">Example</span>
+          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+            <span className="text-muted text-sm">Example</span>
             <div className="space-y-2">
               <input
-                className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
                 value={form.example_sentence_original}
                 onChange={(e) => setForm({ ...form, example_sentence_original: e.target.value })}
                 placeholder="Example sentence (optional)"
               />
               <input
-                className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1 text-sm text-gray-600 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-muted"
                 value={form.example_sentence_translation}
                 onChange={(e) => setForm({ ...form, example_sentence_translation: e.target.value })}
                 placeholder="Translation (optional)"

@@ -122,32 +122,41 @@ export default function StoryGenerator() {
   const resetSpeed = () => setPlaybackRate(1.0)
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-500">Loading...</div>
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
   }
 
   if (languages.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">No vocabulary found. Add some words first to generate texts.</p>
+      <div className="text-center py-16 animate-fade-up">
+        <div className="w-20 h-20 bg-warning-light rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <span className="text-4xl">📚</span>
+        </div>
+        <h1 className="text-xl font-semibold text-text mb-2">No vocabulary yet</h1>
+        <p className="text-muted">Add some words first to generate texts.</p>
       </div>
     )
   }
 
   return (
-    <div>
+    <div className="max-w-2xl mx-auto">
       {/* Settings Panel */}
-      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-surface rounded-2xl shadow-soft border border-border overflow-hidden animate-fade-up">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h1 className="text-lg font-bold text-gray-800">Text Generator</h1>
+        <div className="px-6 py-5 border-b border-border">
+          <h1 className="text-lg font-semibold text-text">Text Generator</h1>
         </div>
 
         {/* Language + Word Sliders */}
-        <div className="px-6 py-5 border-b border-gray-100 space-y-4">
+        <div className="px-6 py-6 border-b border-border space-y-5">
           <select
             value={language}
             onChange={(e) => setLanguage(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+            className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer"
+            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
           >
             <option value="">Language...</option>
             {languages.map(lang => (
@@ -156,44 +165,44 @@ export default function StoryGenerator() {
           </select>
 
           <div>
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-600">Words</span>
-              <span className="text-primary-600 font-semibold">{wordCount}</span>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-muted">Words to include</span>
+              <span className="text-accent font-semibold">{wordCount}</span>
             </div>
             <input
               type="range" min="5" max="20" value={wordCount}
               onChange={(e) => setWordCount(Number(e.target.value))}
-              className="w-full accent-primary-600"
+              className="w-full"
             />
           </div>
 
           <div>
-            <div className="flex items-center text-sm mb-1">
-              <span className="text-gray-600">New</span>
-              <span className="text-primary-600 font-semibold ml-1">{newWordCount}</span>
-              <span className="text-gray-300 mx-2">·</span>
-              <span className="text-gray-600">Review</span>
-              <span className="text-primary-600 font-semibold ml-1">{wordCount - newWordCount}</span>
+            <div className="flex items-center text-sm mb-2">
+              <span className="text-muted">New</span>
+              <span className="text-accent font-semibold ml-1.5">{newWordCount}</span>
+              <span className="text-border mx-3">·</span>
+              <span className="text-muted">Review</span>
+              <span className="text-accent font-semibold ml-1.5">{wordCount - newWordCount}</span>
             </div>
             <input
               type="range" min="0" max={wordCount} value={newWordCount}
               onChange={(e) => setNewWordCount(Number(e.target.value))}
-              className="w-full accent-primary-600"
+              className="w-full"
             />
           </div>
         </div>
 
         {/* Length + Refinements */}
-        <div className="px-6 py-5 border-b border-gray-100 space-y-4">
+        <div className="px-6 py-6 border-b border-border space-y-5">
           <div>
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-600">Length</span>
-              <span className="text-primary-600 font-semibold">{targetLength} words</span>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-muted">Target length</span>
+              <span className="text-accent font-semibold">{targetLength} words</span>
             </div>
             <input
               type="range" min="20" max="300" step="10" value={targetLength}
               onChange={(e) => setTargetLength(Number(e.target.value))}
-              className="w-full accent-primary-600"
+              className="w-full"
             />
           </div>
 
@@ -202,20 +211,20 @@ export default function StoryGenerator() {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="Topic (optional)"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none placeholder:text-gray-400"
+            className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60"
           />
 
           <div>
-            <span className="text-sm text-gray-600">Style</span>
-            <div className="flex flex-wrap gap-1.5 mt-1.5">
+            <span className="text-sm text-muted">Style</span>
+            <div className="flex flex-wrap gap-2 mt-2">
               {STYLE_OPTIONS.map(opt => (
                 <button
                   key={opt}
                   onClick={() => setStyle(s => s === opt ? '' : opt)}
-                  className={`px-2.5 py-1 text-xs rounded-lg border transition-colors ${
+                  className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
                     style === opt
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                      ? 'border-accent bg-accent-light text-accent'
+                      : 'border-border text-muted hover:border-muted'
                   }`}
                 >
                   {opt}
@@ -223,10 +232,10 @@ export default function StoryGenerator() {
               ))}
               <button
                 onClick={() => setStyle(s => s === 'Other' ? '' : 'Other')}
-                className={`px-2.5 py-1 text-xs rounded-lg border transition-colors ${
+                className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
                   style === 'Other'
-                    ? 'border-primary-500 bg-primary-50 text-primary-700'
-                    : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                    ? 'border-accent bg-accent-light text-accent'
+                    : 'border-border text-muted hover:border-muted'
                 }`}
               >
                 Other...
@@ -238,22 +247,22 @@ export default function StoryGenerator() {
                 value={customStyle}
                 onChange={(e) => setCustomStyle(e.target.value)}
                 placeholder="Custom style..."
-                className="w-full mt-1.5 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none placeholder:text-gray-400 text-sm"
+                className="w-full mt-2 px-4 py-2.5 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60 text-sm"
               />
             )}
           </div>
 
           <div>
-            <span className="text-sm text-gray-600">Format</span>
-            <div className="flex flex-wrap gap-1.5 mt-1.5">
+            <span className="text-sm text-muted">Format</span>
+            <div className="flex flex-wrap gap-2 mt-2">
               {FORMAT_OPTIONS.map(opt => (
                 <button
                   key={opt}
                   onClick={() => setFormat(f => f === opt ? '' : opt)}
-                  className={`px-2.5 py-1 text-xs rounded-lg border transition-colors ${
+                  className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
                     format === opt
-                      ? 'border-primary-500 bg-primary-50 text-primary-700'
-                      : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                      ? 'border-accent bg-accent-light text-accent'
+                      : 'border-border text-muted hover:border-muted'
                   }`}
                 >
                   {opt}
@@ -261,10 +270,10 @@ export default function StoryGenerator() {
               ))}
               <button
                 onClick={() => setFormat(f => f === 'Other' ? '' : 'Other')}
-                className={`px-2.5 py-1 text-xs rounded-lg border transition-colors ${
+                className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
                   format === 'Other'
-                    ? 'border-primary-500 bg-primary-50 text-primary-700'
-                    : 'border-gray-200 text-gray-500 hover:border-gray-300'
+                    ? 'border-accent bg-accent-light text-accent'
+                    : 'border-border text-muted hover:border-muted'
                 }`}
               >
                 Other...
@@ -276,31 +285,28 @@ export default function StoryGenerator() {
                 value={customFormat}
                 onChange={(e) => setCustomFormat(e.target.value)}
                 placeholder="Custom format..."
-                className="w-full mt-1.5 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none placeholder:text-gray-400 text-sm"
+                className="w-full mt-2 px-4 py-2.5 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60 text-sm"
               />
             )}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-3 flex items-center justify-between">
+        <div className="px-6 py-4 flex items-center justify-between">
           <button
             onClick={resetSettings}
-            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-sm text-muted hover:text-text transition-colors"
           >
             Reset
           </button>
           <button
             onClick={handleGenerate}
             disabled={!language || generating}
-            className="px-5 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+            className="px-6 py-2.5 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0 flex items-center gap-2"
           >
             {generating ? (
               <>
-                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                </svg>
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 Generating...
               </>
             ) : (
@@ -312,26 +318,23 @@ export default function StoryGenerator() {
 
       {/* Generated Text */}
       {story && (
-        <div className="bg-white rounded-xl shadow-sm mt-6 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-800">Generated Text</h2>
+        <div className="bg-surface rounded-2xl shadow-soft border border-border mt-8 overflow-hidden animate-fade-up">
+          <div className="px-6 py-5 border-b border-border flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-text">Generated Text</h2>
             <button
               onClick={handleAudio}
               disabled={audioLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors text-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-bg border border-border rounded-xl hover:bg-border/50 disabled:opacity-50 transition-all text-sm text-muted"
             >
               {audioLoading ? (
                 <>
-                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                  </svg>
-                  Loading audio...
+                  <span className="w-4 h-4 border-2 border-muted/30 border-t-muted rounded-full animate-spin" />
+                  Loading...
                 </>
               ) : (
                 <>
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                   </svg>
                   Listen
                 </>
@@ -341,20 +344,20 @@ export default function StoryGenerator() {
 
           {/* Audio Player with Speed Controls */}
           {audioUrl && (
-            <div className="px-6 py-3 border-b border-gray-100 flex items-center gap-3">
-              {/* Speed controls - left side */}
-              <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+            <div className="px-6 py-4 border-b border-border flex items-center gap-4">
+              {/* Speed controls */}
+              <div className="flex items-center gap-1 bg-bg rounded-lg p-1">
                 <button
                   onClick={slower}
                   disabled={playbackRate <= 0.5}
-                  className="px-2 py-1 rounded text-xs font-medium text-gray-600 hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all"
+                  className="px-2.5 py-1.5 rounded text-sm font-medium text-muted hover:bg-surface hover:shadow-soft disabled:opacity-30 transition-all"
                   title="Slower"
                 >
                   −
                 </button>
                 <button
                   onClick={resetSpeed}
-                  className="px-2 py-1 rounded text-xs font-mono font-semibold text-gray-700 hover:bg-white hover:shadow-sm transition-all min-w-[3rem] text-center"
+                  className="px-2.5 py-1.5 rounded text-sm font-mono font-semibold text-text hover:bg-surface hover:shadow-soft transition-all min-w-[3.5rem] text-center"
                   title="Reset to 1.0x"
                 >
                   {playbackRate.toFixed(2)}x
@@ -362,7 +365,7 @@ export default function StoryGenerator() {
                 <button
                   onClick={faster}
                   disabled={playbackRate >= 2.0}
-                  className="px-2 py-1 rounded text-xs font-medium text-gray-600 hover:bg-white hover:shadow-sm disabled:opacity-30 transition-all"
+                  className="px-2.5 py-1.5 rounded text-sm font-medium text-muted hover:bg-surface hover:shadow-soft disabled:opacity-30 transition-all"
                   title="Faster"
                 >
                   +
@@ -383,8 +386,8 @@ export default function StoryGenerator() {
           )}
 
           {/* Text Content */}
-          <div className="px-6 py-5">
-            <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+          <div className="px-6 py-6">
+            <p className="text-text leading-relaxed whitespace-pre-wrap text-lg">
               {story}
             </p>
           </div>

@@ -47,15 +47,24 @@ export default function Review() {
   }
 
   if (loading) {
-    return <div className="text-center py-12">Loading review session...</div>
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
   }
 
   if (words.length === 0) {
     return (
-      <div className="text-center py-12">
-        <h1 className="text-2xl font-bold mb-4">No words to review</h1>
-        <p className="text-gray-600 mb-6">Great job! You're all caught up.</p>
-        <Link to="/" className="text-primary-600 hover:underline">Back to Dashboard</Link>
+      <div className="text-center py-16 animate-fade-up">
+        <div className="w-20 h-20 bg-success/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+          <span className="text-4xl">✓</span>
+        </div>
+        <h1 className="text-2xl font-semibold text-text mb-2">All caught up!</h1>
+        <p className="text-muted mb-8">No words to review right now.</p>
+        <Link to="/" className="text-accent font-medium hover:underline underline-offset-2">
+          Back to Dashboard
+        </Link>
       </div>
     )
   }
@@ -65,32 +74,38 @@ export default function Review() {
     const percentage = total > 0 ? Math.round((sessionStats.correct / total) * 100) : 0
 
     return (
-      <div className="max-w-md mx-auto text-center py-12">
-        <h1 className="text-2xl font-bold mb-6">Session Complete!</h1>
+      <div className="max-w-md mx-auto text-center py-10 animate-fade-up">
+        <h1 className="text-2xl font-semibold text-text mb-8">Session Complete</h1>
 
-        <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-          <div className="text-5xl font-bold text-primary-600 mb-2">{percentage}%</div>
-          <p className="text-gray-600">Accuracy</p>
+        {/* Big percentage */}
+        <div className="bg-surface rounded-2xl p-8 shadow-soft border border-border mb-6">
+          <div className="text-6xl font-semibold text-accent mb-2">{percentage}%</div>
+          <p className="text-muted">Accuracy</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-green-50 rounded-xl p-4">
-            <div className="text-2xl font-bold text-green-600">{sessionStats.correct}</div>
-            <p className="text-sm text-gray-600">Correct</p>
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-4 mb-10">
+          <div className="bg-success-light rounded-xl p-5 border border-success/20">
+            <div className="text-2xl font-semibold text-success mb-1">{sessionStats.correct}</div>
+            <p className="text-sm text-muted">Correct</p>
           </div>
-          <div className="bg-red-50 rounded-xl p-4">
-            <div className="text-2xl font-bold text-red-600">{sessionStats.incorrect}</div>
-            <p className="text-sm text-gray-600">Needs Practice</p>
+          <div className="bg-accent-light rounded-xl p-5 border border-accent/20">
+            <div className="text-2xl font-semibold text-accent mb-1">{sessionStats.incorrect}</div>
+            <p className="text-sm text-muted">Needs Practice</p>
           </div>
         </div>
 
+        {/* Actions */}
         <div className="flex gap-4 justify-center">
-          <Link to="/" className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+          <Link 
+            to="/" 
+            className="px-6 py-3 border border-border text-muted rounded-xl hover:bg-bg transition-colors"
+          >
             Dashboard
           </Link>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
+            className="px-6 py-3 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover transition-all hover:-translate-y-0.5"
           >
             Review Again
           </button>
@@ -100,16 +115,16 @@ export default function Review() {
   }
 
   return (
-    <div className="max-w-md mx-auto">
-      {/* Progress bar */}
-      <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-600 mb-1">
+    <div className="max-w-lg mx-auto">
+      {/* Progress */}
+      <div className="mb-8 animate-fade-up">
+        <div className="flex justify-between text-sm text-muted mb-2">
           <span>{currentIndex + 1} of {words.length}</span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-border rounded-full overflow-hidden">
           <div
-            className="h-full bg-primary-600 transition-all duration-300"
+            className="h-full bg-accent transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -117,32 +132,32 @@ export default function Review() {
 
       {/* Flashcard */}
       <div
-        className="relative h-64 mb-6 cursor-pointer perspective-1000"
+        className="relative h-72 mb-8 cursor-pointer perspective-1000 animate-fade-up delay-1"
         onClick={() => setFlipped(!flipped)}
       >
         <div className={`absolute inset-0 transition-transform duration-500 transform-style-3d ${flipped ? 'rotate-y-180' : ''}`}>
           {/* Front */}
-          <div className={`absolute inset-0 bg-white rounded-xl shadow-sm p-6 flex flex-col items-center justify-center backface-hidden ${flipped ? 'invisible' : ''}`}>
-            <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">{currentWord.language_from}</p>
-            <p className="text-3xl font-bold text-center">{currentWord.word}</p>
+          <div className={`absolute inset-0 bg-surface rounded-2xl shadow-medium border border-border p-8 flex flex-col items-center justify-center backface-hidden ${flipped ? 'invisible' : ''}`}>
+            <p className="text-xs text-muted uppercase tracking-widest mb-4">{currentWord.language_from}</p>
+            <p className="text-4xl font-semibold text-text text-center mb-3">{currentWord.word}</p>
             {currentWord.lemma && currentWord.lemma !== currentWord.word && (
-              <p className="text-sm text-gray-500 mt-2">({currentWord.lemma})</p>
+              <p className="text-sm text-muted">({currentWord.lemma})</p>
             )}
-            <p className="text-sm text-gray-400 mt-4">Tap to reveal</p>
+            <p className="text-sm text-muted/60 mt-6">Tap to reveal</p>
           </div>
 
           {/* Back */}
-          <div className={`absolute inset-0 bg-white rounded-xl shadow-sm p-6 flex flex-col items-center justify-center backface-hidden rotate-y-180 ${!flipped ? 'invisible' : ''}`}>
-            <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">{currentWord.language_to}</p>
-            <p className="text-2xl font-bold text-center text-primary-600">{currentWord.translation}</p>
+          <div className={`absolute inset-0 bg-surface rounded-2xl shadow-medium border border-border p-8 flex flex-col items-center justify-center backface-hidden rotate-y-180 ${!flipped ? 'invisible' : ''}`}>
+            <p className="text-xs text-muted uppercase tracking-widest mb-4">{currentWord.language_to}</p>
+            <p className="text-3xl font-semibold text-accent text-center mb-2">{currentWord.translation}</p>
             {currentWord.secondary_translation && (
-              <p className="text-sm text-gray-500 mt-1">{currentWord.secondary_translation}</p>
+              <p className="text-muted mb-4">{currentWord.secondary_translation}</p>
             )}
             {currentWord.example_sentence_original && (
-              <div className="mt-4 text-center">
-                <p className="text-sm text-gray-700 italic">"{currentWord.example_sentence_original}"</p>
+              <div className="mt-4 text-center border-t border-border pt-4 w-full">
+                <p className="text-sm text-text italic">"{currentWord.example_sentence_original}"</p>
                 {currentWord.example_sentence_translation && (
-                  <p className="text-xs text-gray-500 mt-1">"{currentWord.example_sentence_translation}"</p>
+                  <p className="text-xs text-muted mt-2">"{currentWord.example_sentence_translation}"</p>
                 )}
               </div>
             )}
@@ -150,27 +165,27 @@ export default function Review() {
         </div>
       </div>
 
-      {/* Score buttons - only show when flipped */}
+      {/* Score buttons */}
       {flipped && (
-        <div>
-          <p className="text-center text-sm text-gray-600 mb-3">How well did you know this?</p>
+        <div className="animate-fade-up">
+          <p className="text-center text-sm text-muted mb-4">How well did you know this?</p>
           <div className="grid grid-cols-6 gap-2">
             {[0, 1, 2, 3, 4, 5].map(score => (
               <button
                 key={score}
                 onClick={() => handleScore(score)}
                 disabled={submitting}
-                className={`py-3 rounded-lg font-medium transition-colors ${
+                className={`py-4 rounded-xl font-semibold transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none ${
                   score < 3
-                    ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                    : 'bg-green-100 text-green-700 hover:bg-green-200'
-                } disabled:opacity-50`}
+                    ? 'bg-accent-light text-accent border border-accent/20 hover:bg-accent/10'
+                    : 'bg-success-light text-success border border-success/20 hover:bg-success/10'
+                }`}
               >
                 {score}
               </button>
             ))}
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-2 px-1">
+          <div className="flex justify-between text-xs text-muted mt-3 px-1">
             <span>Forgot</span>
             <span>Perfect</span>
           </div>

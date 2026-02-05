@@ -1,12 +1,112 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
+  /* Akari Design System - Japanese Minimalism */
+  --color-bg: #FAFAF8;
+  --color-surface: #FFFFFF;
+  --color-text: #1A1A18;
+  --color-muted: #78756F;
+  --color-border: #E8E6E1;
+  
+  /* Vermillion Red - The single bold accent */
+  --color-accent: #C53030;
+  --color-accent-hover: #A52828;
+  --color-accent-light: #FEF2F2;
+  
+  /* Semantic colors */
+  --color-success: #2D8A7B;
+  --color-success-light: #ECFDF5;
+  --color-warning: #D4880F;
+  --color-warning-light: #FFFBEB;
+  --color-error: #C53030;
+  
+  /* Legacy primary mapping for backwards compat */
+  --color-primary-50: #FEF2F2;
+  --color-primary-100: #FEE2E2;
+  --color-primary-400: #E57373;
+  --color-primary-500: #C53030;
+  --color-primary-600: #C53030;
+  --color-primary-700: #A52828;
 }
+
+/* Base styles */
+* {
+  font-family: 'Sora', system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Staggered entrance animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+/* Stagger delays */
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.1s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.2s; }
+.delay-5 { animation-delay: 0.25s; }
+.delay-6 { animation-delay: 0.3s; }
 
 /* Flashcard 3D flip animation */
 .perspective-1000 {
@@ -23,4 +123,88 @@
 
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+/* Card hover lift effect */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.12);
+}
+
+/* Accent underline for nav links */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-accent);
+  transition: width 0.2s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
+
+/* Input focus states */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-accent) !important;
+  box-shadow: 0 0 0 3px rgba(197, 48, 48, 0.1);
+}
+
+/* Button base styles */
+.btn-primary {
+  background-color: var(--color-accent);
+  color: white;
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-accent-hover);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Range slider accent */
+input[type="range"] {
+  accent-color: var(--color-accent);
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(197, 48, 48, 0.15);
+  color: inherit;
 }

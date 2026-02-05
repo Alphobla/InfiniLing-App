@@ -25,54 +25,73 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-gray-100 p-4">
-      <div className="max-w-sm w-full">
+    <div className="min-h-screen flex items-center justify-center bg-bg p-6">
+      {/* Subtle decorative element */}
+      <div className="fixed top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+      
+      <div className="max-w-sm w-full relative">
         {/* Logo & Tagline */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-3 mb-3">
-            <img src="/zoom_logo.png" alt="" className="w-14 h-14 rounded-2xl" />
-            <span className="text-3xl text-primary-600"><span className="font-black">Infini</span><span className="font-medium text-primary-400">Ling</span></span>
+        <div className="text-center mb-10 animate-fade-up">
+          <Link to="/" className="inline-flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center">
+              <span className="text-white font-bold text-2xl">∞</span>
+            </div>
+            <span className="text-3xl tracking-tight">
+              <span className="font-semibold text-text">Infini</span>
+              <span className="font-light text-muted">Ling</span>
+            </span>
           </Link>
-          <p className="text-gray-500">Learn languages through stories</p>
+          <p className="text-muted text-sm">Learn languages through stories</p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-surface rounded-2xl shadow-medium p-8 animate-fade-up delay-1">
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm text-center">
+            <div className="mb-6 p-3 bg-accent-light border border-accent/20 rounded-xl text-accent text-sm text-center">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent focus:outline-none transition-shadow"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent focus:outline-none transition-shadow"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full px-4 py-3.5 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60 transition-all"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                className="w-full px-4 py-3.5 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60 transition-all"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-primary-600 text-white py-3 rounded-xl font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors"
+              className="w-full bg-accent text-white py-3.5 rounded-xl font-medium hover:bg-accent-hover disabled:opacity-50 transition-all hover:-translate-y-0.5"
             >
-              {loading ? 'Signing in...' : 'Welcome back'}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Signing in...
+                </span>
+              ) : (
+                'Welcome back'
+              )}
             </button>
           </form>
 
-          <p className="text-center mt-6 text-gray-500 text-sm">
+          <p className="text-center mt-8 text-muted text-sm">
             New here?{' '}
-            <Link to="/signup" className="text-primary-600 font-medium hover:underline">
+            <Link to="/signup" className="text-accent font-medium hover:underline underline-offset-2">
               Create an account
             </Link>
           </p>

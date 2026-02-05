@@ -15,7 +15,11 @@ export default function Layout() {
   const [showSettings, setShowSettings] = useState(false)
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-bg">
+        <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
   }
 
   if (!user) {
@@ -28,24 +32,32 @@ export default function Layout() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4">
+    <div className="min-h-screen bg-bg">
+      {/* Navigation */}
+      <nav className="bg-surface border-b border-border">
+        <div className="max-w-5xl mx-auto px-6">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link to="/" className="flex items-center gap-2">
-                <img src="/zoom_logo.png" alt="" className="w-10 h-10 rounded-xl" />
-                <span className="text-xl text-primary-600"><span className="font-black">Infini</span><span className="font-medium text-primary-400">Ling</span></span>
+            {/* Logo & Nav */}
+            <div className="flex items-center gap-12">
+              <Link to="/" className="flex items-center gap-2.5 group">
+                <div className="w-9 h-9 bg-accent rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
+                  <span className="text-white font-bold text-lg">∞</span>
+                </div>
+                <span className="text-xl tracking-tight">
+                  <span className="font-semibold text-text">Infini</span>
+                  <span className="font-light text-muted">Ling</span>
+                </span>
               </Link>
-              <div className="hidden md:flex ml-10 space-x-4">
+              
+              <div className="hidden md:flex items-center gap-1">
                 {navItems.map((item) => (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`px-3 py-2 rounded-md text-sm font-medium ${
+                    className={`nav-link px-4 py-2 text-sm font-medium transition-colors ${
                       location.pathname === item.path
-                        ? 'bg-primary-100 text-primary-700'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'text-accent active'
+                        : 'text-muted hover:text-text'
                     }`}
                   >
                     {item.label}
@@ -53,28 +65,32 @@ export default function Layout() {
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-2">
+
+            {/* Actions */}
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowSettings(true)}
-                className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2.5 text-muted hover:text-text hover:bg-bg rounded-lg transition-all"
                 title="Settings"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </button>
               <button
                 onClick={signOut}
-                className="text-gray-600 hover:text-gray-800 text-sm"
+                className="text-sm text-muted hover:text-text transition-colors"
               >
-                Sign Out
+                Sign out
               </button>
             </div>
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto px-4 py-8">
+
+      {/* Main Content */}
+      <main className="max-w-5xl mx-auto px-6 py-10">
         <Outlet />
       </main>
 

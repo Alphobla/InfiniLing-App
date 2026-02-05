@@ -123,24 +123,24 @@ export default function SettingsModal({ onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-text/40 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-xl shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-surface rounded-2xl shadow-lift max-w-md w-full max-h-[90vh] overflow-y-auto border border-border animate-scale-in">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-semibold">Settings</h2>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-border">
+          <h2 className="text-lg font-semibold text-text">Settings</h2>
           <button
             onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+            className="p-2 text-muted hover:text-text hover:bg-bg rounded-lg transition-all"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
@@ -148,14 +148,15 @@ export default function SettingsModal({ onClose }) {
         <div className="p-6 space-y-6">
           {/* Mother Tongue */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-text mb-3">
               Mother Tongue
             </label>
             <div className="flex gap-2">
               <select
                 value={motherTongue}
                 onChange={(e) => setMotherTongue(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                className="flex-1 px-4 py-2.5 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer"
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px' }}
               >
                 <option value="">Select language</option>
                 {LANGUAGES.map(lang => (
@@ -165,7 +166,7 @@ export default function SettingsModal({ onClose }) {
               <button
                 onClick={handleSaveSettings}
                 disabled={saving}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 text-sm"
+                className="px-5 py-2.5 bg-accent text-white rounded-xl hover:bg-accent-hover disabled:opacity-50 text-sm font-medium transition-colors"
               >
                 Save
               </button>
@@ -174,37 +175,37 @@ export default function SettingsModal({ onClose }) {
 
           {/* Token Usage */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Token Usage</h3>
+            <h3 className="text-sm font-medium text-text mb-3">Token Usage</h3>
             {usage ? (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Used this month</span>
-                  <span>{usage.tokens_used?.toLocaleString() || 0} / {usage.token_limit?.toLocaleString() || '∞'}</span>
+                  <span className="text-muted">Used this month</span>
+                  <span className="text-text font-medium">{usage.tokens_used?.toLocaleString() || 0} / {usage.token_limit?.toLocaleString() || '∞'}</span>
                 </div>
-                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-2 bg-bg rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-primary-600 transition-all"
+                    className="h-full bg-accent transition-all duration-500"
                     style={{ width: `${Math.min((usage.tokens_used / (usage.token_limit || 1)) * 100, 100)}%` }}
                   />
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-gray-400">Loading...</p>
+              <p className="text-sm text-muted">Loading...</p>
             )}
           </div>
 
           {/* API Key */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">OpenAI API Key</h3>
-            <p className="text-xs text-gray-500 mb-2">
+            <h3 className="text-sm font-medium text-text mb-2">OpenAI API Key</h3>
+            <p className="text-xs text-muted mb-3">
               Use your own key to bypass token limits.
             </p>
             {hasApiKey ? (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-green-600">✓ Configured</span>
+              <div className="flex items-center justify-between text-sm p-3 bg-success-light rounded-xl border border-success/20">
+                <span className="text-success font-medium">✓ Configured</span>
                 <button
                   onClick={handleRemoveApiKey}
-                  className="text-red-600 hover:underline"
+                  className="text-accent hover:underline underline-offset-2"
                 >
                   Remove
                 </button>
@@ -216,12 +217,12 @@ export default function SettingsModal({ onClose }) {
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
                   placeholder="sk-..."
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  className="flex-1 px-4 py-2.5 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted/60"
                 />
                 <button
                   onClick={handleSaveApiKey}
                   disabled={!apiKey.trim() || saving}
-                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 text-sm"
+                  className="px-5 py-2.5 bg-accent text-white rounded-xl hover:bg-accent-hover disabled:opacity-50 text-sm font-medium transition-colors"
                 >
                   Save
                 </button>
@@ -231,20 +232,20 @@ export default function SettingsModal({ onClose }) {
 
           {/* Import/Export */}
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Import / Export</h3>
+            <h3 className="text-sm font-medium text-text mb-3">Import / Export</h3>
             <div className="space-y-3">
               <div className="flex gap-2">
                 <button
                   onClick={() => handleExport('csv')}
                   disabled={exportLoading}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 text-sm"
+                  className="flex-1 px-4 py-2.5 border border-border rounded-xl hover:bg-bg disabled:opacity-50 text-sm text-muted hover:text-text transition-colors"
                 >
                   Export CSV
                 </button>
                 <button
                   onClick={() => handleExport('json')}
                   disabled={exportLoading}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 text-sm"
+                  className="flex-1 px-4 py-2.5 border border-border rounded-xl hover:bg-bg disabled:opacity-50 text-sm text-muted hover:text-text transition-colors"
                 >
                   Export JSON
                 </button>
@@ -255,7 +256,7 @@ export default function SettingsModal({ onClose }) {
                 accept=".csv,.json"
                 onChange={handleImport}
                 disabled={importLoading}
-                className="block w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 file:text-sm"
+                className="block w-full text-sm text-muted file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-bg file:text-text file:font-medium hover:file:bg-border/50 file:text-sm file:cursor-pointer file:transition-colors"
               />
             </div>
           </div>
