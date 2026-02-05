@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 
 const LANGUAGES = [
@@ -8,7 +8,6 @@ const LANGUAGES = [
 ]
 
 export default function Onboarding() {
-  const navigate = useNavigate()
   const { user, settings, loading, createSettings } = useAuthStore()
   const [step, setStep] = useState(1)
   const [motherTongue, setMotherTongue] = useState('')
@@ -39,8 +38,9 @@ export default function Onboarding() {
     setSaving(true)
     try {
       await createSettings(motherTongue)
-      navigate('/')
     } catch (err) {
+      // Ignore abort errors — they mean navigation already happened (settings were created)
+      if (err instanceof DOMException && err.name === 'AbortError') return
       console.error('Failed to save settings:', err)
       alert('Failed to complete setup. Please try again.')
     } finally {
