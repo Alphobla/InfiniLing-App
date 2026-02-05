@@ -69,9 +69,9 @@ def get_example_sentence(
     }
 
     def _word_count_ok(text: str) -> bool:
-        # split on whitespace; good enough for a 4–12 word heuristic
+        # split on whitespace; 2-15 word heuristic
         n = len(text.split())
-        return 4 <= n <= 12
+        return 2 <= n <= 15
 
     try:
         with httpx.Client(timeout=15.0) as client:
@@ -87,16 +87,13 @@ def get_example_sentence(
                 if not original or not _word_count_ok(original):
                     continue
 
-                # Tatoeba often returns translations as list-of-lists grouped by language.
+                # Translations are a flat list of dicts
                 translations = s.get("translations") or []
-                for group in translations:
-                    if not isinstance(group, list):
-                        continue
-                    for t in group:
-                        if isinstance(t, dict) and t.get("lang") == to_code:
-                            translation = (t.get("text") or "").strip()
-                            if translation:
-                                return {"original": original, "translation": translation}
+                for t in translations:
+                    if isinstance(t, dict) and t.get("lang") == to_code:
+                        translation = (t.get("text") or "").strip()
+                        if translation:
+                            return {"original": original, "translation": translation}
 
             return None
 
