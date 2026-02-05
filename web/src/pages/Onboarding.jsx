@@ -91,7 +91,7 @@ export default function Onboarding() {
             <>
               <h1 className="text-2xl font-semibold text-center text-text mb-2">Welcome</h1>
               <p className="text-muted text-center mb-8">
-                First things first — what's your native language?
+                Whats poppin' — what's your native language?
               </p>
 
               <div className="mb-8">
@@ -138,11 +138,11 @@ export default function Onboarding() {
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <span className="text-xl">✨</span>
-                  </div>
+                  </div>  
                   <div>
                     <p className="font-medium text-text mb-1">Learn in context</p>
                     <p className="text-sm text-muted leading-relaxed">
-                      A generative AI will create unique texts using the words you've collected, helping you see them in real context.
+                      A generative AI will create unique texts using the words you've collected, helping you see them in real context. The context is up to you: cars, cooking, coding, chimpanzees, you name it!
                     </p>
                   </div>
                 </div>

@@ -25,8 +25,8 @@ export default function Dashboard() {
     <div>
       {/* Header */}
       <div className="mb-10 animate-fade-up">
-        <h1 className="text-2xl font-semibold text-text mb-1">Welcome back</h1>
-        <p className="text-muted">Here's your learning progress</p>
+        <h1 className="text-2xl font-semibold text-text mb-1">Welcome back y'all</h1>
+        <p className="text-muted">Let's look at your stats first</p>
       </div>
 
       {/* Stats Grid */}
@@ -84,9 +84,9 @@ export default function Dashboard() {
           <div className="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <span className="text-3xl">📚</span>
           </div>
-          <h2 className="text-lg font-semibold text-text mb-2">Start your journey</h2>
+          <h2 className="text-lg font-semibold text-text mb-2">Let's hit it!</h2>
           <p className="text-muted mb-6 max-w-sm mx-auto">
-            Add your first words to begin learning. We'll help you practice with personalized stories.
+            Add your first words to begin learning. From there on, it only gets better.
           </p>
           <Link 
             to="/vocabulary" 
