@@ -1,68 +1,99 @@
 import { useState, useEffect, useRef } from 'react'
-import { vocabularyApi, generateApi } from '../services/api'
-import { useAuthStore } from '../stores/authStore'
+import { generateApi } from '../services/api'
+
+const STYLE_OPTIONS = ['Informal', 'Business', 'Academic', 'Creative']
+const FORMAT_OPTIONS = ['Dialogue', 'Essay', 'Monologue', 'Creative']
 
 export default function StoryGenerator() {
-  const settings = useAuthStore((s) => s.settings)
-  const [words, setWords] = useState([])
-  const [selectedIds, setSelectedIds] = useState([])
-  const [multiplier, setMultiplier] = useState(2)
-  const [difficulty, setDifficulty] = useState('intermediate')
+  // Settings state
+  const [languages, setLanguages] = useState([])
+  const [language, setLanguage] = useState('')
+  const [wordCount, setWordCount] = useState(10)
+  const [newWordCount, setNewWordCount] = useState(2)
+  const [targetLength, setTargetLength] = useState(150)
+  const [topic, setTopic] = useState('')
+  const [style, setStyle] = useState('')
+  const [customStyle, setCustomStyle] = useState('')
+  const [format, setFormat] = useState('')
+  const [customFormat, setCustomFormat] = useState('')
+
+  // Generation state
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
   const [story, setStory] = useState(null)
-  const [wordsUsed, setWordsUsed] = useState([])
+
+  // Audio state
   const [audioUrl, setAudioUrl] = useState(null)
   const [audioLoading, setAudioLoading] = useState(false)
+  const [playbackRate, setPlaybackRate] = useState(1.0)
   const audioRef = useRef(null)
 
   useEffect(() => {
-    vocabularyApi.list({ limit: 100 })
-      .then(({ data }) => setWords(data.items || data))
+    generateApi.languages()
+      .then(({ data }) => {
+        const langs = data.languages || []
+        setLanguages(langs)
+        if (langs.length === 1) setLanguage(langs[0])
+      })
       .catch(console.error)
       .finally(() => setLoading(false))
   }, [])
 
-  const toggleWord = (id) => {
-    setSelectedIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    )
+  // Clamp newWordCount when wordCount changes
+  useEffect(() => {
+    if (newWordCount > wordCount) setNewWordCount(wordCount)
+  }, [wordCount])
+
+  // Sync playback rate to audio element
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.playbackRate = playbackRate
+  }, [playbackRate, audioUrl])
+
+  const resetSettings = () => {
+    setWordCount(10)
+    setNewWordCount(2)
+    setTargetLength(150)
+    setTopic('')
+    setStyle('')
+    setCustomStyle('')
+    setFormat('')
+    setCustomFormat('')
   }
 
-  const selectAll = () => setSelectedIds(words.map(w => w.id))
-  const clearSelection = () => setSelectedIds([])
-
-  const generateStory = async () => {
-    if (selectedIds.length === 0) return
+  const handleGenerate = async () => {
+    if (!language) return
     setGenerating(true)
     setStory(null)
-    setWordsUsed([])
     setAudioUrl(null)
+    setPlaybackRate(1.0)
 
     try {
-      const language = words.find(w => selectedIds.includes(w.id))?.language_from || 'English'
+      const effectiveStyle = style === 'Other' ? customStyle : style
+      const effectiveFormat = format === 'Other' ? customFormat : format
+
       const { data } = await generateApi.story({
-        word_ids: selectedIds,
         language,
-        difficulty,
-        word_multiplier: multiplier,
+        word_count: wordCount,
+        new_word_count: newWordCount,
+        target_length: targetLength,
+        topic: topic || undefined,
+        style: effectiveStyle || undefined,
+        format: effectiveFormat || undefined,
       })
       setStory(data.story)
-      setWordsUsed(data.words_used)
     } catch (err) {
-      console.error('Failed to generate story:', err)
-      alert('Failed to generate story. Please try again.')
+      console.error('Failed to generate text:', err)
+      alert('Failed to generate text. Please try again.')
     } finally {
       setGenerating(false)
     }
   }
 
-  const generateAudio = async () => {
+  const handleAudio = async () => {
     if (!story) return
     setAudioLoading(true)
 
     try {
-      // Check cache first
       const cacheKey = `audio-${btoa(story.slice(0, 100))}`
       const cache = await caches.open('infinilig-audio')
       const cached = await cache.match(cacheKey)
@@ -74,12 +105,9 @@ export default function StoryGenerator() {
         return
       }
 
-      // Generate new audio
       const { data: blob } = await generateApi.audio({ text: story })
       const url = URL.createObjectURL(blob)
       setAudioUrl(url)
-
-      // Cache the audio
       await cache.put(cacheKey, new Response(blob))
     } catch (err) {
       console.error('Failed to generate audio:', err)
@@ -89,129 +117,288 @@ export default function StoryGenerator() {
     }
   }
 
-  // Highlight words used in story
-  const highlightStory = (text) => {
-    if (!wordsUsed.length) return text
-
-    const pattern = new RegExp(`\\b(${wordsUsed.join('|')})\\b`, 'gi')
-    const parts = text.split(pattern)
-
-    return parts.map((part, i) => {
-      const isHighlighted = wordsUsed.some(w => w.toLowerCase() === part.toLowerCase())
-      return isHighlighted ? (
-        <span key={i} className="bg-yellow-200 px-0.5 rounded">{part}</span>
-      ) : part
-    })
-  }
+  const slower = () => setPlaybackRate(r => Math.max(0.5, +(r - 0.05).toFixed(2)))
+  const faster = () => setPlaybackRate(r => Math.min(2.0, +(r + 0.05).toFixed(2)))
+  const resetSpeed = () => setPlaybackRate(1.0)
 
   if (loading) {
-    return <div className="text-center py-12">Loading vocabulary...</div>
+    return <div className="text-center py-12 text-gray-500">Loading...</div>
+  }
+
+  if (languages.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500">No vocabulary found. Add some words first to generate texts.</p>
+      </div>
+    )
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Story Generator</h1>
-
-      {/* Word Selection */}
-      <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold">Select Words ({selectedIds.length})</h2>
-          <div className="flex gap-2">
-            <button onClick={selectAll} className="text-sm text-primary-600 hover:underline">
-              Select all
-            </button>
-            <button onClick={clearSelection} className="text-sm text-gray-500 hover:underline">
-              Clear
-            </button>
-          </div>
+      {/* Settings Panel */}
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-gray-100">
+          <h1 className="text-lg font-bold tracking-wide text-gray-800">TEXT GENERATOR SETTINGS</h1>
         </div>
 
-        {words.length === 0 ? (
-          <p className="text-gray-500">No vocabulary words yet. Add some first!</p>
-        ) : (
-          <div className="flex flex-wrap gap-2 max-h-48 overflow-y-auto">
-            {words.map(word => (
-              <button
-                key={word.id}
-                onClick={() => toggleWord(word.id)}
-                className={`px-3 py-1 rounded-full text-sm transition-colors ${
-                  selectedIds.includes(word.id)
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {word.word}
-              </button>
-            ))}
+        {/* Step 1: Database Configuration */}
+        <div className="px-6 py-5 border-b border-gray-100">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+            Step 1: Database Configuration
+          </h2>
+
+          {/* Source Language */}
+          <div className="mb-5">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Source Language
+            </label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+            >
+              <option value="">Select language...</option>
+              {languages.map(lang => (
+                <option key={lang} value={lang}>{lang}</option>
+              ))}
+            </select>
           </div>
-        )}
-      </div>
 
-      {/* Settings */}
-      <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-        <h2 className="text-lg font-semibold mb-4">Settings</h2>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Word Multiplier */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Word Repetition: {multiplier}x
+          {/* Study Words Count */}
+          <div className="mb-5">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Study Words Count: <span className="text-primary-600 font-semibold">{wordCount}</span>
             </label>
             <input
               type="range"
-              min="1"
-              max="5"
-              value={multiplier}
-              onChange={(e) => setMultiplier(Number(e.target.value))}
-              className="w-full"
+              min="5"
+              max="20"
+              value={wordCount}
+              onChange={(e) => setWordCount(Number(e.target.value))}
+              className="w-full accent-primary-600"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Each word will appear approximately {multiplier} times
+            <div className="flex justify-between text-xs text-gray-400 mt-0.5">
+              <span>5</span>
+              <span>20</span>
+            </div>
+            <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+              <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              Higher counts may reduce natural flow.
             </p>
           </div>
 
-          {/* Difficulty */}
+          {/* New Words Sub-slider */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Difficulty
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Of which new words: <span className="text-primary-600 font-semibold">{newWordCount}</span>
             </label>
-            <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            >
-              <option value="beginner">Beginner</option>
-              <option value="intermediate">Intermediate</option>
-              <option value="advanced">Advanced</option>
-            </select>
+            <input
+              type="range"
+              min="0"
+              max={wordCount}
+              value={newWordCount}
+              onChange={(e) => setNewWordCount(Number(e.target.value))}
+              className="w-full accent-primary-600"
+            />
+            <div className="flex justify-between text-xs text-gray-400 mt-0.5">
+              <span>0</span>
+              <span>{wordCount}</span>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              {newWordCount === 0
+                ? 'Only due/overdue words will be used.'
+                : `${wordCount - newWordCount} due words + ${newWordCount} new words`}
+            </p>
           </div>
+        </div>
+
+        {/* Step 2: Output Parameters */}
+        <div className="px-6 py-5 border-b border-gray-100">
+          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+            Step 2: Output Parameters
+          </h2>
+
+          {/* Target Text Length */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Target Text Length: <span className="text-primary-600 font-semibold">{targetLength} words</span>
+            </label>
+            <input
+              type="range"
+              min="20"
+              max="300"
+              step="10"
+              value={targetLength}
+              onChange={(e) => setTargetLength(Number(e.target.value))}
+              className="w-full accent-primary-600"
+            />
+            <div className="flex justify-between text-xs text-gray-400 mt-0.5">
+              <span>20</span>
+              <span>300</span>
+            </div>
+          </div>
+
+          {/* Optional Refinements */}
+          <div>
+            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+              Optional Refinements
+            </h3>
+
+            {/* Topic */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                Topic / Subject Matter
+              </label>
+              <input
+                type="text"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="e.g. Philosophy, Space Travel"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none placeholder:text-gray-400"
+              />
+            </div>
+
+            {/* Language Style */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Language Style
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {STYLE_OPTIONS.map(opt => (
+                  <button
+                    key={opt}
+                    onClick={() => setStyle(s => s === opt ? '' : opt)}
+                    className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                      style === opt
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setStyle(s => s === 'Other' ? '' : 'Other')}
+                  className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                    style === 'Other'
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  }`}
+                >
+                  Other...
+                </button>
+              </div>
+              {style === 'Other' && (
+                <input
+                  type="text"
+                  value={customStyle}
+                  onChange={(e) => setCustomStyle(e.target.value)}
+                  placeholder="Describe your preferred style..."
+                  className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none placeholder:text-gray-400"
+                />
+              )}
+            </div>
+
+            {/* Conversation Format */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Conversation Format
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {FORMAT_OPTIONS.map(opt => (
+                  <button
+                    key={opt}
+                    onClick={() => setFormat(f => f === opt ? '' : opt)}
+                    className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                      format === opt
+                        ? 'border-primary-500 bg-primary-50 text-primary-700'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                    }`}
+                  >
+                    {opt}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setFormat(f => f === 'Other' ? '' : 'Other')}
+                  className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                    format === 'Other'
+                      ? 'border-primary-500 bg-primary-50 text-primary-700'
+                      : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                  }`}
+                >
+                  Other...
+                </button>
+              </div>
+              {format === 'Other' && (
+                <input
+                  type="text"
+                  value={customFormat}
+                  onChange={(e) => setCustomFormat(e.target.value)}
+                  placeholder="Describe your preferred format..."
+                  className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none placeholder:text-gray-400"
+                />
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 flex items-center justify-between">
+          <button
+            onClick={resetSettings}
+            className="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Reset
+          </button>
+          <button
+            onClick={handleGenerate}
+            disabled={!language || generating}
+            className="px-6 py-2.5 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+          >
+            {generating ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                </svg>
+                Generating...
+              </>
+            ) : (
+              <>
+                GENERATE
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </>
+            )}
+          </button>
         </div>
       </div>
 
-      {/* Generate Button */}
-      <button
-        onClick={generateStory}
-        disabled={selectedIds.length === 0 || generating}
-        className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed mb-6"
-      >
-        {generating ? 'Generating...' : `Generate Story (${selectedIds.length} words)`}
-      </button>
-
-      {/* Story Display */}
+      {/* Generated Text */}
       {story && (
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Your Story</h2>
+        <div className="bg-white rounded-xl shadow-sm mt-6 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-800">Generated Text</h2>
             <button
-              onClick={generateAudio}
+              onClick={handleAudio}
               disabled={audioLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors text-sm"
             >
               {audioLoading ? (
-                'Loading...'
+                <>
+                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                  </svg>
+                  Loading audio...
+                </>
               ) : (
                 <>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                   </svg>
                   Listen
@@ -220,25 +407,61 @@ export default function StoryGenerator() {
             </button>
           </div>
 
+          {/* Audio Player with Speed Controls */}
           {audioUrl && (
-            <div className="mb-4">
-              <audio ref={audioRef} controls className="w-full" src={audioUrl} />
+            <div className="px-6 py-3 border-b border-gray-100 flex items-center gap-3">
+              {/* Turtle (slower) */}
+              <button
+                onClick={slower}
+                disabled={playbackRate <= 0.5}
+                className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                title="Slower"
+              >
+                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.31 5.6c-.06-.09-.13-.17-.2-.25a4.34 4.34 0 0 0-1.62-1.13 3.29 3.29 0 0 0-1.27-.28 2.85 2.85 0 0 0-1.09.19l-.05.02c-.08.03-.15.07-.22.11A9.83 9.83 0 0 0 10.5 2C5.81 2 2 5.81 2 10.5c0 1.77.55 3.41 1.48 4.77L2.04 18.5a1 1 0 0 0 .97 1.22l3.23-.44A9.4 9.4 0 0 0 10.5 21c.92 0 1.81-.13 2.66-.38l.2.18c.46.38 1.07.7 1.83.7.18 0 .36-.02.54-.06l2.52-.56a1 1 0 0 0 .77-.77l.56-2.52c.16-.72-.04-1.39-.32-1.89A9.44 9.44 0 0 0 20 10.5c0-1.77-.49-3.42-1.33-4.84l.64-.06zm-2.36 10.23c.2.36.26.63.22.83l-.42 1.87-1.87.42c-.2.04-.47-.02-.83-.22a2.37 2.37 0 0 0-.15-.1l-1.1-.73-1.22.44A7.44 7.44 0 0 1 10.5 19a7.5 7.5 0 0 1-3.3-.77l-.6-.3-2.42.33.33-2.42-.3-.6A7.48 7.48 0 0 1 10.5 4c2.03 0 3.88.81 5.24 2.12l-.2.02h-.1a1 1 0 0 0-.14.01c-.93.13-1.6.76-1.98 1.55-.4.82-.55 1.84-.32 2.78a1 1 0 0 0 .44.6l2.68 1.78.83.98z" />
+                </svg>
+              </button>
+
+              {/* Audio element */}
+              <audio
+                ref={audioRef}
+                controls
+                className="flex-1 h-8"
+                src={audioUrl}
+                onLoadedMetadata={() => {
+                  if (audioRef.current) audioRef.current.playbackRate = playbackRate
+                }}
+              />
+
+              {/* Speed display (click to reset) */}
+              <button
+                onClick={resetSpeed}
+                className="text-xs font-mono font-medium text-gray-500 hover:text-primary-600 min-w-[3rem] text-center transition-colors"
+                title="Reset to 1.0x"
+              >
+                {playbackRate.toFixed(2)}x
+              </button>
+
+              {/* Rabbit (faster) */}
+              <button
+                onClick={faster}
+                disabled={playbackRate >= 2.0}
+                className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                title="Faster"
+              >
+                <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.05 4.28c-.47-.2-.97-.28-1.45-.28-.87 0-1.72.32-2.43.87l-.6.46c-1.06-.5-2.26-.83-3.57-.83-1.8 0-3.47.6-4.84 1.6L3.29 4.71a1 1 0 0 0-1.58 1.22l1.73 2.25A8.92 8.92 0 0 0 2 13c0 1.2.24 2.35.67 3.4L2 20a1 1 0 0 0 1 1h1a1 1 0 0 0 .93-.64l.4-1.01C6.72 20.38 8.3 21 10 21c1.13 0 2.2-.25 3.17-.69l.23.47A1 1 0 0 0 14.3 21H16a1 1 0 0 0 .97-.76l.8-3.42c.04-.15.05-.3.03-.45A8.97 8.97 0 0 0 19 13c0-.7-.09-1.37-.24-2.02l2.08-2.42a1 1 0 0 0 .16-.99 4.37 4.37 0 0 0-2.95-3.29zM10 19c-1.26 0-2.43-.38-3.42-1.02l.5-1.24a1 1 0 0 0-.5-1.32A6.96 6.96 0 0 1 4 13c0-3.86 3.14-7 7-7 .77 0 1.52.13 2.22.37l-.72.55a1 1 0 0 0-.05 1.52l1.09 1.02a1 1 0 0 0 .57.24l2.42.2A7 7 0 0 1 10 19zm8.12-10.52l-1.3 1.51a1 1 0 0 0-.2.82c.18.71.28 1.44.28 2.19 0 .55-.07 1.08-.19 1.6l-.6 2.6-.46-.93a1 1 0 0 0-.64-.52l-.13-.03A8.93 8.93 0 0 0 17.86 9a1 1 0 0 0-.04-.11l1.9-1.43a2.38 2.38 0 0 1 .6 1.02l-2.2.01z" />
+                </svg>
+              </button>
             </div>
           )}
 
-          <div className="prose max-w-none">
+          {/* Text Content */}
+          <div className="px-6 py-5">
             <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
-              {highlightStory(story)}
+              {story}
             </p>
           </div>
-
-          {wordsUsed.length > 0 && (
-            <div className="mt-4 pt-4 border-t">
-              <p className="text-sm text-gray-500">
-                Words used: {wordsUsed.join(', ')}
-              </p>
-            </div>
-          )}
         </div>
       )}
     </div>

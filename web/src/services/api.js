@@ -41,6 +41,7 @@ export const userApi = {
 export const generateApi = {
   story: (data) => api.post('/api/generate/story', data),
   audio: (data) => api.post('/api/generate/audio', data, { responseType: 'blob' }),
+  languages: () => api.get('/api/vocabulary/languages'),
 }
 
 // Starter words

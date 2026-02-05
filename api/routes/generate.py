@@ -1,7 +1,8 @@
 """Story and audio generation endpoints."""
 
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import Optional
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from supabase import Client
@@ -16,16 +17,18 @@ router = APIRouter(prefix="/api/generate", tags=["generate"])
 
 class StoryRequest(BaseModel):
     """Schema for story generation request."""
-    word_ids: List[str]
     language: str
-    difficulty: str = "intermediate"
-    word_multiplier: Optional[int] = None  # Override default if provided
+    word_count: int = 10
+    new_word_count: int = 2
+    target_length: int = 150
+    topic: Optional[str] = None
+    style: Optional[str] = None
+    format: Optional[str] = None
 
 
 class StoryResponse(BaseModel):
     """Schema for story generation response."""
     story: str
-    words_used: List[str]
 
 
 class AudioRequest(BaseModel):
@@ -40,50 +43,89 @@ def generate_story(
     user_id: str = Depends(get_current_user_id),
     db: Client = Depends(get_supabase)
 ):
-    """Generate a story using vocabulary words."""
+    """Generate a text using the most overdue vocabulary words."""
     settings = get_settings()
 
     # Check token limit
     tracker = TokenTracker(db, user_id)
     tracker.check_limit()
 
-    # Get words from database
+    today = datetime.utcnow().date().isoformat()
+    due_count = request.word_count - request.new_word_count
+
+    # Fetch most overdue words for this language
     words = []
-    for word_id in request.word_ids:
-        result = db.table("vocabulary").select("word, lemma").eq("id", word_id).eq("user_id", user_id).execute()
-        if result.data:
-            # Use lemma if available, otherwise word
-            w = result.data[0]
-            words.append(w.get("lemma") or w["word"])
+    if due_count > 0:
+        due_query = (
+            db.table("vocabulary")
+            .select("word, lemma")
+            .eq("user_id", user_id)
+            .eq("language_from", request.language)
+            .not_.is_("next_review_date", "null")
+            .lte("next_review_date", today)
+            .order("next_review_date")
+            .limit(due_count)
+        )
+        due_result = due_query.execute()
+        words = [row.get("lemma") or row["word"] for row in due_result.data]
+
+    # Fetch new words (never reviewed)
+    if request.new_word_count > 0:
+        new_query = (
+            db.table("vocabulary")
+            .select("word, lemma")
+            .eq("user_id", user_id)
+            .eq("language_from", request.language)
+            .is_("next_review_date", "null")
+            .order("created_at")
+            .limit(request.new_word_count)
+        )
+        new_result = new_query.execute()
+        words.extend(row.get("lemma") or row["word"] for row in new_result.data)
+
+    # If not enough due words, fill with more new words (and vice versa)
+    if len(words) < request.word_count:
+        existing_words = set(w.lower() for w in words)
+        remaining = request.word_count - len(words)
+        fill_query = (
+            db.table("vocabulary")
+            .select("word, lemma")
+            .eq("user_id", user_id)
+            .eq("language_from", request.language)
+            .order("created_at")
+            .limit(remaining + len(words))
+        )
+        fill_result = fill_query.execute()
+        for row in fill_result.data:
+            if len(words) >= request.word_count:
+                break
+            w = row.get("lemma") or row["word"]
+            if w.lower() not in existing_words:
+                words.append(w)
+                existing_words.add(w.lower())
 
     if not words:
-        raise HTTPException(status_code=400, detail="No valid words found")
+        raise HTTPException(status_code=400, detail="No vocabulary words found for this language")
 
-    # Use request multiplier or fall back to settings default
-    word_multiplier = request.word_multiplier or settings.story_word_multiplier
-
-    # Generate story
+    # Generate text
     service = OpenAIService(
         settings.openai_api_key,
         settings.story_max_tokens,
         settings.story_temperature
     )
-    result = service.generate_story(
-        words,
-        request.language,
-        request.difficulty,
-        word_multiplier=word_multiplier,
-        max_tokens=settings.story_max_tokens,
-        temperature=settings.story_temperature
+    result = service.generate_text(
+        words=words,
+        language=request.language,
+        target_length=request.target_length,
+        topic=request.topic,
+        style=request.style,
+        format=request.format,
     )
 
     # Track tokens
     tracker.add_tokens(result.get("tokens_used", 0))
 
-    return StoryResponse(
-        story=result["story"],
-        words_used=result["words_used"]
-    )
+    return StoryResponse(story=result["story"])
 
 
 @router.post("/audio")

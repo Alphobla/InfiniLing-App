@@ -175,6 +175,18 @@ def create_vocabulary(
 # Static Path Endpoints (must come before /{vocab_id})
 # ============================================================================
 
+@router.get("/languages")
+def get_user_languages(
+    user_id: str = Depends(get_current_user_id),
+    db: Client = Depends(get_supabase)
+):
+    """Get distinct languages the user has vocabulary for."""
+    result = db.table("vocabulary").select("language_from").eq("user_id", user_id).execute()
+
+    languages = sorted(set(row["language_from"] for row in result.data))
+    return {"languages": languages}
+
+
 @router.get("/due", response_model=List[DueWordResponse])
 def get_due_words(
     language_from: Optional[str] = None,

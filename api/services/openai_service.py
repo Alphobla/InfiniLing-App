@@ -110,53 +110,54 @@ OUTPUT: JSON only, no markdown formatting.
 
         return result
 
-    def generate_story(
+    def generate_text(
         self,
         words: List[str],
         language: str,
-        difficulty: str = "intermediate",
-        word_multiplier: int = 20,
-        max_tokens: int = 800,
-        temperature: float = 0.7
+        target_length: int = 150,
+        topic: Optional[str] = None,
+        style: Optional[str] = None,
+        format: Optional[str] = None,
     ) -> Dict:
         """
-        Generate a story using the provided vocabulary words.
+        Generate a text that naturally incorporates vocabulary words.
 
-        Args:
-            words: Vocabulary words to include
-            language: Target language for the story
-            difficulty: Learner level (beginner, intermediate, advanced)
-            word_multiplier: Story words per vocabulary word (e.g., 20 = 200 words for 10 vocab words)
-            max_tokens: Max tokens for API response
-            temperature: Creativity setting
-
-        Returns dict with: story, words_used, tokens_used
+        Returns dict with: story, tokens_used
         """
         words_str = ", ".join(words)
-        target_words = len(words) * word_multiplier
 
-        prompt = f"""Write a short story (around {target_words} words) in {language} that naturally incorporates these vocabulary words: {words_str}
+        refinements = []
+        if topic:
+            refinements.append(f"- Topic/subject matter: {topic}")
+        if style:
+            refinements.append(f"- Language style: {style}")
+        if format:
+            refinements.append(f"- Format: {format}")
+
+        refinements_block = "\n".join(refinements)
+        if refinements_block:
+            refinements_block = f"\n\nAdditional requirements:\n{refinements_block}"
+
+        prompt = f"""Write a text (around {target_length} words) in {language} that naturally incorporates these vocabulary words: {words_str}
 
 Requirements:
-- Use simple, clear sentences appropriate for {difficulty} learners
-- Incorporate all the words naturally (don't force them)
-- Make it engaging and memorable
-- The story should make sense and flow well
+- Incorporate all the words naturally — they should feel like a seamless part of the text
+- Make it engaging, coherent, and well-written
+- The text should flow naturally and read like authentic {language} writing{refinements_block}
 
-Write only the story, no explanations."""
+Write only the text, no explanations or titles."""
 
         response = self.client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=max_tokens,
-            temperature=temperature
+            max_tokens=self.max_tokens,
+            temperature=self.temperature
         )
 
         story = response.choices[0].message.content.strip()
 
         return {
             "story": story,
-            "words_used": words,
             "tokens_used": response.usage.total_tokens
         }
 
