@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from supabase import Client
 from api.dependencies import get_supabase, get_current_user_id
 from api.config import get_settings
-from src.shared.languages import get_all_languages, LANGUAGES
+from src.shared.languages import get_code, is_valid_code
 
 router = APIRouter(prefix="/api/user", tags=["user"])
 
@@ -211,15 +211,3 @@ def remove_api_key(
         raise HTTPException(status_code=404, detail="User settings not found")
 
     return {"message": "API key removed"}
-
-
-@router.get("/languages")
-def get_languages():
-    """Get list of all supported languages."""
-    # Returns list of language objects with code and name
-    return {
-        "languages": [
-            {"code": code, "name": name}
-            for name, code in get_all_languages()
-        ]
-    }

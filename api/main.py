@@ -3,6 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import vocabulary, user, generate, import_export, starter_words
+from src.shared.languages import get_all_languages
 
 app = FastAPI(
     title="InfiniLing API",
@@ -32,6 +33,17 @@ app.include_router(starter_words.router)
 def health_check():
     """Health check endpoint."""
     return {"status": "ok"}
+
+
+@app.get("/api/languages")
+def get_languages():
+    """Get list of all supported languages (public endpoint)."""
+    return {
+        "languages": [
+            {"code": code, "name": name}
+            for name, code in get_all_languages()
+        ]
+    }
 
 
 @app.get("/api/debug/tatoeba")

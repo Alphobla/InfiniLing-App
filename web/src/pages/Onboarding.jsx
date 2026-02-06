@@ -16,7 +16,7 @@ export default function Onboarding() {
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
-        const response = await api.get('/api/user/languages')
+        const response = await api.get('/api/languages')
         // API returns { languages: [{ code: 'fr', name: 'French' }, ...] }
         setLanguages(response.data.languages)
       } catch (err) {
