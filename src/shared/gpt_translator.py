@@ -315,19 +315,23 @@ class GPTTranslator:
         
         return "\n".join(lines)
 
-    def analyze_word_string(self, word_text: str, language_from: str = 'fr', language_to: str = 'de', assist_translation: str = None) -> dict:
+    def analyze_word_string(self, word_text: str, language_from: str = None, language_to: str = None, assist_translation: str = None) -> dict:
         """
         Analyze a single word and return all enhancement data as dictionary.
         
         Args:
             word_text: The word to analyze
-            language_from: Source language (default: 'fr')
-            language_to: Target language (default: 'de')
+            language_from: Source language (if None, must be provided by caller)
+            language_to: Target language (if None, must be provided by caller)
             assist_translation: Optional existing translation as guidance
             
         Returns:
             dict: Complete word analysis with all data
         """
+        if not language_from or not language_to:
+            from .languages import LANGUAGES
+            raise ValueError(f"Both language_from and language_to must be provided. Supported: {list(LANGUAGES.keys())}")
+        
         try:
             from .tatoeba_client import get_sentence_example
             

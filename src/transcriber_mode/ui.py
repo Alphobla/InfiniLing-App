@@ -617,12 +617,29 @@ class WhisperInterface:
 
 class SavedTranscriptionReview:
     """Modern review UI for saved transcriptions using shared components."""
-    def __init__(self, master, srt_path, mp3_path, config=None, back_callback=None, language_from="fr", language_to="de"):
+    def __init__(self, master, srt_path, mp3_path, config=None, back_callback=None, language_from=None, language_to=None):
         self.master = master
         self.srt_path = srt_path
         self.mp3_path = mp3_path
         self.config = config
         self.back_callback = back_callback
+        
+        # Get languages from config or use first available
+        if not language_from or not language_to:
+            from src.shared.languages import LANGUAGES
+            sorted_langs = sorted(LANGUAGES.keys())
+            language_from = language_from or sorted_langs[0]
+            language_to = language_to or sorted_langs[0]
+        
+        self.language_from = language_from
+        self.language_to = language_to
+        
+        # Get languages from config or use first available
+        if not language_from or not language_to:
+            from src.shared.languages import LANGUAGES
+            sorted_langs = sorted(LANGUAGES.keys())
+            language_from = language_from or sorted_langs[0]
+            language_to = language_to or sorted_langs[0]
         self.language_from = language_from
         self.language_to = language_to
         
