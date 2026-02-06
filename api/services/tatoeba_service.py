@@ -56,15 +56,17 @@ def get_example_sentence(
     # Strip articles for search (e.g., "der Hund" -> "Hund")
     search_word = strip_prefix_words(word, language_from)
 
-    # One-call approach: ask for sentences in from_code that contain the query,
-    # and request translations in to_code in the SAME response.
-    search_url = "https://api.tatoeba.org/unstable/sentences"
+    # Force exact token match in Tatoeba search:
+    # - single word: "=sel"
+    # - multiple words: "=word1 =word2"
+    exact_q = " ".join("=" + w for w in search_word.split())
+
     params = {
         "lang": from_code,
-        "q": search_word,
-        "trans:lang": to_code,   # filter by translation language
-        "showtrans": "matching", # only show matching translations
-        "sort": "relevance",     # required parameter
+        "q": exact_q,
+        "trans:lang": to_code,
+        "showtrans": "matching",
+        "sort": "relevance",
         "limit": 30,
     }
 
@@ -75,7 +77,7 @@ def get_example_sentence(
 
     try:
         with httpx.Client(timeout=3.0) as client:
-            resp = client.get(search_url, params=params)
+            resp = client.get("https://api.tatoeba.org/unstable/sentences", params=params)
             resp.raise_for_status()
 
             results = resp.json().get("data", [])
