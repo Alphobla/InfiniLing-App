@@ -3,6 +3,7 @@
   "buildCommand": "npm run build --prefix web",
   "outputDirectory": "web/dist",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/main.py" }
+    { "source": "/api/(.*)", "destination": "/api/main.py" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
