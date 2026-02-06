@@ -50,7 +50,7 @@ export default function Signup() {
               <span className="text-3xl">📬</span>
             </div>
             
-            <h1 className="text-xl font-semibold text-text mb-3">Check your inbox</h1>
+            <h1 className="text-xl font-semibold text-text mb-3">Check out your inbox plz</h1>
             
             <p className="text-muted text-sm mb-6 leading-relaxed">
               I've sent a confirmation link to <span className="font-medium text-text">{email}</span>. 
@@ -59,7 +59,7 @@ export default function Signup() {
             
             <div className="bg-warning-light border border-warning/20 rounded-xl p-4 mb-6">
               <p className="text-sm text-warning font-medium">
-                📁 Don't see it? Check your spam folder!
+                📁 Don't see it? Check your spam bro!
               </p>
             </div>
             
