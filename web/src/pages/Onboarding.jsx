@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 
 const LANGUAGES = [
@@ -12,6 +12,7 @@ export default function Onboarding() {
   const [step, setStep] = useState(1)
   const [motherTongue, setMotherTongue] = useState('')
   const [saving, setSaving] = useState(false)
+  const navigate = useNavigate()
 
   // If still loading, show loading state
   if (loading) {
@@ -43,14 +44,13 @@ export default function Onboarding() {
     try {
       console.log('Creating settings with motherTongue:', motherTongue)
       await createSettings(motherTongue)
-      console.log('Settings created successfully')
-      // Navigation should happen automatically via the settings check above
+      console.log('Settings created successfully, navigating to dashboard')
+      navigate('/', { replace: true })
     } catch (err) {
       console.error('Failed to save settings:', err)
       // Ignore abort errors — they mean navigation already happened (settings were created)
       if (err instanceof DOMException && err.name === 'AbortError') return
       alert('Failed to complete setup: ' + (err.response?.data?.detail || err.message || 'Unknown error'))
-    } finally {
       setSaving(false)
     }
   }
@@ -89,9 +89,9 @@ export default function Onboarding() {
         <div className="bg-surface rounded-2xl p-8 shadow-medium border border-border animate-fade-up delay-2">
           {step === 1 && (
             <>
-              <h1 className="text-2xl font-semibold text-center text-text mb-2">Welcome</h1>
+              <h1 className="text-2xl font-semibold text-center text-text mb-2">Hi there mate</h1>
               <p className="text-muted text-center mb-8">
-                Whats poppin' — what's your native language?
+                First off — what's your native language?
               </p>
 
               <div className="mb-8">
@@ -120,7 +120,7 @@ export default function Onboarding() {
 
           {step === 2 && (
             <>
-              <h1 className="text-2xl font-semibold text-center text-text mb-6">How does this app work?</h1>
+              <h1 className="text-2xl font-semibold text-center text-text mb-6">Now: how does this app work?</h1>
               
               <div className="space-y-5 mb-8">
                 <div className="flex items-start gap-4">
@@ -142,7 +142,7 @@ export default function Onboarding() {
                   <div>
                     <p className="font-medium text-text mb-1">Learn in context</p>
                     <p className="text-sm text-muted leading-relaxed">
-                      A generative AI will create unique texts using the words you've collected, helping you see them in real context. The context is up to you: cars, cooking, coding, chimpanzees, you name it!
+                      A generative AI will create unique texts using the words you've collected, helping you see them in real context. The chosen topic is up to you: cars, cooking, comets - you name it! There's an infinite number of stories to explore.
                     </p>
                   </div>
                 </div>
