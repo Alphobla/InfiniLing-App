@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
-import apiClient from '../api/client'
+import api from '../services/api'
 
 export default function Onboarding() {
   const { user, settings, loading, createSettings } = useAuthStore()
@@ -16,7 +16,7 @@ export default function Onboarding() {
   useEffect(() => {
     const fetchLanguages = async () => {
       try {
-        const response = await apiClient.get('/api/user/languages')
+        const response = await api.get('/api/user/languages')
         // API returns { languages: [{ code: 'fr', name: 'French' }, ...] }
         setLanguages(response.data.languages)
       } catch (err) {
