@@ -1,14 +1,9 @@
 """Tatoeba service for fetching example sentences."""
 
 import httpx
-import sys
-import os
 from typing import Optional, Dict
 from api.services.text_utils import strip_prefix_words
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
-from src.shared.languages import get_iso_639_3, get_code, VALID_CODES
+from api.services.languages import get_iso_639_3, get_code, VALID_CODES
 
 
 def get_tatoeba_language(lang: str) -> Optional[str]:

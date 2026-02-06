@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from supabase import Client
 from api.dependencies import get_supabase, get_current_user_id
 from api.config import get_settings
-from src.shared.languages import get_code, is_valid_code
+from api.services.languages import get_code, is_valid_code
 
 router = APIRouter(prefix="/api/user", tags=["user"])
 

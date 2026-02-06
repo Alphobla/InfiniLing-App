@@ -3,7 +3,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.routes import vocabulary, user, generate, import_export, starter_words
-from src.shared.languages import get_all_languages
+from api.services.languages import get_all_languages
 
 app = FastAPI(
     title="InfiniLing API",

@@ -1,10 +1,6 @@
 """Shared text processing utilities."""
 
-import sys
-import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-
-from src.shared.languages import STRIP_PREFIXES
+from api.services.languages import STRIP_PREFIXES
 
 
 def strip_prefix_words(text: str, language: str) -> str:
