@@ -1,20 +1,35 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
-
-const LANGUAGES = [
-  'Arabic', 'Chinese', 'English', 'French', 'German', 'Italian', 'Russian', 'Spanish'
-]
+import apiClient from '../api/client'
 
 export default function Onboarding() {
   const { user, settings, loading, createSettings } = useAuthStore()
   const [step, setStep] = useState(1)
   const [motherTongue, setMotherTongue] = useState('')
+  const [languages, setLanguages] = useState([])
+  const [loadingLanguages, setLoadingLanguages] = useState(true)
   const [saving, setSaving] = useState(false)
   const navigate = useNavigate()
 
+  // Fetch available languages
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const response = await apiClient.get('/api/user/languages')
+        // API returns { languages: [{ code: 'fr', name: 'French' }, ...] }
+        setLanguages(response.data.languages)
+      } catch (err) {
+        console.error('Failed to fetch languages:', err)
+      } finally {
+        setLoadingLanguages(false)
+      }
+    }
+    fetchLanguages()
+  }, [])
+
   // If still loading, show loading state
-  if (loading) {
+  if (loading || loadingLanguages) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg">
         <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
@@ -101,8 +116,8 @@ export default function Onboarding() {
                   style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
                 >
                   <option value="">Select your language</option>
-                  {LANGUAGES.map(lang => (
-                    <option key={lang} value={lang}>{lang}</option>
+                  {languages.map(lang => (
+                    <option key={lang.code} value={lang.name}>{lang.name}</option>
                   ))}
                 </select>
               </div>
