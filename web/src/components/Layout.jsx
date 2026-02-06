@@ -92,9 +92,48 @@ export default function Layout() {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-5xl mx-auto px-6 py-10">
+      <main className="max-w-5xl mx-auto px-6 py-10 pb-24 md:pb-10">
         <Outlet />
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-surface border-t border-border md:hidden safe-area-bottom">
+        <div className="flex justify-around items-center h-16">
+          <Link
+            to="/vocabulary"
+            className={`flex flex-col items-center gap-1 px-6 py-2 transition-colors ${
+              location.pathname === '/vocabulary' ? 'text-accent' : 'text-muted'
+            }`}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            <span className="text-xs font-medium">Words</span>
+          </Link>
+          <Link
+            to="/review"
+            className={`flex flex-col items-center gap-1 px-6 py-2 transition-colors ${
+              location.pathname === '/review' ? 'text-accent' : 'text-muted'
+            }`}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span className="text-xs font-medium">Review</span>
+          </Link>
+          <Link
+            to="/story"
+            className={`flex flex-col items-center gap-1 px-6 py-2 transition-colors ${
+              location.pathname === '/story' ? 'text-accent' : 'text-muted'
+            }`}
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+            <span className="text-xs font-medium">Story</span>
+          </Link>
+        </div>
+      </nav>
 
       {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
     </div>

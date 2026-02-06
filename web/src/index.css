@@ -208,3 +208,8 @@ input[type="range"] {
   background-color: rgba(197, 48, 48, 0.15);
   color: inherit;
 }
+
+/* Safe area for mobile devices (iPhone notch, etc.) */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
