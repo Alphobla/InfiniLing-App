@@ -120,7 +120,7 @@ export default function Signup() {
             <div>
               <label className="block text-sm font-medium text-muted mb-2">Password</label>
               <input
-                type="password"
+                type="text"
                 className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60 transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
