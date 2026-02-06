@@ -85,7 +85,6 @@ def create_user_settings(
     settings = get_settings()
 
     # Convert language name to code if needed
-    from src.shared.languages import get_code, is_valid_code
     mother_tongue = request.mother_tongue
     
     # If it's a full language name, convert to code
