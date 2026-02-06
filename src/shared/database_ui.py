@@ -392,8 +392,9 @@ class AddWordDialog:
         if not language_from:
             language_from = self.current_language
 
-        # Get mother tongue
-        language_to = self.config.get_mother_tongue() if self.config else 'de'
+        # Get mother tongue - default to first language alphabetically if not configured
+        from .languages import LANGUAGES
+        language_to = self.config.get_mother_tongue() if self.config else sorted(LANGUAGES.keys())[0]
 
         try:
             self.db_manager.add_word(

@@ -1,37 +1,34 @@
 """Tatoeba service for fetching example sentences."""
 
 import httpx
+import sys
+import os
 from typing import Optional, Dict
 from api.services.text_utils import strip_prefix_words
 
-# Map language codes to Tatoeba language codes
-LANGUAGE_MAP = {
-    "en": "eng",
-    "de": "deu",
-    "fr": "fra",
-    "es": "spa",
-    "it": "ita",
-    "pt": "por",
-    "nl": "nld",
-    "ru": "rus",
-    "ja": "jpn",
-    "zh": "cmn",
-    # Also map full language names (in case stored as names instead of codes)
-    "english": "eng",
-    "german": "deu",
-    "french": "fra",
-    "spanish": "spa",
-    "italian": "ita",
-    "portuguese": "por",
-    "dutch": "nld",
-    "russian": "rus",
-    "japanese": "jpn",
-    "chinese": "cmn",
-}
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+
+from src.shared.languages import get_iso_639_3, get_code, VALID_CODES
 
 
-from typing import Dict, Optional
-import httpx
+def get_tatoeba_language(lang: str) -> Optional[str]:
+    """Convert language code or name to Tatoeba language code (ISO 639-3).
+    
+    Args:
+        lang: ISO 639-1 code (e.g., 'fr') or full language name (e.g., 'French')
+    
+    Returns:
+        ISO 639-3 code (e.g., 'fra') or None if not found
+    """
+    if not lang:
+        return None
+    
+    # Get the ISO 639-1 code (handles both codes and names)
+    code = get_code(lang) if lang.lower() not in VALID_CODES else lang.lower()
+    
+    # Convert to ISO 639-3
+    return get_iso_639_3(code) if code else None
+
 
 def get_example_sentence(
     word: str,
@@ -49,9 +46,9 @@ def get_example_sentence(
     Returns:
         Dict with "original" and "translation" keys, or None if not found
     """
-    # Convert to Tatoeba language codes (case-insensitive lookup)
-    from_code = LANGUAGE_MAP.get(language_from.lower(), language_from)
-    to_code = LANGUAGE_MAP.get(language_to.lower(), language_to)
+    # Convert to Tatoeba language codes using central function
+    from_code = get_tatoeba_language(language_from)
+    to_code = get_tatoeba_language(language_to)
 
     # Strip articles for search (e.g., "der Hund" -> "Hund")
     search_word = strip_prefix_words(word, language_from)

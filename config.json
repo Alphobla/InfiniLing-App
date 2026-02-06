@@ -13,8 +13,12 @@
       "to": "de",
       "available_languages": [
         [
-          "German",
-          "de"
+          "Arabic",
+          "ar"
+        ],
+        [
+          "Chinese",
+          "zh"
         ],
         [
           "English",
@@ -25,36 +29,20 @@
           "fr"
         ],
         [
-          "Spanish",
-          "es"
+          "German",
+          "de"
         ],
         [
           "Italian",
           "it"
         ],
         [
-          "Portuguese",
-          "pt"
-        ],
-        [
           "Russian",
           "ru"
         ],
         [
-          "Arabic",
-          "ar"
-        ],
-        [
-          "Japanese",
-          "ja"
-        ],
-        [
-          "Korean",
-          "ko"
-        ],
-        [
-          "Chinese",
-          "zh"
+          "Spanish",
+          "es"
         ]
       ]
     },

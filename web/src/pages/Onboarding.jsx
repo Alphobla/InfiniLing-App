@@ -3,8 +3,7 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 
 const LANGUAGES = [
-  'English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese',
-  'Dutch', 'Russian', 'Japanese', 'Chinese', 'Korean', 'Arabic'
+  'Arabic', 'Chinese', 'English', 'French', 'German', 'Italian', 'Russian', 'Spanish'
 ]
 
 export default function Onboarding() {

@@ -39,7 +39,7 @@ class Vocabulary(Base):
     original_word = Column(String(255), nullable=False, index=True)  # Original word in source language
     translation = Column(String(255), nullable=False)
     language_from = Column(String(10), nullable=False)
-    language_to = Column(String(10), nullable=False, default='de')
+    language_to = Column(String(10), nullable=False)  # No default - must be explicitly set
     
     # Optional metadata from GPT translation
     primary_translation = Column(String(255))

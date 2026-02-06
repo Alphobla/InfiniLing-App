@@ -344,8 +344,9 @@ class GentexterConfig:
                 widget.pack_forget()
             
             print(f"service app: {type(self.vocab_app)}")
-            # Get target language from config
-            language_to = self.config.get('vocabulary.languages.to', 'de')
+            # Get target language from config - default to first language alphabetically
+            from ..shared.languages import LANGUAGES
+            language_to = self.config.get('vocabulary.languages.to', sorted(LANGUAGES.keys())[0])
 
             # Create review interface
             self.reader_ui = ReaderUI(

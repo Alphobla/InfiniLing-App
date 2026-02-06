@@ -14,12 +14,14 @@ const FREQUENCY_COLORS = {
 }
 
 const LANGUAGES = {
-  en: 'English',
   de: 'German',
+  en: 'English',
   fr: 'French',
   es: 'Spanish',
   it: 'Italian',
-  pt: 'Portuguese',
+  ru: 'Russian',
+  ar: 'Arabic',
+  zh: 'Chinese',
 }
 
 export default function VocabularyList() {
@@ -518,7 +520,13 @@ function formatReviewDate(dateStr) {
 
 function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
   const [word, setWord] = useState('')
-  const [language, setLanguage] = useState(defaultLanguage || 'de')
+  // Default to first language in LANGUAGES that isn't the mother tongue
+  const getDefaultLanguage = () => {
+    if (defaultLanguage) return defaultLanguage
+    const availableLangs = Object.keys(LANGUAGES).filter(code => code !== motherTongue)
+    return availableLangs[0] || Object.keys(LANGUAGES)[0]
+  }
+  const [language, setLanguage] = useState(getDefaultLanguage())
   const [loading, setLoading] = useState(false)
   const [enhanced, setEnhanced] = useState(null)
   const [form, setForm] = useState(null)

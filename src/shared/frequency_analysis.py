@@ -120,12 +120,10 @@ def get_supported_languages() -> list:
     Returns:
         List of supported language codes
     """
-    # Common languages supported by wordfreq
+    # Languages supported by both our app and wordfreq library
+    # This should match src.shared.languages.LANGUAGES
     return [
-        'en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'ko', 'zh',
-        'ar', 'hi', 'nl', 'pl', 'tr', 'sv', 'da', 'no', 'fi', 'cs',
-        'hu', 'el', 'he', 'th', 'vi', 'id', 'ms', 'tl', 'sw', 'ro',
-        'bg', 'hr', 'sk', 'sl', 'et', 'lv', 'lt', 'mt', 'cy', 'ga'
+        'ar', 'de', 'en', 'es', 'fr', 'it', 'ru', 'zh'
     ]
 
 
