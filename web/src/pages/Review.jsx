@@ -96,10 +96,10 @@ export default function Review() {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
           <Link 
             to="/" 
-            className="px-6 py-3 border border-border text-muted rounded-xl hover:bg-bg transition-colors"
+            className="px-6 py-3 border border-border text-muted rounded-xl hover:bg-bg transition-colors text-center"
           >
             Dashboard
           </Link>

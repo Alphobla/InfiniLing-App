@@ -57,8 +57,8 @@ export default function Dashboard() {
 
       {/* Review CTA */}
       {stats?.due_words > 0 && (
-        <div className="bg-surface rounded-2xl p-8 shadow-soft border border-border animate-fade-up delay-5">
-          <div className="flex items-center justify-between">
+        <div className="bg-surface rounded-2xl p-6 md:p-8 shadow-soft border border-border animate-fade-up delay-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <h2 className="text-lg font-semibold text-text mb-1">Ready to review?</h2>
               <p className="text-muted">
@@ -67,7 +67,7 @@ export default function Dashboard() {
             </div>
             <Link 
               to="/review" 
-              className="px-6 py-3 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover transition-all hover:-translate-y-0.5 flex items-center gap-2"
+              className="px-6 py-3 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               Start Review
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

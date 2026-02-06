@@ -178,12 +178,12 @@ export default function VocabularyList() {
   return (
     <div className="animate-fade-up">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
         <h1 className="text-2xl font-semibold text-text">My Words</h1>
         <button
           onClick={() => setShowAddForm(true)}
           disabled={showAddForm}
-          className="bg-accent text-white px-5 py-2.5 rounded-xl font-medium hover:bg-accent-hover disabled:opacity-50 transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
+          className="bg-accent text-white px-5 py-2.5 rounded-xl font-medium hover:bg-accent-hover disabled:opacity-50 transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0 w-full sm:w-auto"
         >
           + Add Word
         </button>
@@ -209,8 +209,8 @@ export default function VocabularyList() {
       )}
 
       {/* Sort Controls & Search */}
-      <div className="flex flex-wrap gap-4 mb-6 items-center">
-        <div className="flex gap-2 items-center">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex gap-2 items-center flex-wrap">
           <span className="text-muted text-sm">Sort:</span>
           <SortButton active={sortBy === 'date'} asc={sortAsc} onClick={() => handleSort('date')}>
             Date
@@ -225,7 +225,7 @@ export default function VocabularyList() {
         <input
           type="text"
           placeholder="Search..."
-          className="flex-1 min-w-[200px] px-4 py-2 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted/60"
+          className="flex-1 min-w-0 px-4 py-2 bg-bg border border-border rounded-xl text-sm text-text placeholder:text-muted/60"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -367,17 +367,17 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
     <div className="bg-surface rounded-xl border border-border overflow-hidden shadow-soft animate-scale-in">
       <form onSubmit={handleSubmit}>
         {/* Header */}
-        <div className="p-4 border-b border-border flex justify-between items-center">
+        <div className="p-4 border-b border-border flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
           {editing ? (
             <input
-              className="text-lg font-semibold bg-bg border border-border rounded-lg px-3 py-1.5 text-text"
+              className="text-lg font-semibold bg-bg border border-border rounded-lg px-3 py-1.5 text-text w-full sm:w-auto"
               value={form.lemma}
               onChange={(e) => setForm({ ...form, lemma: e.target.value })}
             />
           ) : (
             <h3 className="text-lg font-semibold text-text">{word.lemma || word.word}</h3>
           )}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {editing ? (
               <>
                 <button type="submit" className="px-4 py-1.5 text-sm bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors">
@@ -401,13 +401,13 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
         </div>
 
         {/* Content */}
-        <div className="p-5 space-y-4">
+        <div className="p-4 sm:p-5 space-y-4">
           {/* Translation */}
-          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-1 sm:gap-3 items-start">
             <span className="text-muted text-sm">Translation</span>
             {editing ? (
               <input
-                className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
+                className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text w-full"
                 value={form.translation}
                 onChange={(e) => setForm({ ...form, translation: e.target.value })}
               />
@@ -417,11 +417,11 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
           </div>
 
           {/* Secondary Translation */}
-          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-1 sm:gap-3 items-start">
             <span className="text-muted text-sm">Secondary</span>
             {editing ? (
               <input
-                className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
+                className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text w-full"
                 value={form.secondary_translation}
                 onChange={(e) => setForm({ ...form, secondary_translation: e.target.value })}
                 placeholder="Alternative meaning"
@@ -432,7 +432,7 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
           </div>
 
           {/* Frequency */}
-          <div className="grid grid-cols-[120px_1fr] gap-3 items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-1 sm:gap-3 items-start sm:items-center">
             <span className="text-muted text-sm">Frequency</span>
             <div className="flex items-center gap-2">
               <FrequencyBadge level={word.frequency_level} />
@@ -443,7 +443,7 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
           </div>
 
           {/* Example Sentence */}
-          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-1 sm:gap-3 items-start">
             <span className="text-muted text-sm">Example</span>
             {editing ? (
               <div className="space-y-2">

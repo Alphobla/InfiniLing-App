@@ -344,9 +344,9 @@ export default function StoryGenerator() {
 
           {/* Audio Player with Speed Controls */}
           {audioUrl && (
-            <div className="px-6 py-4 border-b border-border flex items-center gap-4">
+            <div className="px-4 sm:px-6 py-4 border-b border-border flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
               {/* Speed controls */}
-              <div className="flex items-center gap-1 bg-bg rounded-lg p-1">
+              <div className="flex items-center justify-center gap-1 bg-bg rounded-lg p-1">
                 <button
                   onClick={slower}
                   disabled={playbackRate <= 0.5}
@@ -376,7 +376,7 @@ export default function StoryGenerator() {
               <audio
                 ref={audioRef}
                 controls
-                className="flex-1 h-8"
+                className="flex-1 h-10 sm:h-8 w-full"
                 src={audioUrl}
                 onLoadedMetadata={() => {
                   if (audioRef.current) audioRef.current.playbackRate = playbackRate
