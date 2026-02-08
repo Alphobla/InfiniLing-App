@@ -153,44 +153,23 @@ export default function StoryGenerator() {
     }
   }
 
-  // Mobile: long-press a word — use caretRangeFromPoint since there's no auto-selection
+  // Mobile: long-press a word via per-span touch handlers
   const longPressTimer = useRef(null)
   const touchOrigin = useRef({ x: 0, y: 0 })
 
-  const handleTouchStart = (e) => {
+  const handleWordTouchStart = (e, wordText) => {
     const touch = e.touches[0]
-    const tx = touch.clientX, ty = touch.clientY
-    touchOrigin.current = { x: tx, y: ty }
+    touchOrigin.current = { x: touch.clientX, y: touch.clientY }
 
     longPressTimer.current = setTimeout(() => {
-      // Try to get word at touch point
-      const range = document.caretRangeFromPoint?.(tx, ty)
-      if (!range) return
-
-      // Expand to word boundaries manually
-      const textNode = range.startContainer
-      if (textNode.nodeType !== Node.TEXT_NODE) return
-      const text = textNode.textContent
-      let start = range.startOffset, end = range.startOffset
-      const isWordChar = (c) => /[\p{L}\p{M}'-]/u.test(c)
-      while (start > 0 && isWordChar(text[start - 1])) start--
-      while (end < text.length && isWordChar(text[end])) end++
-
-      const word = text.slice(start, end).trim()
-      if (!word) return
-
-      // Create a range for positioning
-      const wordRange = document.createRange()
-      wordRange.setStart(textNode, start)
-      wordRange.setEnd(textNode, end)
-      const rect = wordRange.getBoundingClientRect()
-
-      setPopover({ word, rect })
-    }, 500)
+      // The span element IS the word, so just get its bounding rect
+      const rect = e.target.getBoundingClientRect()
+      const clean = wordText.replace(/[^\p{L}\p{M}'-]/gu, '')
+      if (clean) setPopover({ word: clean, rect })
+    }, 400)
   }
 
-  const handleTouchMove = (e) => {
-    // Only cancel if finger moved more than 10px (allows natural finger wobble)
+  const handleWordTouchMove = (e) => {
     const touch = e.touches[0]
     const dx = touch.clientX - touchOrigin.current.x
     const dy = touch.clientY - touchOrigin.current.y
@@ -199,7 +178,7 @@ export default function StoryGenerator() {
     }
   }
 
-  const handleTouchEnd = () => {
+  const handleWordTouchEnd = () => {
     clearTimeout(longPressTimer.current)
   }
 
@@ -490,12 +469,20 @@ export default function StoryGenerator() {
             <p
               className="text-text leading-relaxed whitespace-pre-wrap text-lg cursor-text select-text touch-no-select"
               onDoubleClick={handleWordDoubleClick}
-              onTouchStart={handleTouchStart}
-              onTouchEnd={handleTouchEnd}
-              onTouchMove={handleTouchMove}
               onContextMenu={(e) => e.preventDefault()}
             >
-              {story}
+              {story.split(/(\s+)/).map((part, i) =>
+                /\s+/.test(part) ? part : (
+                  <span
+                    key={i}
+                    onTouchStart={(e) => handleWordTouchStart(e, part)}
+                    onTouchMove={handleWordTouchMove}
+                    onTouchEnd={handleWordTouchEnd}
+                  >
+                    {part}
+                  </span>
+                )
+              )}
             </p>
             <p className="text-xs text-muted/50 mt-4 pointer-fine">Double-click a word to translate</p>
             <p className="text-xs text-muted/50 mt-4 pointer-coarse">Hold a word to translate</p>
