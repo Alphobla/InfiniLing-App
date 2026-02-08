@@ -168,7 +168,7 @@ Write only the text, no explanations or titles."""
         Returns audio bytes (mp3 format).
         """
         response = self.client.audio.speech.create(
-            model="tts-1",
+            model="gpt-4o-mini-tts",
             voice=voice,
             input=text
         )

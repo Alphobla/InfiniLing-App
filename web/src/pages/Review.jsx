@@ -139,10 +139,7 @@ export default function Review() {
           {/* Front */}
           <div className={`absolute inset-0 bg-surface rounded-2xl shadow-medium border border-border p-8 flex flex-col items-center justify-center backface-hidden ${flipped ? 'invisible' : ''}`}>
             <p className="text-xs text-muted uppercase tracking-widest mb-4">{currentWord.language_from}</p>
-            <p className="text-4xl font-semibold text-text text-center mb-3">{currentWord.word}</p>
-            {currentWord.lemma && currentWord.lemma !== currentWord.word && (
-              <p className="text-sm text-muted">({currentWord.lemma})</p>
-            )}
+            <p className="text-4xl font-semibold text-text text-center mb-3">{currentWord.lemma || currentWord.word}</p>
             <p className="text-sm text-muted/60 mt-6">Tap to reveal</p>
           </div>
 
