@@ -1,14 +1,23 @@
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useAuthStore } from './stores/authStore'
 import Layout from './components/Layout'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
-import Dashboard from './pages/Dashboard'
-import VocabularyList from './pages/VocabularyList'
-import Review from './pages/Review'
-import StoryGenerator from './pages/StoryGenerator'
-import Onboarding from './pages/Onboarding'
+
+// Lazy-loaded pages — each becomes a separate JS chunk that is only
+// downloaded when the user navigates to that route.
+const Login = lazy(() => import('./pages/Login'))
+const Signup = lazy(() => import('./pages/Signup'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const VocabularyList = lazy(() => import('./pages/VocabularyList'))
+const Review = lazy(() => import('./pages/Review'))
+const StoryGenerator = lazy(() => import('./pages/StoryGenerator'))
+const Onboarding = lazy(() => import('./pages/Onboarding'))
+
+const PageLoader = () => (
+  <div className="flex items-center justify-center py-20">
+    <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+  </div>
+)
 
 function App() {
   const initialize = useAuthStore((s) => s.initialize)
@@ -19,17 +28,19 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/vocabulary" element={<VocabularyList />} />
-          <Route path="/review" element={<Review />} />
-          <Route path="/story" element={<StoryGenerator />} />
-        </Route>
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/vocabulary" element={<VocabularyList />} />
+            <Route path="/review" element={<Review />} />
+            <Route path="/story" element={<StoryGenerator />} />
+          </Route>
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

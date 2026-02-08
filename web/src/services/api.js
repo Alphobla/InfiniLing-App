@@ -1,13 +1,19 @@
 import axios from 'axios'
-import { supabase } from './supabase'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
 })
 
-// Add auth token to requests
-api.interceptors.request.use(async (config) => {
-  const { data: { session } } = await supabase.auth.getSession()
+// Session getter, set by authStore once it initializes.
+// This avoids a circular import (authStore imports from api.js).
+let getSession = () => null
+export const setSessionGetter = (fn) => { getSession = fn }
+
+// Add auth token to requests — reads from in-memory store (instant)
+// instead of calling supabase.auth.getSession() (async) on every request.
+// The store session is kept up to date by onAuthStateChange in authStore.
+api.interceptors.request.use((config) => {
+  const session = getSession()
   if (session?.access_token) {
     config.headers.Authorization = `Bearer ${session.access_token}`
   }

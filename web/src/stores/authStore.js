@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { supabase } from '../services/supabase'
-import { userApi } from '../services/api'
+import { userApi, setSessionGetter } from '../services/api'
 
 let initialized = false
 let authListener = null
@@ -16,27 +16,12 @@ export const useAuthStore = create((set) => ({
     if (initialized) return
     initialized = true
 
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        set({ user: session.user, session })
-        try {
-          const { data } = await userApi.getSettings()
-          set({ settings: data })
-        } catch (e) { /* Settings might not exist yet */ }
-      }
-    } catch (e) {
-      // Ignore AbortError from Web Locks API - this is a known Supabase issue
-      if (e instanceof DOMException && e.name === 'AbortError') {
-        console.warn('Auth initialization aborted (harmless Web Locks issue)')
-      } else {
-        console.error('Auth initialization failed:', e)
-      }
-    } finally {
-      set({ loading: false })
-    }
+    // Wire up the API interceptor to read session from this store (instant, no async call)
+    setSessionGetter(() => useAuthStore.getState().session)
 
-    // Only set up listener once
+    // Set up auth listener BEFORE getSession() so it catches the initial session.
+    // This single listener handles both initial load and future changes (login/logout/token refresh),
+    // and is the only place that fetches settings — no duplicate calls.
     if (!authListener) {
       const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
         set({ user: session?.user || null, session })
@@ -44,12 +29,28 @@ export const useAuthStore = create((set) => ({
           try {
             const { data } = await userApi.getSettings()
             set({ settings: data })
-          } catch (e) {}
+          } catch (e) { /* Settings might not exist yet */ }
         } else {
           set({ settings: null })
         }
+        set({ loading: false })
       })
       authListener = subscription
+    }
+
+    // Trigger the listener above with the current session.
+    // If there's no session (logged out), the listener won't fire,
+    // so we still need to clear loading.
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) set({ loading: false })
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') {
+        console.warn('Auth initialization aborted (harmless Web Locks issue)')
+      } else {
+        console.error('Auth initialization failed:', e)
+      }
+      set({ loading: false })
     }
   },
 
