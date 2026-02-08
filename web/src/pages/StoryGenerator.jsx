@@ -94,7 +94,7 @@ export default function StoryGenerator() {
     setAudioLoading(true)
 
     try {
-      const cacheKey = `audio-${btoa(story.slice(0, 100))}`
+      const cacheKey = `/audio/${btoa(unescape(encodeURIComponent(story.slice(0, 100))))}`
       const cache = await caches.open('infinilig-audio')
       const cached = await cache.match(cacheKey)
 
