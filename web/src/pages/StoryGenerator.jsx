@@ -22,6 +22,7 @@ export default function StoryGenerator() {
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
   const [story, setStory] = useState(null)
+  const [stale, setStale] = useState(false) // true when settings changed after last generation
 
   // Audio state
   const [audioUrl, setAudioUrl] = useState(null)
@@ -50,6 +51,12 @@ export default function StoryGenerator() {
     if (newWordCount > wordCount) setNewWordCount(wordCount)
   }, [wordCount])
 
+  // When any setting changes after a story was generated, mark as stale
+  // so the Generate button reappears instead of "View Text"
+  useEffect(() => {
+    if (story) setStale(true)
+  }, [language, wordCount, newWordCount, targetLength, topic, style, customStyle, format, customFormat])
+
   // Sync playback rate to audio element
   useEffect(() => {
     if (audioRef.current) audioRef.current.playbackRate = playbackRate
@@ -69,6 +76,7 @@ export default function StoryGenerator() {
   const handleGenerate = async () => {
     if (!language) return
     setGenerating(true)
+    setStale(false)
     setStory(null)
     setAudioUrl(null)
     setPlaybackRate(1.0)
@@ -362,7 +370,7 @@ export default function StoryGenerator() {
           >
             Reset
           </button>
-          {story && !generating ? (
+          {story && !generating && !stale ? (
             <button
               onClick={() => storyRef.current?.scrollIntoView({ behavior: 'smooth' })}
               className="px-6 py-2.5 bg-accent text-white rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5 flex items-center gap-2 animate-pulse"
