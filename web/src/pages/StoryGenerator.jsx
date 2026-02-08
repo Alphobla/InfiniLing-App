@@ -473,11 +473,12 @@ export default function StoryGenerator() {
           {/* Text Content — double-click (desktop) or long-press (mobile) a word to look it up */}
           <div className="px-6 py-6 relative">
             <p
-              className="text-text leading-relaxed whitespace-pre-wrap text-lg cursor-text select-text"
+              className="text-text leading-relaxed whitespace-pre-wrap text-lg cursor-text select-text touch-no-select"
               onDoubleClick={handleWordDoubleClick}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
               onTouchMove={handleTouchEnd}
+              onContextMenu={(e) => e.preventDefault()}
             >
               {story}
             </p>

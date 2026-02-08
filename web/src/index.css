@@ -220,6 +220,16 @@ input[type="range"] {
   min-height: 100dvh;
 }
 
+/* On touch devices, disable native long-press text selection on story text
+   so our custom long-press handler can work instead */
+@media (pointer: coarse) {
+  .touch-no-select {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
 /* Show/hide elements based on input device type */
 /* pointer: fine = mouse/trackpad (desktop), pointer: coarse = touch (phone/tablet) */
 .pointer-fine { display: none; }
