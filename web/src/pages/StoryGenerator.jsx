@@ -481,6 +481,8 @@ export default function StoryGenerator() {
             >
               {story}
             </p>
+            <p className="text-xs text-muted/50 mt-4 pointer-fine">Double-click a word to translate</p>
+            <p className="text-xs text-muted/50 mt-4 pointer-coarse">Hold a word to translate</p>
             {popover && (
               <WordPopover
                 word={popover.word}

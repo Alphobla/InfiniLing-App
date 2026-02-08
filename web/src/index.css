@@ -219,3 +219,10 @@ input[type="range"] {
   min-height: 100vh;
   min-height: 100dvh;
 }
+
+/* Show/hide elements based on input device type */
+/* pointer: fine = mouse/trackpad (desktop), pointer: coarse = touch (phone/tablet) */
+.pointer-fine { display: none; }
+.pointer-coarse { display: none; }
+@media (pointer: fine) { .pointer-fine { display: block; } }
+@media (pointer: coarse) { .pointer-coarse { display: block; } }
