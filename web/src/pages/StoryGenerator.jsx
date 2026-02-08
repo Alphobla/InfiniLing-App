@@ -27,6 +27,7 @@ export default function StoryGenerator() {
   const [audioLoading, setAudioLoading] = useState(false)
   const [playbackRate, setPlaybackRate] = useState(1.0)
   const audioRef = useRef(null)
+  const storyRef = useRef(null)
 
   useEffect(() => {
     generateApi.languages()
@@ -299,26 +300,38 @@ export default function StoryGenerator() {
           >
             Reset
           </button>
-          <button
-            onClick={handleGenerate}
-            disabled={!language || generating}
-            className="px-6 py-2.5 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0 flex items-center gap-2"
-          >
-            {generating ? (
-              <>
-                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Generating...
-              </>
-            ) : (
-              'Generate'
-            )}
-          </button>
+          {story && !generating ? (
+            <button
+              onClick={() => storyRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-6 py-2.5 bg-accent text-white rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5 flex items-center gap-2 animate-pulse"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              View Text
+            </button>
+          ) : (
+            <button
+              onClick={handleGenerate}
+              disabled={!language || generating}
+              className="px-6 py-2.5 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0 flex items-center gap-2"
+            >
+              {generating ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                'Generate'
+              )}
+            </button>
+          )}
         </div>
       </div>
 
       {/* Generated Text */}
       {story && (
-        <div className="bg-surface rounded-2xl shadow-soft border border-border mt-8 overflow-hidden animate-fade-up">
+        <div ref={storyRef} className="bg-surface rounded-2xl shadow-soft border border-border mt-8 overflow-hidden animate-fade-up">
           <div className="px-6 py-5 border-b border-border flex items-center justify-between">
             <h2 className="text-lg font-semibold text-text">Generated Text</h2>
             <button
