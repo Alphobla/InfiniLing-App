@@ -193,12 +193,12 @@ export default function VocabularyList() {
 
       {/* Language Tabs */}
       {Object.keys(languages).length > 0 && (
-        <div className="flex gap-1 mb-6 border-b border-border">
+        <div className="flex gap-1 mb-6 border-b border-border overflow-x-auto">
           {Object.entries(languages).map(([lang, count]) => (
             <button
               key={lang}
               onClick={() => setActiveTab(lang)}
-              className={`nav-link px-5 py-3 font-medium transition-colors ${
+              className={`nav-link px-5 py-3 font-medium transition-colors flex-shrink-0 ${
                 activeTab === lang
                   ? 'text-accent active'
                   : 'text-muted hover:text-text'
@@ -349,14 +349,14 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
         style={style}
         className="bg-surface p-4 rounded-xl border border-border flex justify-between items-center cursor-pointer card-hover animate-fade-up"
       >
-        <div className="flex items-center gap-4">
-          <div>
+        <div className="flex items-center gap-4 min-w-0 flex-1">
+          <div className="truncate">
             <span className="font-medium text-text">{word.lemma || word.word}</span>
-            <span className="text-border mx-3">—</span>
+            <span className="text-border mx-2 sm:mx-3">—</span>
             <span className="text-muted">{word.translation}</span>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <FrequencyBadge level={word.frequency_level} />
           <DueIndicator nextReviewDate={word.next_review_date} />
         </div>
@@ -595,7 +595,7 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
               Cancel
             </button>
           </div>
-          <div className="grid grid-cols-[1fr_150px] gap-4 mb-5">
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_150px] gap-4 mb-5">
             <div>
               <label className="block text-sm text-muted mb-2">Word</label>
               <input
@@ -646,9 +646,9 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
     <div className="bg-surface rounded-xl border border-border overflow-hidden mb-6 shadow-soft animate-scale-in">
       <form onSubmit={handleSave}>
         {/* Header */}
-        <div className="p-4 border-b border-border flex justify-between items-center">
+        <div className="p-4 border-b border-border flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
           <input
-            className="text-lg font-semibold bg-bg border border-border rounded-lg px-3 py-1.5 text-text"
+            className="text-lg font-semibold bg-bg border border-border rounded-lg px-3 py-1.5 text-text w-full sm:w-auto"
             value={form.lemma}
             onChange={(e) => setForm({ ...form, lemma: e.target.value })}
           />
@@ -663,27 +663,27 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
         </div>
 
         {/* Content */}
-        <div className="p-5 space-y-4">
-          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+        <div className="p-4 sm:p-5 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-1 sm:gap-3 items-start">
             <span className="text-muted text-sm">Translation</span>
             <input
-              className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
+              className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text w-full"
               value={form.translation}
               onChange={(e) => setForm({ ...form, translation: e.target.value })}
             />
           </div>
 
-          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-1 sm:gap-3 items-start">
             <span className="text-muted text-sm">Secondary</span>
             <input
-              className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text"
+              className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text w-full"
               value={form.secondary_translation}
               onChange={(e) => setForm({ ...form, secondary_translation: e.target.value })}
               placeholder="Alternative meaning"
             />
           </div>
 
-          <div className="grid grid-cols-[120px_1fr] gap-3 items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-1 sm:gap-3 items-start sm:items-center">
             <span className="text-muted text-sm">Frequency</span>
             <div className="flex items-center gap-2">
               <FrequencyBadge level={enhanced.frequency_level} />
@@ -693,7 +693,7 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-[120px_1fr] gap-3 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] gap-1 sm:gap-3 items-start">
             <span className="text-muted text-sm">Example</span>
             <div className="space-y-2">
               <input

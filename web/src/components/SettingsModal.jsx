@@ -130,7 +130,7 @@ export default function SettingsModal({ onClose }) {
       />
 
       {/* Modal */}
-      <div className="relative bg-surface rounded-2xl shadow-lift max-w-md w-full max-h-[90vh] overflow-y-auto border border-border animate-scale-in">
+      <div className="relative bg-surface rounded-2xl shadow-lift max-w-md w-full max-h-[90dvh] overflow-y-auto border border-border animate-scale-in">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-border">
           <h2 className="text-lg font-semibold text-text">Settings</h2>

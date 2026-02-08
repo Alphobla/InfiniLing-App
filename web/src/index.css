@@ -213,3 +213,9 @@ input[type="range"] {
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
+
+/* Use dynamic viewport height on mobile so 100vh doesn't extend behind the URL bar */
+.min-h-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
