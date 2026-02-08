@@ -155,9 +155,13 @@ export default function StoryGenerator() {
 
   // Mobile: long-press a word — use caretRangeFromPoint since there's no auto-selection
   const longPressTimer = useRef(null)
+  const touchOrigin = useRef({ x: 0, y: 0 })
+
   const handleTouchStart = (e) => {
     const touch = e.touches[0]
     const tx = touch.clientX, ty = touch.clientY
+    touchOrigin.current = { x: tx, y: ty }
+
     longPressTimer.current = setTimeout(() => {
       // Try to get word at touch point
       const range = document.caretRangeFromPoint?.(tx, ty)
@@ -184,6 +188,17 @@ export default function StoryGenerator() {
       setPopover({ word, rect })
     }, 500)
   }
+
+  const handleTouchMove = (e) => {
+    // Only cancel if finger moved more than 10px (allows natural finger wobble)
+    const touch = e.touches[0]
+    const dx = touch.clientX - touchOrigin.current.x
+    const dy = touch.clientY - touchOrigin.current.y
+    if (dx * dx + dy * dy > 100) {
+      clearTimeout(longPressTimer.current)
+    }
+  }
+
   const handleTouchEnd = () => {
     clearTimeout(longPressTimer.current)
   }
@@ -477,7 +492,7 @@ export default function StoryGenerator() {
               onDoubleClick={handleWordDoubleClick}
               onTouchStart={handleTouchStart}
               onTouchEnd={handleTouchEnd}
-              onTouchMove={handleTouchEnd}
+              onTouchMove={handleTouchMove}
               onContextMenu={(e) => e.preventDefault()}
             >
               {story}
@@ -569,18 +584,22 @@ function WordPopover({ word, rect, language, motherTongue, onClose }) {
     return () => { cancelled = true }
   }, [word, language, motherTongue])
 
-  // Close on click outside
+  // Close on click/tap outside
   useEffect(() => {
     const handle = (e) => {
       if (popoverRef.current && !popoverRef.current.contains(e.target)) {
         onClose()
       }
     }
-    // Delay so the double-click that opened us doesn't immediately close us
-    const timer = setTimeout(() => document.addEventListener('mousedown', handle), 10)
+    // Delay so the interaction that opened us doesn't immediately close us
+    const timer = setTimeout(() => {
+      document.addEventListener('mousedown', handle)
+      document.addEventListener('touchstart', handle)
+    }, 100)
     return () => {
       clearTimeout(timer)
       document.removeEventListener('mousedown', handle)
+      document.removeEventListener('touchstart', handle)
     }
   }, [onClose])
 
