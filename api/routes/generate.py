@@ -28,6 +28,7 @@ class StoryRequest(BaseModel):
 
 class StoryResponse(BaseModel):
     """Schema for story generation response."""
+    title: str
     story: str
 
 
@@ -125,7 +126,7 @@ def generate_story(
     # Track tokens
     tracker.add_tokens(result.get("tokens_used", 0))
 
-    return StoryResponse(story=result["story"])
+    return StoryResponse(title=result.get("title", ""), story=result["story"])
 
 
 @router.post("/audio")

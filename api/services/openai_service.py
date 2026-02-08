@@ -145,7 +145,11 @@ Requirements:
 - Make it engaging, coherent, and well-written
 - The text should flow naturally and read like authentic {language} writing{refinements_block}
 
-Write only the text, no explanations or titles."""
+Output JSON only, no markdown formatting.
+{{
+  "title": "<short creative title for the text, in {language}>",
+  "story": "<the full text>"
+}}"""
 
         response = self.client.chat.completions.create(
             model="gpt-4o-mini",
@@ -154,10 +158,18 @@ Write only the text, no explanations or titles."""
             temperature=self.temperature
         )
 
-        story = response.choices[0].message.content.strip()
+        content = response.choices[0].message.content.strip()
+
+        # Clean markdown code blocks if present
+        if content.startswith("```"):
+            lines = content.splitlines()
+            content = "\n".join(lines[1:-1])
+
+        result = json.loads(content)
 
         return {
-            "story": story,
+            "title": result.get("title", ""),
+            "story": result.get("story", content),
             "tokens_used": response.usage.total_tokens
         }
 

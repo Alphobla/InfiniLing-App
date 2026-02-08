@@ -22,6 +22,7 @@ export default function StoryGenerator() {
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
   const [story, setStory] = useState(null)
+  const [storyTitle, setStoryTitle] = useState('')
   const [stale, setStale] = useState(false) // true when settings changed after last generation
 
   // Audio state
@@ -94,6 +95,7 @@ export default function StoryGenerator() {
         style: effectiveStyle || undefined,
         format: effectiveFormat || undefined,
       })
+      setStoryTitle(data.title || '')
       setStory(data.story)
     } catch (err) {
       console.error('Failed to generate text:', err)
@@ -403,7 +405,7 @@ export default function StoryGenerator() {
       {story && (
         <div ref={storyRef} className="bg-surface rounded-2xl shadow-soft border border-border mt-8 overflow-hidden animate-fade-up">
           <div className="px-6 py-5 border-b border-border flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-text">Generated Text</h2>
+            <h2 className="text-lg font-semibold text-text">{storyTitle || 'Generated Text'}</h2>
             <button
               onClick={handleAudio}
               disabled={audioLoading}
