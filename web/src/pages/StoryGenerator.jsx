@@ -123,43 +123,55 @@ export default function StoryGenerator() {
     }
   }
 
-  // Extract the word at a given screen position from the story text
-  const getWordAtPoint = (x, y) => {
-    // caretRangeFromPoint gives us the exact character position under the cursor
-    const range = document.caretRangeFromPoint(x, y)
-    if (!range) return null
+  // Read the word the browser selected (after double-click or long-press selection)
+  const getSelectedWord = () => {
+    const sel = window.getSelection()
+    if (!sel || sel.isCollapsed || !sel.rangeCount) return null
 
-    // Expand the range to cover the full word
-    try {
-      range.expand('word')
-    } catch { return null }
-
-    const word = range.toString().trim().replace(/[^\p{L}\p{M}'-]/gu, '')
+    const word = sel.toString().trim().replace(/[^\p{L}\p{M}'-]/gu, '')
     if (!word) return null
 
-    // Get the position of the word to anchor the popover
-    const rect = range.getBoundingClientRect()
+    const rect = sel.getRangeAt(0).getBoundingClientRect()
     return { word, rect }
   }
 
-  // Desktop: double-click a word
-  const handleWordDoubleClick = (e) => {
-    const result = getWordAtPoint(e.clientX, e.clientY)
+  // Desktop: double-click selects a word automatically, we just read it
+  const handleWordDoubleClick = () => {
+    const result = getSelectedWord()
     if (result) {
       setPopover({ word: result.word, rect: result.rect })
     }
   }
 
-  // Mobile: long-press a word
+  // Mobile: long-press a word — use caretRangeFromPoint since there's no auto-selection
   const longPressTimer = useRef(null)
   const handleTouchStart = (e) => {
     const touch = e.touches[0]
+    const tx = touch.clientX, ty = touch.clientY
     longPressTimer.current = setTimeout(() => {
-      const result = getWordAtPoint(touch.clientX, touch.clientY)
-      if (result) {
-        e.preventDefault()
-        setPopover({ word: result.word, rect: result.rect })
-      }
+      // Try to get word at touch point
+      const range = document.caretRangeFromPoint?.(tx, ty)
+      if (!range) return
+
+      // Expand to word boundaries manually
+      const textNode = range.startContainer
+      if (textNode.nodeType !== Node.TEXT_NODE) return
+      const text = textNode.textContent
+      let start = range.startOffset, end = range.startOffset
+      const isWordChar = (c) => /[\p{L}\p{M}'-]/u.test(c)
+      while (start > 0 && isWordChar(text[start - 1])) start--
+      while (end < text.length && isWordChar(text[end])) end++
+
+      const word = text.slice(start, end).trim()
+      if (!word) return
+
+      // Create a range for positioning
+      const wordRange = document.createRange()
+      wordRange.setStart(textNode, start)
+      wordRange.setEnd(textNode, end)
+      const rect = wordRange.getBoundingClientRect()
+
+      setPopover({ word, rect })
     }, 500)
   }
   const handleTouchEnd = () => {
