@@ -90,3 +90,49 @@ CREATE POLICY "Users can insert own settings" ON user_settings
 
 CREATE POLICY "Users can update own settings" ON user_settings
     FOR UPDATE USING (auth.uid() = user_id);
+
+-- Podcasts
+CREATE TABLE IF NOT EXISTS podcasts (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+    title text NOT NULL,
+    description text,
+    rss_url text NOT NULL,
+    image_url text,
+    language text NOT NULL,
+    is_starter boolean DEFAULT false,
+    created_at timestamptz DEFAULT now(),
+    UNIQUE(user_id, rss_url)
+);
+
+ALTER TABLE podcasts ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own podcasts"
+    ON podcasts FOR ALL
+    USING (user_id = auth.uid());
+
+-- Podcast Episodes (only transcribed ones are stored)
+CREATE TABLE IF NOT EXISTS podcast_episodes (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    podcast_id uuid REFERENCES podcasts(id) ON DELETE CASCADE NOT NULL,
+    guid text NOT NULL,
+    title text NOT NULL,
+    description text,
+    audio_url text NOT NULL,
+    duration integer,
+    published_at timestamptz,
+    transcript jsonb,
+    is_transcribed boolean DEFAULT false,
+    created_at timestamptz DEFAULT now(),
+    UNIQUE(podcast_id, guid)
+);
+
+ALTER TABLE podcast_episodes ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their podcast episodes"
+    ON podcast_episodes FOR ALL
+    USING (EXISTS (
+        SELECT 1 FROM podcasts
+        WHERE podcasts.id = podcast_episodes.podcast_id
+        AND podcasts.user_id = auth.uid()
+    ));
