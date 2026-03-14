@@ -81,7 +81,7 @@ body {
 }
 
 .animate-fade-up {
-  animation: fadeUp 0.5s ease-out forwards;
+  animation: fadeUp 0.25s ease-out forwards;
   opacity: 0;
 }
 
