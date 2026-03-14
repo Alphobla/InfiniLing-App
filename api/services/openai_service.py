@@ -46,32 +46,49 @@ class OpenAIService:
         existing_translation: Optional[str] = None
     ) -> Dict:
         """
-        Enhance a word with lemmatization, translation, and frequency.
+        Enhance a word with lemmatization, translation, example sentence, and frequency.
 
-        Returns dict with: lemma, translation, secondary_translation,
-        frequency_rank, frequency_level, tokens_used
+        Returns dict with: lemma, is_fixed_expression, translation, secondary_translation,
+        example_sentence, example_sentence_translation, frequency_rank, frequency_level, tokens_used
 
-        If enhancement fails, returns dict with "enhancement_failed": True
+        If enhancement fails, returns dict with "enhancement_failed": True and "tokens_used".
         """
+        from api.services.language_prompts import get_language_rules
+        language_rules = get_language_rules(language_from)
+
+        context_line = (
+            f'CONTEXT: Existing translation "{existing_translation}" may help disambiguate meaning.\n\n'
+            if existing_translation else ""
+        )
+
         prompt = f"""You are a professional lexicographer normalizing vocabulary entries.
 
-INPUT: {language_from} word "{word}"
-{f'CONTEXT: Existing translation "{existing_translation}" may help disambiguate meaning.' if existing_translation else ''}
+INPUT: {language_from} word/expression "{word}"
+{context_line}TASK: Normalize to dictionary headword (lemma), translate to {language_to}, and write one example sentence.
 
-TASK: Convert to standard dictionary headword form (lemma), then translate to {language_to}.
+{language_rules}
 
-LEMMATIZATION STANDARDS:
-- Verbs: infinitive form (e.g., "played" -> "play", "ging" -> "gehen")
-- Nouns: singular form with definite article ONLY if the language uses gendered articles to convey grammatical gender (e.g., "der Hund" for German, "le chien" for French). For languages without grammatical gender like English, use bare noun without article.
-- Adjectives: citation form (typically masculine singular, e.g., "belle" -> "beau")
-- Reflexive/pronominal verbs: retain reflexive marker (e.g., "sich freuen", "se lever")
-- Fixed expressions/idioms: preserve complete phrase (e.g., "ins Gras beissen", "casser les pieds")
+TRANSLATION RULES:
+- Translate to {language_to}.
+- translation: the most common, everyday meaning.
+- secondary_translation: the next most distinct meaning if the word is clearly polysemous, otherwise null.
+  Do not invent a secondary meaning for words with one dominant sense.
+  For Russian verbs: secondary_translation holds the perfective aspect partner only (e.g. "написать"), not a meaning.
 
-OUTPUT: JSON only, no markdown formatting.
+EXAMPLE SENTENCE RULES:
+- Write one natural sentence in {language_from} that uses the full lemma exactly as written.
+- Do not use only part of a fixed expression.
+- Length: 8-18 words.
+- Translate the sentence into {language_to}.
+
+OUTPUT: JSON only, no markdown.
 {{
-  "lemma": "<dictionary headword in {language_from}>",
-  "translation": "<{language_to} equivalent>",
-  "secondary_translation": "<alternative meaning if common, otherwise null>"
+  "lemma": "...",
+  "is_fixed_expression": true/false,
+  "translation": "...",
+  "secondary_translation": "...",
+  "example_sentence": "...",
+  "example_sentence_translation": "..."
 }}"""
 
         response = self.client.chat.completions.create(
@@ -83,12 +100,18 @@ OUTPUT: JSON only, no markdown formatting.
 
         content = response.choices[0].message.content.strip()
 
-        # Clean markdown code blocks if present
+        # Strip markdown code blocks if present
         if content.startswith("```"):
             lines = content.splitlines()
             content = "\n".join(lines[1:-1])
 
-        result = json.loads(content)
+        try:
+            result = json.loads(content)
+        except (json.JSONDecodeError, ValueError):
+            return {
+                "enhancement_failed": True,
+                "tokens_used": response.usage.total_tokens
+            }
 
         # Validate that lemma was identified
         lemma = result.get("lemma")
@@ -98,14 +121,15 @@ OUTPUT: JSON only, no markdown formatting.
                 "tokens_used": response.usage.total_tokens
             }
 
-        # Add frequency info (strip prefix words like articles for lookup)
-        core_expression = strip_prefix_words(lemma, language_from)
+        # Add frequency info — skip strip_prefix_words for fixed expressions
+        if not result.get("is_fixed_expression"):
+            core_expression = strip_prefix_words(lemma, language_from)
+        else:
+            core_expression = lemma
         freq_info = get_frequency_info(core_expression, language_from)
 
         result["frequency_rank"] = freq_info["rank"]
         result["frequency_level"] = freq_info["level"]
-
-        # Return token count for tracking
         result["tokens_used"] = response.usage.total_tokens
 
         return result
