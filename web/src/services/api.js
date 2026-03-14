@@ -73,4 +73,14 @@ export const importExportApi = {
   },
 }
 
+// Podcasts
+export const podcastApi = {
+  list: () => api.get('/api/podcasts'),
+  add: (data) => api.post('/api/podcasts', data),
+  remove: (id) => api.delete(`/api/podcasts/${id}`),
+  episodes: (podcastId) => api.get(`/api/podcasts/${podcastId}/episodes`),
+  transcribe: (podcastId, data) => api.post(`/api/podcasts/${podcastId}/episodes/transcribe`, data),
+  getEpisode: (podcastId, episodeId) => api.get(`/api/podcasts/${podcastId}/episodes/${episodeId}`),
+}
+
 export default api
