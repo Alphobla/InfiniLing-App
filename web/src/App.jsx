@@ -12,6 +12,7 @@ const VocabularyList = lazy(() => import('./pages/VocabularyList'))
 const Review = lazy(() => import('./pages/Review'))
 const StoryGenerator = lazy(() => import('./pages/StoryGenerator'))
 const Onboarding = lazy(() => import('./pages/Onboarding'))
+const Podcast = lazy(() => import('./pages/Podcast'))
 
 const PageLoader = () => (
   <div className="flex items-center justify-center py-20">
@@ -38,6 +39,7 @@ function App() {
             <Route path="/vocabulary" element={<VocabularyList />} />
             <Route path="/review" element={<Review />} />
             <Route path="/story" element={<StoryGenerator />} />
+            <Route path="/podcast" element={<Podcast />} />
           </Route>
         </Routes>
       </Suspense>
