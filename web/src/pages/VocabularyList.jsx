@@ -347,7 +347,7 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
       <div
         onClick={onExpand}
         style={style}
-        className="bg-surface p-4 rounded-xl border border-border flex justify-between items-center cursor-pointer card-hover animate-fade-up"
+        className="bg-surface p-4 rounded-xl border border-border flex justify-between items-center cursor-pointer card-hover"
       >
         <div className="flex items-center gap-4 min-w-0 flex-1">
           <div className="truncate">
