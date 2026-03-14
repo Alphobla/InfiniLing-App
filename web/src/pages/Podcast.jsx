@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { podcastApi } from '../services/api'
 import { useAuthStore } from '../stores/authStore'
+import { LANGUAGES } from '../constants/languages'
 import useWordPopover from '../hooks/useWordPopover'
 import WordPopover from '../components/WordPopover'
+import AudioPlayer from '../components/AudioPlayer'
 
 export default function Podcast() {
   const { settings } = useAuthStore()
@@ -11,6 +13,9 @@ export default function Podcast() {
   const [view, setView] = useState('list') // 'list' | 'episodes' | 'study'
   const [selectedPodcast, setSelectedPodcast] = useState(null)
   const [selectedEpisode, setSelectedEpisode] = useState(null)
+
+  // Language filter (same default as Vocabulary page)
+  const [language, setLanguage] = useState(settings?.last_language || 'fr')
 
   // Podcast list state
   const [podcasts, setPodcasts] = useState([])
@@ -28,11 +33,6 @@ export default function Podcast() {
   // Study mode state
   const [transcript, setTranscript] = useState([])
   const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
-  const [playbackRate, setPlaybackRate] = useState(1.0)
-  const audioRef = useRef(null)
   const transcriptRef = useRef(null)
 
   // Preview audio (episode list play button)
@@ -42,18 +42,14 @@ export default function Podcast() {
   // Word popover (shared hook)
   const { popover, openPopover, closePopover } = useWordPopover()
 
-  // ── Fetch podcasts on mount ──
+  // ── Fetch podcasts when language changes ──
   useEffect(() => {
-    podcastApi.list()
+    setLoadingPodcasts(true)
+    podcastApi.list(language)
       .then(({ data }) => setPodcasts(data.podcasts || []))
       .catch(console.error)
       .finally(() => setLoadingPodcasts(false))
-  }, [])
-
-  // ── Sync playback rate ──
-  useEffect(() => {
-    if (audioRef.current) audioRef.current.playbackRate = playbackRate
-  }, [playbackRate])
+  }, [language])
 
   // ── Add podcast from RSS ──
   const handleAddPodcast = async () => {
@@ -63,7 +59,7 @@ export default function Podcast() {
     try {
       const { data } = await podcastApi.add({
         rss_url: rssUrl.trim(),
-        language: settings?.last_language || 'fr',
+        language,
       })
       setPodcasts(prev => [...prev, data])
       setRssUrl('')
@@ -134,26 +130,21 @@ export default function Podcast() {
       setSelectedEpisode(data)
       setTranscript(data.transcript || [])
       setCurrentSegmentIndex(-1)
-      setCurrentTime(0)
-      setIsPlaying(false)
       setView('study')
     } catch (err) {
       console.error(err)
     }
   }
 
-  // ── Audio time update → find current segment ──
-  const handleTimeUpdate = useCallback(() => {
-    if (!audioRef.current) return
-    const t = audioRef.current.currentTime
-    setCurrentTime(t)
+  // ── Audio time update → highlight current transcript segment ──
+  const handleAudioTimeUpdate = (t) => {
     const idx = transcript.findIndex(seg => t >= seg.start && t < seg.end)
     if (idx !== currentSegmentIndex) {
       setCurrentSegmentIndex(idx)
       const el = document.getElementById(`segment-${idx}`)
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
-  }, [transcript, currentSegmentIndex])
+  }
 
   // ── Word click handler ──
   const handleWordClick = (word, e) => {
@@ -162,13 +153,6 @@ export default function Podcast() {
     closePopover()
     const rect = e.target.getBoundingClientRect()
     openPopover(clean, rect)
-  }
-
-  // ── Format time ──
-  const formatTime = (s) => {
-    const m = Math.floor(s / 60)
-    const sec = Math.floor(s % 60)
-    return `${m}:${sec.toString().padStart(2, '0')}`
   }
 
   // ── Format duration for episode list ──
@@ -196,6 +180,18 @@ export default function Podcast() {
           />
           {addError && <p className="text-red-400 text-sm mt-2">{addError}</p>}
         </form>
+
+        {/* Language selector */}
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="mb-6 px-4 py-2.5 bg-surface border border-border rounded-xl text-text text-sm appearance-none cursor-pointer focus:outline-none focus:border-accent"
+          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px' }}
+        >
+          {Object.entries(LANGUAGES).map(([code, name]) => (
+            <option key={code} value={code}>{name}</option>
+          ))}
+        </select>
 
         {/* Podcast grid */}
         {loadingPodcasts ? (
@@ -286,9 +282,6 @@ export default function Podcast() {
                       {ep.published_at && new Date(ep.published_at).toLocaleDateString()}
                       {ep.duration && ` · ${formatDuration(ep.duration)}`}
                     </p>
-                    {ep.is_transcribed && (
-                      <p className="text-xs text-accent mt-1">✓ Transcribed</p>
-                    )}
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
                     {ep.is_transcribed ? (
@@ -332,75 +325,24 @@ export default function Podcast() {
     <div>
       {/* Back button */}
       <button
-        onClick={() => { setView('episodes'); setIsPlaying(false); if (audioRef.current) audioRef.current.pause() }}
+        onClick={() => setView('episodes')}
         className="text-accent text-sm mb-4 hover:underline"
       >
         ← Back to Episodes
       </button>
 
+      {/* Episode title */}
+      <h2 className="text-lg font-bold text-text mb-4">{selectedEpisode?.title}</h2>
+
       {/* Audio player */}
       <div className="bg-surface border border-border rounded-xl p-4 mb-6">
-        <audio
-          ref={audioRef}
+        <AudioPlayer
           src={selectedEpisode?.audio_url}
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
+          onTimeUpdate={handleAudioTimeUpdate}
         />
-        <div className="flex items-center gap-3">
-          {/* Play/pause */}
-          <button
-            onClick={() => {
-              if (isPlaying) audioRef.current?.pause()
-              else audioRef.current?.play()
-            }}
-            className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center text-lg flex-shrink-0"
-          >
-            {isPlaying ? '⏸' : '▶'}
-          </button>
-
-          {/* Progress bar */}
-          <div className="flex-1">
-            <div
-              className="h-1.5 bg-border rounded-full cursor-pointer relative"
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect()
-                const ratio = (e.clientX - rect.left) / rect.width
-                if (audioRef.current) audioRef.current.currentTime = ratio * duration
-              }}
-            >
-              <div
-                className="h-full bg-accent rounded-full"
-                style={{ width: duration ? `${(currentTime / duration) * 100}%` : '0%' }}
-              />
-            </div>
-            <div className="flex justify-between mt-1 text-xs text-muted">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(duration)}</span>
-            </div>
-          </div>
-
-          {/* Speed controls */}
-          <div className="flex gap-1 flex-shrink-0">
-            {[0.75, 1, 1.25].map((rate) => (
-              <button
-                key={rate}
-                onClick={() => setPlaybackRate(rate)}
-                className={`px-2 py-1 text-xs rounded ${
-                  playbackRate === rate
-                    ? 'bg-accent text-white'
-                    : 'bg-surface border border-border text-muted hover:text-text'
-                }`}
-              >
-                {rate}x
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
 
-      {/* Transcript */}
+      {/* Transcript + popover share a relative container */}
       <div ref={transcriptRef} className="leading-relaxed text-base relative">
         {transcript.map((seg, i) => (
           <span
@@ -408,7 +350,7 @@ export default function Podcast() {
             id={`segment-${i}`}
             className={`inline ${
               i === currentSegmentIndex
-                ? 'bg-accent/10 border-l-2 border-accent pl-1.5 rounded-sm'
+                ? 'bg-accent/10 rounded-sm'
                 : 'text-muted'
             }`}
             style={{ transition: 'all 0.3s ease' }}
@@ -430,18 +372,18 @@ export default function Podcast() {
             {' '}
           </span>
         ))}
-      </div>
 
-      {/* Word popover */}
-      {popover && (
-        <WordPopover
-          word={popover.word}
-          rect={popover.rect}
-          language={settings?.last_language}
-          motherTongue={settings?.mother_tongue}
-          onClose={closePopover}
-        />
-      )}
+        {/* Word popover — must be inside the relative container */}
+        {popover && (
+          <WordPopover
+            word={popover.word}
+            rect={popover.rect}
+            language={language}
+            motherTongue={settings?.mother_tongue}
+            onClose={closePopover}
+          />
+        )}
+      </div>
     </div>
   )
 }

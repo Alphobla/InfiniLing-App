@@ -12,56 +12,20 @@ from openai import OpenAI
 
 STARTER_PODCASTS = {
     "fr": [
-        {
-            "title": "Tout un monde",
-            "rss_url": "https://feeds.rts.ch/info-tout-un-monde.xml",
-            "image_url": "https://www.rts.ch/2024/06/28/17/31/14928029.image/16x9",
-            "description": "RTS — Actualité internationale",
-        },
-        {
-            "title": "Journal en français facile",
-            "rss_url": "https://savoirs.rfi.fr/fr/apprendre-enseigner/langue-francaise/journal-en-francais-facile/podcast",
-            "image_url": "",
-            "description": "RFI — Actualité simplifiée",
-        },
-        {
-            "title": "InnerFrench",
-            "rss_url": "https://feeds.soundcloud.com/users/soundcloud:users:304682547/sounds.rss",
-            "image_url": "",
-            "description": "Hugo Cotton — Intermediate French",
-        },
+        {"title": "Tout un monde", "rss_url": "https://www.rts.ch/rts-premiere/programmes/tout-un-monde/podcast/?flux=rss"},
+        {"title": "InnerFrench", "rss_url": "https://podcast.innerfrench.com/feed.xml"},
+        {"title": "Français Authentique", "rss_url": "https://francaisauthentique.libsyn.com/rss"},
     ],
     "es": [
-        {
-            "title": "News in Slow Spanish",
-            "rss_url": "https://www.newsinslowspanish.com/latino/podcast/feed",
-            "image_url": "",
-            "description": "Current events in slow Spanish",
-        },
-    ],
-    "it": [
-        {
-            "title": "News in Slow Italian",
-            "rss_url": "https://www.newsinslowitalian.com/podcast/feed",
-            "image_url": "",
-            "description": "Current events in slow Italian",
-        },
+        {"title": "Hoy Hablamos", "rss_url": "https://hoyhablamos.com/feed/"},
+        {"title": "Español Automático", "rss_url": "https://espanolautomatico.libsyn.com/rss"},
     ],
     "ru": [
-        {
-            "title": "Russian Podcast",
-            "rss_url": "https://russianpodcast.eu/feed/podcast",
-            "image_url": "",
-            "description": "Slow Russian for learners",
-        },
-    ],
-    "zh": [
-        {
-            "title": "ChinesePod",
-            "rss_url": "https://chinesepod.com/feed",
-            "image_url": "",
-            "description": "Learn Mandarin Chinese",
-        },
+        {"title": "Russian Made Easy", "rss_url": "https://russianmadeeasy.com/feed/podcast/"},
+        {"title": "Slow Russian", "rss_url": "https://slowrussian.libsyn.com/rss"},
+        {"title": "Comprehensible Russian (Russian With Max)", "rss_url": "https://anchor.fm/s/6f65684/podcast/rss"},
+        {"title": "Русский Подкаст (Tatiana Klimova)", "rss_url": "https://russianpodcast.eu/feed"},
+        {"title": "Be Fluent in Russian", "rss_url": "https://rss.buzzsprout.com/1861558.rss"},
     ],
 }
 
@@ -72,10 +36,16 @@ def parse_rss_feed(rss_url: str) -> dict:
     title = feed.feed.get("title", "Unknown Podcast")
     description = feed.feed.get("subtitle", "") or feed.feed.get("summary", "")
 
+    # Try itunes:image first (most common), then standard RSS <image>
     image_url = ""
-    image = feed.feed.get("image")
-    if image and hasattr(image, "href"):
-        image_url = image.href
+    itunes_image = feed.feed.get("image")
+    if itunes_image and hasattr(itunes_image, "href"):
+        image_url = itunes_image.href
+    if not image_url:
+        # feedparser stores <itunes:image href="..."> under a different key
+        itunes_img = feed.feed.get("itunes_image")
+        if itunes_img and hasattr(itunes_img, "href"):
+            image_url = itunes_img.href
 
     return {"title": title, "description": description, "image_url": image_url}
 

@@ -1,5 +1,9 @@
 # Claude Development Notes
+Screenshot photos can be found here: C:\Users\Valentin Maissen\OneDrive\Bilder\Screenshots
 
+Remember: I know python but am new to designing websites, using vite, react and so on. Explain concepts on the way with context. Whenever you code with important concepts, give an explaining comment with context. I want to learn.
+
+use uv run python instead of python
 ## Core Development Principles
 After proposing a change in the code, wait. I might ask followup questions. Aim of this project is to create a cool app but also for me to learn core concepts on the way.
 ### Simplicity First

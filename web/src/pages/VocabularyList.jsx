@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { vocabularyApi } from '../services/api'
 import { useAuthStore } from '../stores/authStore'
+import { LANGUAGES } from '../constants/languages'
 
 // Frequency badge colors - more refined palette
 const FREQUENCY_COLORS = {
@@ -11,17 +12,6 @@ const FREQUENCY_COLORS = {
   'Top 50,000': { bg: '#E69B3A', text: 'white' },
   'Rare': { bg: '#C53030', text: 'white' },
   'Unknown': { bg: '#78756F', text: 'white' },
-}
-
-const LANGUAGES = {
-  de: 'German',
-  en: 'English',
-  fr: 'French',
-  es: 'Spanish',
-  it: 'Italian',
-  ru: 'Russian',
-  ar: 'Arabic',
-  zh: 'Chinese',
 }
 
 export default function VocabularyList() {

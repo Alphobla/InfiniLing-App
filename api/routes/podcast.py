@@ -1,6 +1,6 @@
 """Podcast routes: browse, add, delete podcasts; list episodes; transcribe."""
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional
 
@@ -31,28 +31,41 @@ class TranscribeRequest(BaseModel):
 
 @router.get("")
 def list_podcasts(
+    language: str = Query(default=None),
     user_id: str = Depends(get_current_user_id),
     db=Depends(get_supabase),
 ):
-    """List user's podcasts. Auto-seeds starters if none exist for language."""
-    settings = db.table("user_settings").select("last_language").eq("user_id", user_id).maybe_single().execute()
-    language = settings.data.get("last_language", "") if settings.data else ""
+    """List user's podcasts for a language. Auto-seeds starters if none exist."""
+    # If no language param, fall back to user's last_language
+    if not language:
+        settings = db.table("user_settings").select("last_language").eq("user_id", user_id).maybe_single().execute()
+        language = settings.data.get("last_language", "") if settings.data else ""
 
-    existing = db.table("podcasts").select("id").eq("user_id", user_id).execute()
+    # Seed starters for this language if user has none for it
+    if language and language in STARTER_PODCASTS:
+        existing = db.table("podcasts").select("id").eq("user_id", user_id).eq("language", language).execute()
+        if not existing.data:
+            for starter in STARTER_PODCASTS[language]:
+                try:
+                    # Fetch RSS to get real image URL (CDN-hosted, CORS-friendly)
+                    metadata = parse_rss_feed(starter["rss_url"])
+                    db.table("podcasts").insert({
+                        "user_id": user_id,
+                        "title": metadata["title"] or starter["title"],
+                        "description": metadata["description"] or starter.get("description", ""),
+                        "rss_url": starter["rss_url"],
+                        "image_url": metadata["image_url"],
+                        "language": language,
+                        "is_starter": True,
+                    }).execute()
+                except Exception as e:
+                    print(f"Failed to seed starter '{starter['title']}': {e}")
 
-    if not existing.data and language in STARTER_PODCASTS:
-        for starter in STARTER_PODCASTS[language]:
-            db.table("podcasts").insert({
-                "user_id": user_id,
-                "title": starter["title"],
-                "description": starter.get("description", ""),
-                "rss_url": starter["rss_url"],
-                "image_url": starter.get("image_url", ""),
-                "language": language,
-                "is_starter": True,
-            }).execute()
-
-    result = db.table("podcasts").select("*").eq("user_id", user_id).order("created_at").execute()
+    # Filter by language
+    query = db.table("podcasts").select("*").eq("user_id", user_id).order("created_at")
+    if language:
+        query = query.eq("language", language)
+    result = query.execute()
     return {"podcasts": result.data}
 
 

@@ -75,7 +75,7 @@ export const importExportApi = {
 
 // Podcasts
 export const podcastApi = {
-  list: () => api.get('/api/podcasts'),
+  list: (language) => api.get('/api/podcasts', { params: { language } }),
   add: (data) => api.post('/api/podcasts', data),
   remove: (id) => api.delete(`/api/podcasts/${id}`),
   episodes: (podcastId) => api.get(`/api/podcasts/${podcastId}/episodes`),

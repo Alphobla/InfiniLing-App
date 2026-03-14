@@ -3,16 +3,36 @@ import { generateApi } from '../services/api'
 import { useAuthStore } from '../stores/authStore'
 import useWordPopover from '../hooks/useWordPopover'
 import WordPopover from '../components/WordPopover'
+import AudioPlayer from '../components/AudioPlayer'
+import { LANGUAGES } from '../constants/languages'
 
-const STYLE_OPTIONS = ['Informal', 'Business', 'Academic', 'Creative']
-const FORMAT_OPTIONS = ['Dialogue', 'Essay', 'Monologue', 'Creative']
+// Presets control wordCount, newWordCount, and targetLength together
+const PRESETS = [
+  { key: 'quick', label: '⚡', tip: 'Quick', words: 5, newWords: 1, length: 50 },
+  { key: 'standard', label: '📖', tip: 'Standard', words: 10, newWords: 3, length: 150 },
+  { key: 'deep', label: '🏋️', tip: 'Deep Dive', words: 15, newWords: 5, length: 300 },
+]
+
+const STYLE_OPTIONS = [
+  { label: '😊', value: 'Casual', tip: 'Casual' },
+  { label: '💼', value: 'Formal', tip: 'Formal' },
+  { label: '📚', value: 'Academic', tip: 'Academic' },
+  { label: '😂', value: 'Humorous', tip: 'Humorous' },
+]
+const FORMAT_OPTIONS = [
+  { label: '💬', value: 'Dialogue', tip: 'Dialogue' },
+  { label: '📝', value: 'Essay', tip: 'Essay' },
+  { label: '📰', value: 'Article', tip: 'Article' },
+  { label: '✉️', value: 'Letter', tip: 'Letter' },
+]
 
 export default function StoryGenerator() {
   // Settings state
   const [languages, setLanguages] = useState([])
   const [language, setLanguage] = useState('')
+  const [preset, setPreset] = useState('standard')
   const [wordCount, setWordCount] = useState(10)
-  const [newWordCount, setNewWordCount] = useState(2)
+  const [newWordCount, setNewWordCount] = useState(3)
   const [targetLength, setTargetLength] = useState(150)
   const [topic, setTopic] = useState('')
   const [style, setStyle] = useState('')
@@ -25,13 +45,12 @@ export default function StoryGenerator() {
   const [generating, setGenerating] = useState(false)
   const [story, setStory] = useState(null)
   const [storyTitle, setStoryTitle] = useState('')
-  const [stale, setStale] = useState(false) // true when settings changed after last generation
+  const [stale, setStale] = useState(false)
 
   // Audio state
   const [audioUrl, setAudioUrl] = useState(null)
   const [audioLoading, setAudioLoading] = useState(false)
-  const [playbackRate, setPlaybackRate] = useState(1.0)
-  const audioRef = useRef(null)
+  const [currentWordIndex, setCurrentWordIndex] = useState(-1)
   const storyRef = useRef(null)
 
   // Word popover state
@@ -49,26 +68,23 @@ export default function StoryGenerator() {
       .finally(() => setLoading(false))
   }, [])
 
-  // Clamp newWordCount when wordCount changes
-  useEffect(() => {
-    if (newWordCount > wordCount) setNewWordCount(wordCount)
-  }, [wordCount])
+  // Apply preset values when preset changes
+  const applyPreset = (key) => {
+    const p = PRESETS.find(pr => pr.key === key)
+    if (!p) return
+    setPreset(key)
+    setWordCount(p.words)
+    setNewWordCount(p.newWords)
+    setTargetLength(p.length)
+  }
 
   // When any setting changes after a story was generated, mark as stale
-  // so the Generate button reappears instead of "View Text"
   useEffect(() => {
     if (story) setStale(true)
-  }, [language, wordCount, newWordCount, targetLength, topic, style, customStyle, format, customFormat])
-
-  // Sync playback rate to audio element
-  useEffect(() => {
-    if (audioRef.current) audioRef.current.playbackRate = playbackRate
-  }, [playbackRate, audioUrl])
+  }, [language, preset, topic, style, customStyle, format, customFormat])
 
   const resetSettings = () => {
-    setWordCount(10)
-    setNewWordCount(2)
-    setTargetLength(150)
+    applyPreset('standard')
     setTopic('')
     setStyle('')
     setCustomStyle('')
@@ -82,7 +98,6 @@ export default function StoryGenerator() {
     setStale(false)
     setStory(null)
     setAudioUrl(null)
-    setPlaybackRate(1.0)
 
     try {
       const effectiveStyle = style === 'Other' ? customStyle : style
@@ -135,58 +150,14 @@ export default function StoryGenerator() {
     }
   }
 
-  // Read the word the browser selected (after double-click or long-press selection)
-  const getSelectedWord = () => {
-    const sel = window.getSelection()
-    if (!sel || sel.isCollapsed || !sel.rangeCount) return null
-
-    const word = sel.toString().trim().replace(/[^\p{L}\p{M}'-]/gu, '')
-    if (!word) return null
-
-    const rect = sel.getRangeAt(0).getBoundingClientRect()
-    return { word, rect }
+  // Word click handler (single click, same as podcast)
+  const handleWordClick = (word, e) => {
+    const clean = word.replace(/[^\p{L}\p{M}'-]/gu, '').trim()
+    if (!clean) return
+    closePopover()
+    const rect = e.target.getBoundingClientRect()
+    openPopover(clean, rect)
   }
-
-  // Desktop: double-click selects a word automatically, we just read it
-  const handleWordDoubleClick = () => {
-    const result = getSelectedWord()
-    if (result) {
-      openPopover(result.word, result.rect)
-    }
-  }
-
-  // Mobile: long-press a word via per-span touch handlers
-  const longPressTimer = useRef(null)
-  const touchOrigin = useRef({ x: 0, y: 0 })
-
-  const handleWordTouchStart = (e, wordText) => {
-    const touch = e.touches[0]
-    touchOrigin.current = { x: touch.clientX, y: touch.clientY }
-
-    longPressTimer.current = setTimeout(() => {
-      // The span element IS the word, so just get its bounding rect
-      const rect = e.target.getBoundingClientRect()
-      const clean = wordText.replace(/[^\p{L}\p{M}'-]/gu, '')
-      if (clean) openPopover(clean, rect)
-    }, 400)
-  }
-
-  const handleWordTouchMove = (e) => {
-    const touch = e.touches[0]
-    const dx = touch.clientX - touchOrigin.current.x
-    const dy = touch.clientY - touchOrigin.current.y
-    if (dx * dx + dy * dy > 100) {
-      clearTimeout(longPressTimer.current)
-    }
-  }
-
-  const handleWordTouchEnd = () => {
-    clearTimeout(longPressTimer.current)
-  }
-
-  const slower = () => setPlaybackRate(r => Math.max(0.5, +(r - 0.05).toFixed(2)))
-  const faster = () => setPlaybackRate(r => Math.min(2.0, +(r + 0.05).toFixed(2)))
-  const resetSpeed = () => setPlaybackRate(1.0)
 
   if (loading) {
     return (
@@ -210,189 +181,176 @@ export default function StoryGenerator() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Settings Panel */}
-      <div className="bg-surface rounded-2xl shadow-soft border border-border overflow-hidden animate-fade-up">
-        {/* Header */}
-        <div className="px-6 py-5 border-b border-border">
-          <h1 className="text-lg font-semibold text-text">Text Generator</h1>
-        </div>
+      {/* Settings Panel — single flowing card */}
+      <div className="bg-surface rounded-2xl shadow-soft border border-border overflow-hidden animate-fade-up px-6 py-6 space-y-5">
 
-        {/* Language + Word Sliders */}
-        <div className="px-6 py-6 border-b border-border space-y-5">
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer"
-            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
-          >
-            <option value="">Language...</option>
-            {languages.map(lang => (
-              <option key={lang} value={lang}>{lang}</option>
-            ))}
-          </select>
-
-          <div>
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-muted">Words to include</span>
-              <span className="text-accent font-semibold">{wordCount}</span>
-            </div>
-            <input
-              type="range" min="5" max="20" value={wordCount}
-              onChange={(e) => setWordCount(Number(e.target.value))}
-              className="w-full"
-            />
-          </div>
-
-          <div>
-            <div className="flex items-center text-sm mb-2">
-              <span className="text-muted">New</span>
-              <span className="text-accent font-semibold ml-1.5">{newWordCount}</span>
-              <span className="text-border mx-3">·</span>
-              <span className="text-muted">Review</span>
-              <span className="text-accent font-semibold ml-1.5">{wordCount - newWordCount}</span>
-            </div>
-            <input
-              type="range" min="0" max={wordCount} value={newWordCount}
-              onChange={(e) => setNewWordCount(Number(e.target.value))}
-              className="w-full"
-            />
-          </div>
-        </div>
-
-        {/* Length + Refinements */}
-        <div className="px-6 py-6 border-b border-border space-y-5">
-          <div>
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-muted">Target length</span>
-              <span className="text-accent font-semibold">{targetLength} words</span>
-            </div>
-            <input
-              type="range" min="20" max="300" step="10" value={targetLength}
-              onChange={(e) => setTargetLength(Number(e.target.value))}
-              className="w-full"
-            />
-          </div>
-
+        {/* Topic + Language — side by side */}
+        <div className="flex gap-2">
           <input
             type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="Topic (optional)"
-            className="w-full px-4 py-3 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60"
+            className="flex-1 px-4 py-3 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60"
           />
-
-          <div>
-            <span className="text-sm text-muted">Style</span>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {STYLE_OPTIONS.map(opt => (
-                <button
-                  key={opt}
-                  onClick={() => setStyle(s => s === opt ? '' : opt)}
-                  className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
-                    style === opt
-                      ? 'border-accent bg-accent-light text-accent'
-                      : 'border-border text-muted hover:border-muted'
-                  }`}
-                >
-                  {opt}
-                </button>
-              ))}
-              <button
-                onClick={() => setStyle(s => s === 'Other' ? '' : 'Other')}
-                className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
-                  style === 'Other'
-                    ? 'border-accent bg-accent-light text-accent'
-                    : 'border-border text-muted hover:border-muted'
-                }`}
-              >
-                Other...
-              </button>
-            </div>
-            {style === 'Other' && (
-              <input
-                type="text"
-                value={customStyle}
-                onChange={(e) => setCustomStyle(e.target.value)}
-                placeholder="Custom style..."
-                className="w-full mt-2 px-4 py-2.5 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60 text-sm"
-              />
-            )}
-          </div>
-
-          <div>
-            <span className="text-sm text-muted">Format</span>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {FORMAT_OPTIONS.map(opt => (
-                <button
-                  key={opt}
-                  onClick={() => setFormat(f => f === opt ? '' : opt)}
-                  className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
-                    format === opt
-                      ? 'border-accent bg-accent-light text-accent'
-                      : 'border-border text-muted hover:border-muted'
-                  }`}
-                >
-                  {opt}
-                </button>
-              ))}
-              <button
-                onClick={() => setFormat(f => f === 'Other' ? '' : 'Other')}
-                className={`px-3 py-1.5 text-sm rounded-lg border transition-all ${
-                  format === 'Other'
-                    ? 'border-accent bg-accent-light text-accent'
-                    : 'border-border text-muted hover:border-muted'
-                }`}
-              >
-                Other...
-              </button>
-            </div>
-            {format === 'Other' && (
-              <input
-                type="text"
-                value={customFormat}
-                onChange={(e) => setCustomFormat(e.target.value)}
-                placeholder="Custom format..."
-                className="w-full mt-2 px-4 py-2.5 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60 text-sm"
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 flex items-center justify-between">
-          <button
-            onClick={resetSettings}
-            className="text-sm text-muted hover:text-text transition-colors"
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="px-4 py-3 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer"
+            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px', paddingRight: '32px' }}
           >
-            Reset
-          </button>
-          {story && !generating && !stale ? (
-            <button
-              onClick={() => storyRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-6 py-2.5 bg-accent text-white rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5 flex items-center gap-2 animate-pulse"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-              View Text
-            </button>
-          ) : (
-            <button
-              onClick={handleGenerate}
-              disabled={!language || generating}
-              className="px-6 py-2.5 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0 flex items-center gap-2"
-            >
-              {generating ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                'Generate'
-              )}
-            </button>
-          )}
+            <option value="">Language...</option>
+            {languages.map(lang => (
+              <option key={lang} value={lang}>{LANGUAGES[lang] || lang}</option>
+            ))}
+          </select>
         </div>
+
+        {/* Preset cards — emoji + label, selected shows accent border */}
+        <div className="flex gap-2">
+          {PRESETS.map(p => (
+            <button
+              key={p.key}
+              onClick={() => applyPreset(p.key)}
+              className={`flex-1 py-2.5 rounded-xl border transition-all flex flex-col items-center gap-0.5 ${
+                preset === p.key
+                  ? 'border-accent bg-accent-light'
+                  : 'border-border hover:border-muted'
+              }`}
+            >
+              <span className="text-xl">{p.label}</span>
+              <span className={`text-xs ${preset === p.key ? 'text-accent' : 'text-muted'}`}>{p.tip}</span>
+            </button>
+          ))}
+        </div>
+        {/* Subtle specs for the active preset */}
+        <p className="text-xs text-muted text-center -mt-2">
+          ~{targetLength} words · {newWordCount} new · {wordCount - newWordCount} review
+        </p>
+
+        {/* Style & Format — icon chips */}
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-muted w-12">Style</span>
+          <div className="flex gap-2">
+            {STYLE_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                title={opt.tip}
+                onClick={() => setStyle(s => s === opt.value ? '' : opt.value)}
+                className={`w-9 h-9 text-lg rounded-lg border transition-all flex items-center justify-center ${
+                  style === opt.value
+                    ? 'border-accent bg-accent-light'
+                    : 'border-border hover:border-muted'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+            <button
+              title="Custom style"
+              onClick={() => setStyle(s => s === 'Other' ? '' : 'Other')}
+              className={`w-9 h-9 text-sm rounded-lg border transition-all flex items-center justify-center ${
+                style === 'Other'
+                  ? 'border-accent bg-accent-light text-accent'
+                  : 'border-border text-muted hover:border-muted'
+              }`}
+            >
+              ...
+            </button>
+          </div>
+        </div>
+        {style === 'Other' && (
+          <input
+            type="text"
+            value={customStyle}
+            onChange={(e) => setCustomStyle(e.target.value)}
+            placeholder="Custom style..."
+            className="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60 text-sm"
+          />
+        )}
+
+        <div className="flex items-center gap-4">
+          <span className="text-sm text-muted w-12">Format</span>
+          <div className="flex gap-2">
+            {FORMAT_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                title={opt.tip}
+                onClick={() => setFormat(f => f === opt.value ? '' : opt.value)}
+                className={`w-9 h-9 text-lg rounded-lg border transition-all flex items-center justify-center ${
+                  format === opt.value
+                    ? 'border-accent bg-accent-light'
+                    : 'border-border hover:border-muted'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+            <button
+              title="Custom format"
+              onClick={() => setFormat(f => f === 'Other' ? '' : 'Other')}
+              className={`w-9 h-9 text-sm rounded-lg border transition-all flex items-center justify-center ${
+                format === 'Other'
+                  ? 'border-accent bg-accent-light text-accent'
+                  : 'border-border text-muted hover:border-muted'
+              }`}
+            >
+              ...
+            </button>
+          </div>
+        </div>
+        {format === 'Other' && (
+          <input
+            type="text"
+            value={customFormat}
+            onChange={(e) => setCustomFormat(e.target.value)}
+            placeholder="Custom format..."
+            className="w-full px-4 py-2.5 bg-bg border border-border rounded-xl text-text placeholder:text-muted/60 text-sm"
+          />
+        )}
+
+        {/* Dynamic summary sentence */}
+        {language && (
+          <p className="text-sm text-muted text-center">
+            Generate {style && style !== 'Other' ? `a ${style.toLowerCase()} ` : 'a '}{format && format !== 'Other' ? format.toLowerCase() : 'text'} in {LANGUAGES[language] || language}{topic ? ` about "${topic}"` : ''}.
+          </p>
+        )}
+
+        {/* Generate button — full width, hero CTA */}
+        {story && !generating && !stale ? (
+          <button
+            onClick={() => storyRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            className="w-full py-3 bg-accent text-white rounded-xl text-sm font-medium transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2 animate-pulse"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+            View Text
+          </button>
+        ) : (
+          <button
+            onClick={handleGenerate}
+            disabled={!language || generating}
+            className="w-full py-3 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0 flex items-center justify-center gap-2"
+          >
+            {generating ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Generating...
+              </>
+            ) : (
+              'Generate'
+            )}
+          </button>
+        )}
+
+        {/* Reset — subtle link */}
+        <button
+          onClick={resetSettings}
+          className="w-full text-xs text-muted hover:text-text transition-colors"
+        >
+          Reset to defaults
+        </button>
       </div>
 
       {/* Generated Text */}
@@ -400,92 +358,72 @@ export default function StoryGenerator() {
         <div ref={storyRef} className="bg-surface rounded-2xl shadow-soft border border-border mt-8 overflow-hidden animate-fade-up">
           <div className="px-6 py-5 border-b border-border flex items-center justify-between">
             <h2 className="text-lg font-semibold text-text">{storyTitle || 'Generated Text'}</h2>
-            <button
-              onClick={handleAudio}
-              disabled={audioLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-bg border border-border rounded-xl hover:bg-border/50 disabled:opacity-50 transition-all text-sm text-muted"
-            >
-              {audioLoading ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-muted/30 border-t-muted rounded-full animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                  </svg>
-                  Listen
-                </>
-              )}
-            </button>
+            {!audioUrl && (
+              <button
+                onClick={handleAudio}
+                disabled={audioLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-xl hover:bg-accent-hover disabled:opacity-50 transition-all text-sm font-medium animate-pulse"
+              >
+                {audioLoading ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    </svg>
+                    Read aloud
+                  </>
+                )}
+              </button>
+            )}
           </div>
 
-          {/* Audio Player with Speed Controls */}
+          {/* Audio Player */}
           {audioUrl && (
-            <div className="px-4 sm:px-6 py-4 border-b border-border flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-              {/* Speed controls */}
-              <div className="flex items-center justify-center gap-1 bg-bg rounded-lg p-1">
-                <button
-                  onClick={slower}
-                  disabled={playbackRate <= 0.5}
-                  className="px-2.5 py-1.5 rounded text-sm font-medium text-muted hover:bg-surface hover:shadow-soft disabled:opacity-30 transition-all"
-                  title="Slower"
-                >
-                  −
-                </button>
-                <button
-                  onClick={resetSpeed}
-                  className="px-2.5 py-1.5 rounded text-sm font-mono font-semibold text-text hover:bg-surface hover:shadow-soft transition-all min-w-[3.5rem] text-center"
-                  title="Reset to 1.0x"
-                >
-                  {playbackRate.toFixed(2)}x
-                </button>
-                <button
-                  onClick={faster}
-                  disabled={playbackRate >= 2.0}
-                  className="px-2.5 py-1.5 rounded text-sm font-medium text-muted hover:bg-surface hover:shadow-soft disabled:opacity-30 transition-all"
-                  title="Faster"
-                >
-                  +
-                </button>
-              </div>
-
-              {/* Audio element */}
-              <audio
-                ref={audioRef}
-                controls
-                className="flex-1 h-10 sm:h-8 w-full"
+            <div className="px-6 py-4 border-b border-border">
+              <AudioPlayer
                 src={audioUrl}
-                onLoadedMetadata={() => {
-                  if (audioRef.current) audioRef.current.playbackRate = playbackRate
+                onTimeUpdate={(currentTime, duration) => {
+                  if (!duration) return
+                  // Estimate which word we're on based on linear time progression
+                  const tokens = story.split(/(\s+)/)
+                  const totalWords = tokens.filter(t => /\p{L}/u.test(t)).length
+                  const wordIdx = Math.floor((currentTime / duration) * totalWords)
+                  setCurrentWordIndex(wordIdx < totalWords ? wordIdx : -1)
                 }}
               />
             </div>
           )}
 
-          {/* Text Content — double-click (desktop) or long-press (mobile) a word to look it up */}
-          <div className="px-6 py-6 relative">
-            <p
-              className="text-text leading-relaxed whitespace-pre-wrap text-lg cursor-text select-text touch-no-select"
-              onDoubleClick={handleWordDoubleClick}
-              onContextMenu={(e) => e.preventDefault()}
-            >
-              {story.split(/(\s+)/).map((part, i) =>
-                /\s+/.test(part) ? part : (
-                  <span
-                    key={i}
-                    onTouchStart={(e) => handleWordTouchStart(e, part)}
-                    onTouchMove={handleWordTouchMove}
-                    onTouchEnd={handleWordTouchEnd}
-                  >
-                    {part}
-                  </span>
-                )
-              )}
-            </p>
-            <p className="text-xs text-muted/50 mt-4 pointer-fine">Double-click a word to translate</p>
-            <p className="text-xs text-muted/50 mt-4 pointer-coarse">Hold a word to translate</p>
+          {/* Text Content — click a word to translate, highlight current word during playback */}
+          <div className="px-6 py-6 relative leading-relaxed text-base">
+            {(() => {
+              const tokens = story.split(/(\s+)/)
+              let wordIdx = 0
+              return tokens.map((token, i) => {
+                const isWord = /\p{L}/u.test(token)
+                if (isWord) {
+                  const thisWordIdx = wordIdx++
+                  const isActive = audioUrl && thisWordIdx === currentWordIndex
+                  return (
+                    <span
+                      key={i}
+                      onClick={(e) => handleWordClick(token, e)}
+                      className={`cursor-pointer hover:underline hover:decoration-dotted hover:text-text transition-colors ${
+                        isActive ? 'bg-accent/10 text-text rounded-sm' : 'text-muted'
+                      }`}
+                    >
+                      {token}
+                    </span>
+                  )
+                }
+                return <span key={i}>{token}</span>
+              })
+            })()}
+
             {popover && (
               <WordPopover
                 word={popover.word}
