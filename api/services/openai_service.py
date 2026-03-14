@@ -5,6 +5,7 @@ from typing import Optional, Dict, List
 from openai import OpenAI
 from wordfreq import zipf_frequency
 from api.services.text_utils import strip_prefix_words
+from api.services.language_prompts import get_language_rules
 
 
 def get_frequency_info(word: str, language: str) -> Dict:
@@ -53,7 +54,6 @@ class OpenAIService:
 
         If enhancement fails, returns dict with "enhancement_failed": True and "tokens_used".
         """
-        from api.services.language_prompts import get_language_rules
         language_rules = get_language_rules(language_from)
 
         context_line = (
