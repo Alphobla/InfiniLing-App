@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     openai_api_key: str
 
     # Word enhancement settings
-    enhance_max_tokens: int = 200
+    enhance_max_tokens: int = 400
     enhance_temperature: float = 0.3
 
     # Story generation settings
