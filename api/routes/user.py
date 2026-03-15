@@ -77,44 +77,54 @@ def create_user_settings(
     db: Client = Depends(get_supabase)
 ):
     """Create user settings (called on signup)."""
-    # Check if already exists
-    existing = db.table("user_settings").select("user_id").eq("user_id", user_id).execute()
-    if existing.data:
-        raise HTTPException(status_code=400, detail="Settings already exist")
+    import traceback
+    try:
+        # Check if already exists
+        existing = db.table("user_settings").select("user_id").eq("user_id", user_id).execute()
+        if existing.data:
+            raise HTTPException(status_code=400, detail="Settings already exist")
 
-    settings = get_settings()
+        settings = get_settings()
 
-    # Convert language name to code if needed
-    mother_tongue = request.mother_tongue
-    
-    # If it's a full language name, convert to code
-    if not is_valid_code(mother_tongue):
-        code = get_code(mother_tongue)
-        if code:
-            mother_tongue = code
-        else:
-            raise HTTPException(status_code=400, detail=f"Invalid language: {request.mother_tongue}")
+        # Convert language name to code if needed
+        mother_tongue = request.mother_tongue
+        
+        # If it's a full language name, convert to code
+        if not is_valid_code(mother_tongue):
+            code = get_code(mother_tongue)
+            if code:
+                mother_tongue = code
+            else:
+                raise HTTPException(status_code=400, detail=f"Invalid language: {request.mother_tongue}")
 
-    data = {
-        "user_id": user_id,
-        "mother_tongue": mother_tongue,
-        "token_limit": settings.default_token_limit
-    }
+        data = {
+            "user_id": user_id,
+            "mother_tongue": mother_tongue,
+            "token_limit": settings.default_token_limit
+        }
 
-    result = db.table("user_settings").insert(data).execute()
+        print(f"DEBUG: Inserting user_settings with data: {data}")
+        result = db.table("user_settings").insert(data).execute()
+        print(f"DEBUG: Insert result: {result}")
 
-    if not result.data:
-        raise HTTPException(status_code=400, detail="Failed to create settings")
+        if not result.data:
+            raise HTTPException(status_code=400, detail="Failed to create settings")
 
-    s = result.data[0]
-    return UserSettingsResponse(
-        mother_tongue=s["mother_tongue"],
-        last_language=s.get("last_language"),
-        has_seen_intro=s.get("has_seen_intro", False),
-        has_own_api_key=False,
-        tokens_used_this_month=0,
-        token_limit=s.get("token_limit", 100000)
-    )
+        s = result.data[0]
+        return UserSettingsResponse(
+            mother_tongue=s["mother_tongue"],
+            last_language=s.get("last_language"),
+            has_seen_intro=s.get("has_seen_intro", False),
+            has_own_api_key=False,
+            tokens_used_this_month=0,
+            token_limit=s.get("token_limit", 100000)
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"ERROR creating settings: {e}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
 
 
 @router.put("/settings", response_model=UserSettingsResponse)
