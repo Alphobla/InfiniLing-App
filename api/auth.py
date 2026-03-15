@@ -16,9 +16,8 @@ def get_jwks(supabase_url: str) -> dict:
         response = httpx.get(jwks_url, timeout=5)
         response.raise_for_status()
         return response.json()
-    except Exception as e:
-        # Return empty dict if JWKS fetch fails - will fall back to secret
-        print(f"JWKS fetch failed: {e}")
+    except Exception:
+        # Return empty dict if JWKS fetch fails - will fall back to raising error
         return {"keys": []}
 
 
@@ -33,16 +32,12 @@ def get_signing_key(token: str, supabase_url: str):
     if alg == "HS256":
         return settings.supabase_jwt_secret
     
-    # For ES256/RS256, try JWKS first
-    try:
-        jwks = get_jwks(supabase_url)
-        for key in jwks.get("keys", []):
-            if key.get("kid") == kid:
-                return jwk.construct(key)
-    except Exception as e:
-        print(f"JWKS key construction failed: {e}")
+    # For ES256/RS256, fetch from JWKS
+    jwks = get_jwks(supabase_url)
+    for key in jwks.get("keys", []):
+        if key.get("kid") == kid:
+            return jwk.construct(key)
     
-    # Fallback: try the JWT secret anyway (some Supabase configs use it)
     raise ValueError(f"Unable to find signing key for kid: {kid}, alg: {alg}")
 
 
@@ -85,5 +80,4 @@ def get_user_id_from_token(request: Request) -> str:
     except HTTPException:
         raise
     except Exception as e:
-        # Catch all errors (JOSEError, ValueError, httpx errors, etc)
-        raise HTTPException(status_code=401, detail=f"Invalid token: {type(e).__name__}: {str(e)}")
+        raise HTTPException(status_code=401, detail=f"Invalid token: {str(e)}")
