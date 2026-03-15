@@ -1,35 +1,23 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
-import api from '../services/api'
+import { LANGUAGES } from '../constants/languages'
 
 export default function Onboarding() {
   const { user, settings, loading, createSettings } = useAuthStore()
   const [step, setStep] = useState(1)
   const [motherTongue, setMotherTongue] = useState('')
-  const [languages, setLanguages] = useState([])
-  const [loadingLanguages, setLoadingLanguages] = useState(true)
   const [saving, setSaving] = useState(false)
   const navigate = useNavigate()
 
-  // Fetch available languages
-  useEffect(() => {
-    const fetchLanguages = async () => {
-      try {
-        const response = await api.get('/api/languages')
-        // API returns { languages: [{ code: 'fr', name: 'French' }, ...] }
-        setLanguages(response.data.languages)
-      } catch (err) {
-        console.error('Failed to fetch languages:', err)
-      } finally {
-        setLoadingLanguages(false)
-      }
-    }
-    fetchLanguages()
-  }, [])
+  // Convert LANGUAGES object to sorted array of { code, name } objects
+  // LANGUAGES is a static constant - no need to fetch from API during onboarding
+  const languages = Object.entries(LANGUAGES)
+    .map(([code, name]) => ({ code, name }))
+    .sort((a, b) => a.name.localeCompare(b.name))
 
-  // If still loading, show loading state
-  if (loading || loadingLanguages) {
+  // If still loading auth, show loading state
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg">
         <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
