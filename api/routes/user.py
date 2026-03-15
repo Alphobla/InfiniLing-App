@@ -103,12 +103,10 @@ def create_user_settings(
             "token_limit": settings.default_token_limit
         }
 
-        print(f"DEBUG: Inserting user_settings with data: {data}")
         result = db.table("user_settings").insert(data).execute()
-        print(f"DEBUG: Insert result: {result}")
 
         if not result.data:
-            raise HTTPException(status_code=400, detail="Failed to create settings")
+            raise HTTPException(status_code=400, detail="Failed to create settings - no data returned")
 
         s = result.data[0]
         return UserSettingsResponse(
@@ -122,9 +120,9 @@ def create_user_settings(
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR creating settings: {e}")
-        print(traceback.format_exc())
-        raise HTTPException(status_code=500, detail=f"Internal error: {str(e)}")
+        # Include full traceback in error for debugging
+        tb = traceback.format_exc()
+        raise HTTPException(status_code=500, detail=f"{type(e).__name__}: {str(e)} | Traceback: {tb[:500]}")
 
 
 @router.put("/settings", response_model=UserSettingsResponse)
