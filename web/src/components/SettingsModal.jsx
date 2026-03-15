@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuthStore } from '../stores/authStore'
 import { userApi, importExportApi } from '../services/api'
-
-const LANGUAGES = [
-  'Arabic', 'Chinese', 'English', 'French', 'German', 'Italian', 'Russian', 'Spanish'
-]
+import { useLanguages } from '../hooks/useLanguages'
 
 export default function SettingsModal({ onClose }) {
   const { settings, updateSettings } = useAuthStore()
+  // Languages from single source of truth
+  const { languages: availableLanguages } = useLanguages()
   const [motherTongue, setMotherTongue] = useState('')
   const [apiKey, setApiKey] = useState('')
   const [hasApiKey, setHasApiKey] = useState(false)
@@ -158,8 +157,8 @@ export default function SettingsModal({ onClose }) {
                 style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px' }}
               >
                 <option value="">Select language</option>
-                {LANGUAGES.map(lang => (
-                  <option key={lang} value={lang}>{lang}</option>
+                {availableLanguages.map(lang => (
+                  <option key={lang.code} value={lang.name}>{lang.name}</option>
                 ))}
               </select>
               <button

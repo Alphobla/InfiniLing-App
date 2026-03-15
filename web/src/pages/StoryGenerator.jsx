@@ -4,7 +4,7 @@ import { useAuthStore } from '../stores/authStore'
 import useWordPopover from '../hooks/useWordPopover'
 import WordPopover from '../components/WordPopover'
 import AudioPlayer from '../components/AudioPlayer'
-import { LANGUAGES } from '../constants/languages'
+import { useLanguages } from '../hooks/useLanguages'
 
 // Presets control wordCount, newWordCount, and targetLength together
 const PRESETS = [
@@ -27,8 +27,10 @@ const FORMAT_OPTIONS = [
 ]
 
 export default function StoryGenerator() {
+  // Languages from single source of truth
+  const { languages: availableLanguages, languageMap, loading: loadingLanguages } = useLanguages()
+  
   // Settings state
-  const [languages, setLanguages] = useState([])
   const [language, setLanguage] = useState('')
   const [preset, setPreset] = useState('standard')
   const [wordCount, setWordCount] = useState(10)
@@ -41,7 +43,6 @@ export default function StoryGenerator() {
   const [customFormat, setCustomFormat] = useState('')
 
   // Generation state
-  const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
   const [story, setStory] = useState(null)
   const [storyTitle, setStoryTitle] = useState('')
@@ -57,16 +58,13 @@ export default function StoryGenerator() {
   const { popover, openPopover, closePopover } = useWordPopover()
   const { settings } = useAuthStore()
 
+  // Set default language when languages load
   useEffect(() => {
-    generateApi.languages()
-      .then(({ data }) => {
-        const langs = data.languages || []
-        setLanguages(langs)
-        if (langs.length === 1) setLanguage(langs[0])
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+    if (availableLanguages.length > 0 && !language) {
+      // Default to first available language
+      setLanguage(availableLanguages[0].code)
+    }
+  }, [availableLanguages, language])
 
   // Apply preset values when preset changes
   const applyPreset = (key) => {
@@ -159,7 +157,7 @@ export default function StoryGenerator() {
     openPopover(clean, rect)
   }
 
-  if (loading) {
+  if (loadingLanguages) {
     return (
       <div className="flex items-center justify-center py-20">
         <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
@@ -167,7 +165,7 @@ export default function StoryGenerator() {
     )
   }
 
-  if (languages.length === 0) {
+  if (availableLanguages.length === 0) {
     return (
       <div className="text-center py-16 animate-fade-up">
         <div className="w-20 h-20 bg-warning-light rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -200,8 +198,8 @@ export default function StoryGenerator() {
             style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px', paddingRight: '32px' }}
           >
             <option value="">Language...</option>
-            {languages.map(lang => (
-              <option key={lang} value={lang}>{LANGUAGES[lang] || lang}</option>
+            {availableLanguages.map(lang => (
+              <option key={lang.code} value={lang.code}>{lang.name}</option>
             ))}
           </select>
         </div>
@@ -312,7 +310,7 @@ export default function StoryGenerator() {
         {/* Dynamic summary sentence */}
         {language && (
           <p className="text-sm text-muted text-center">
-            Generate {style && style !== 'Other' ? `a ${style.toLowerCase()} ` : 'a '}{format && format !== 'Other' ? format.toLowerCase() : 'text'} in {LANGUAGES[language] || language}{topic ? ` about "${topic}"` : ''}.
+            Generate {style && style !== 'Other' ? `a ${style.toLowerCase()} ` : 'a '}{format && format !== 'Other' ? format.toLowerCase() : 'text'} in {languageMap[language] || language}{topic ? ` about "${topic}"` : ''}.
           </p>
         )}
 

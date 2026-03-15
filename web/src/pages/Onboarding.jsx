@@ -1,22 +1,18 @@
 import { useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
-import { LANGUAGES } from '../constants/languages'
-
-// Static list of languages sorted alphabetically - no API call needed
-const LANGUAGE_OPTIONS = Object.entries(LANGUAGES)
-  .map(([code, name]) => ({ code, name }))
-  .sort((a, b) => a.name.localeCompare(b.name))
+import { useLanguages } from '../hooks/useLanguages'
 
 export default function Onboarding() {
   const { user, settings, loading, createSettings } = useAuthStore()
+  const { languages, loading: loadingLanguages } = useLanguages()
   const [step, setStep] = useState(1)
   const [motherTongue, setMotherTongue] = useState('')
   const [saving, setSaving] = useState(false)
   const navigate = useNavigate()
 
   // If still loading, show loading state
-  if (loading) {
+  if (loading || loadingLanguages) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-bg">
         <div className="w-6 h-6 border-2 border-accent border-t-transparent rounded-full animate-spin" />
@@ -103,7 +99,7 @@ export default function Onboarding() {
                   style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
                 >
                   <option value="">Select your language</option>
-                  {LANGUAGE_OPTIONS.map(lang => (
+                  {languages.map(lang => (
                     <option key={lang.code} value={lang.name}>{lang.name}</option>
                   ))}
                 </select>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { vocabularyApi } from '../services/api'
 import { useAuthStore } from '../stores/authStore'
-import { LANGUAGES } from '../constants/languages'
+import { useLanguages } from '../hooks/useLanguages'
 
 // Frequency badge colors - more refined palette
 const FREQUENCY_COLORS = {
@@ -16,6 +16,8 @@ const FREQUENCY_COLORS = {
 
 export default function VocabularyList() {
   const { settings } = useAuthStore()
+  // languageMap: { code: name } lookup, e.g. { en: 'English' }
+  const { languages: availableLanguages, languageMap } = useLanguages()
   const [words, setWords] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
@@ -194,7 +196,7 @@ export default function VocabularyList() {
                   : 'text-muted hover:text-text'
               }`}
             >
-              {LANGUAGES[lang] || lang} ({count})
+              {languageMap[lang] || lang} ({count})
             </button>
           ))}
         </div>
@@ -228,6 +230,7 @@ export default function VocabularyList() {
         <AddWordForm
           defaultLanguage={activeTab}
           motherTongue={settings?.mother_tongue || 'en'}
+          availableLanguages={availableLanguages}
           onComplete={handleAddComplete}
         />
       )}
@@ -508,13 +511,13 @@ function formatReviewDate(dateStr) {
   }
 }
 
-function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
+function AddWordForm({ defaultLanguage, motherTongue, availableLanguages, onComplete }) {
   const [word, setWord] = useState('')
-  // Default to first language in LANGUAGES that isn't the mother tongue
+  // Default to first language that isn't the mother tongue
   const getDefaultLanguage = () => {
     if (defaultLanguage) return defaultLanguage
-    const availableLangs = Object.keys(LANGUAGES).filter(code => code !== motherTongue)
-    return availableLangs[0] || Object.keys(LANGUAGES)[0]
+    const filtered = availableLanguages.filter(l => l.code !== motherTongue)
+    return filtered[0]?.code || availableLanguages[0]?.code || 'en'
   }
   const [language, setLanguage] = useState(getDefaultLanguage())
   const [loading, setLoading] = useState(false)
@@ -606,8 +609,8 @@ function AddWordForm({ defaultLanguage, motherTongue, onComplete }) {
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
               >
-                {Object.entries(LANGUAGES).filter(([code]) => code !== motherTongue).map(([code, name]) => (
-                  <option key={code} value={code}>{name}</option>
+                {availableLanguages.filter(l => l.code !== motherTongue).map(l => (
+                  <option key={l.code} value={l.code}>{l.name}</option>
                 ))}
               </select>
             </div>

@@ -1,13 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 import { podcastApi } from '../services/api'
 import { useAuthStore } from '../stores/authStore'
-import { LANGUAGES } from '../constants/languages'
+import { useLanguages } from '../hooks/useLanguages'
 import useWordPopover from '../hooks/useWordPopover'
 import WordPopover from '../components/WordPopover'
 import AudioPlayer from '../components/AudioPlayer'
 
 export default function Podcast() {
   const { settings } = useAuthStore()
+  // Languages from single source of truth
+  const { languages: availableLanguages } = useLanguages()
 
   // Navigation state — controls which of the 3 views is shown
   const [view, setView] = useState('list') // 'list' | 'episodes' | 'study'
@@ -188,8 +190,8 @@ export default function Podcast() {
           className="mb-6 px-4 py-2.5 bg-surface border border-border rounded-xl text-text text-sm appearance-none cursor-pointer focus:outline-none focus:border-accent"
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px' }}
         >
-          {Object.entries(LANGUAGES).map(([code, name]) => (
-            <option key={code} value={code}>{name}</option>
+          {availableLanguages.map(lang => (
+            <option key={lang.code} value={lang.code}>{lang.name}</option>
           ))}
         </select>
 
