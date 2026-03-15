@@ -433,7 +433,6 @@ class DatabaseManager:
         try:
             # Import here to avoid circular imports
             from .gpt_translator import GPTTranslator
-            from .tatoeba_client import get_sentence_example
             
             # Initialize translator
             if not api_key:
@@ -476,15 +475,6 @@ class DatabaseManager:
             frequency = get_word_frequency_category(core_word, word.language_from)
             word.frequency_level = frequency.get('level')
             word.frequency_rank = frequency.get('rank')
-
-            # Get example sentence (log errors but don't fail)
-            try:
-                example = get_sentence_example(core_word, word.language_from, word.language_to)
-                if example:
-                    word.example_sentence_original = example[0]
-                    word.example_sentence_translation = example[1]
-            except Exception as e:
-                print(f"Warning: Could not get example sentence for '{core_word}': {e}")
             
             return word
             

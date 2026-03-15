@@ -17,18 +17,6 @@ LANGUAGES = {
     'zh': 'Chinese',
 }
 
-# ISO 639-1 to ISO 639-3 mapping (for Tatoeba API)
-ISO_639_3 = {
-    'de': 'deu',
-    'en': 'eng',
-    'fr': 'fra',
-    'es': 'spa',
-    'it': 'ita',
-    'ru': 'rus',
-    'ar': 'ara',
-    'zh': 'cmn',  # Mandarin Chinese
-}
-
 # Words to strip from the beginning of lemmas for frequency/search lookup
 # These are articles, infinitive markers, reflexive pronouns, etc.
 STRIP_PREFIXES = {
@@ -102,17 +90,3 @@ def get_all_languages() -> list[tuple[str, str]]:
 def is_valid_code(code: str) -> bool:
     """Check if a language code is valid."""
     return code.lower() in VALID_CODES if code else False
-
-
-def get_iso_639_3(code: str) -> str | None:
-    """Get ISO 639-3 code from ISO 639-1 code.
-    
-    Args:
-        code: ISO 639-1 language code (e.g., 'fr')
-    
-    Returns:
-        ISO 639-3 code (e.g., 'fra'), or None if not found
-    """
-    if not code:
-        return None
-    return ISO_639_3.get(code.lower())
