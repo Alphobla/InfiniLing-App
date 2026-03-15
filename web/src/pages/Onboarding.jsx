@@ -86,9 +86,12 @@ export default function Onboarding() {
         <div className="bg-surface rounded-2xl p-8 shadow-medium border border-border animate-fade-up delay-2">
           {step === 1 && (
             <>
-              <h1 className="text-2xl font-semibold text-center text-text mb-2">Hi there mate</h1>
-              <p className="text-muted text-center mb-8">
-                First off — what's your native language?
+              <h1 className="text-2xl font-semibold text-center text-text mb-2">Hi there!</h1>
+              <p className="text-muted text-center mb-1">
+                What's your native language?
+              </p>
+              <p className="text-xs text-muted/70 text-center mb-8">
+                This is the language <strong>you already speak</strong> — not the one you're learning.
               </p>
 
               <div className="mb-8">
@@ -98,7 +101,7 @@ export default function Onboarding() {
                   className="w-full px-4 py-3.5 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer"
                   style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px' }}
                 >
-                  <option value="">Select your language</option>
+                  <option value="">Select your native language</option>
                   {languages.map(lang => (
                     <option key={lang.code} value={lang.name}>{lang.name}</option>
                   ))}

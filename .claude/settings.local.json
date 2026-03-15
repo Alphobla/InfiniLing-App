@@ -20,7 +20,8 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(python -m py_compile:*)",
-      "WebFetch(domain:infiniling.vercel.app)"
+      "WebFetch(domain:infiniling.vercel.app)",
+      "WebSearch"
     ],
     "deny": []
   }

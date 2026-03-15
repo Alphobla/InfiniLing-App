@@ -11,21 +11,45 @@ from openai import OpenAI
 
 
 STARTER_PODCASTS = {
+    "ar": [
+        {"title": "ArabicPod101", "rss_url": "https://www.arabicpod101.com/feed/podcast"},
+        {"title": "بعد أمس (Al Jazeera Arabic)", "rss_url": "https://www.omnycontent.com/d/playlist/9c074afa-3313-47e8-b802-a9f900789975/e54931fc-28a8-4b63-85fa-ab05007b29a8/13f1f6de-b3cf-436f-adce-ab0500824437/podcast.rss"},
+        {"title": "The Arabic We Speak", "rss_url": "https://feed.podbean.com/thearabicwespeak/feed.xml"},
+    ],
+    "zh": [
+        {"title": "ChineseClass101", "rss_url": "https://www.chineseclass101.com/feed/podcast"},
+        {"title": "Slow Chinese (慢速中文)", "rss_url": "https://feeds.feedburner.com/slow-chinese"},
+        {"title": "Talk Chineasy", "rss_url": "https://feeds.acast.com/public/shows/talk-chineasy"},
+    ],
+    "de": [
+        {"title": "Slow German (Annik Rubens)", "rss_url": "https://slowgerman.com/feed/podcast"},
+        {"title": "Tagesschau in 100 Sekunden", "rss_url": "https://www.tagesschau.de/xml/podcast/6/tagesschau-in-100-sekunden"},
+        {"title": "Easy German Podcast", "rss_url": "https://feeds.megaphone.fm/FKAX9498713481"},
+    ],
+    "en": [
+        {"title": "BBC 6 Minute English", "rss_url": "https://podcasts.files.bbci.co.uk/p02pc9tn.rss"},
+        {"title": "BBC Global News Podcast", "rss_url": "https://podcasts.files.bbci.co.uk/p02nq0gn.rss"},
+        {"title": "All Ears English", "rss_url": "https://feeds.feedburner.com/AllEarsEnglish"},
+    ],
     "fr": [
         {"title": "Tout un monde", "rss_url": "https://www.rts.ch/rts-premiere/programmes/tout-un-monde/podcast/?flux=rss"},
         {"title": "InnerFrench", "rss_url": "https://podcast.innerfrench.com/feed.xml"},
         {"title": "Français Authentique", "rss_url": "https://francaisauthentique.libsyn.com/rss"},
     ],
-    "es": [
-        {"title": "Hoy Hablamos", "rss_url": "https://hoyhablamos.com/feed/"},
-        {"title": "Español Automático", "rss_url": "https://espanolautomatico.libsyn.com/rss"},
+    "it": [
+        {"title": "Coffee Break Italian", "rss_url": "https://feeds.acast.com/public/shows/coffeebreakitalian"},
+        {"title": "News in Slow Italian", "rss_url": "https://newsinslowitalian.com/feed/podcast/intermediate"},
+        {"title": "Podcast Italiano", "rss_url": "https://feeds.buzzsprout.com/2413795.rss"},
     ],
     "ru": [
-        {"title": "Russian Made Easy", "rss_url": "https://russianmadeeasy.com/feed/podcast/"},
-        {"title": "Slow Russian", "rss_url": "https://slowrussian.libsyn.com/rss"},
-        {"title": "Comprehensible Russian (Russian With Max)", "rss_url": "https://anchor.fm/s/6f65684/podcast/rss"},
-        {"title": "Русский Подкаст (Tatiana Klimova)", "rss_url": "https://russianpodcast.eu/feed"},
-        {"title": "Be Fluent in Russian", "rss_url": "https://rss.buzzsprout.com/1861558.rss"},
+        {"title": "RussianPod101", "rss_url": "https://www.russianpod101.com/feed/podcast"},
+        {"title": "Russian with Max", "rss_url": "https://anchor.fm/s/6bc161c/podcast/rss"},
+        {"title": "Что случилось (Meduza)", "rss_url": "https://simplecast.com/podcasts/2453/rss"},
+    ],
+    "es": [
+        {"title": "Coffee Break Spanish", "rss_url": "https://feeds.acast.com/public/shows/985e7c00-8945-4e0d-a4da-b93049180ce1"},
+        {"title": "News in Slow Spanish", "rss_url": "https://newsinslowspanish.com/feed/podcast/intermediate"},
+        {"title": "Hoy Hablamos", "rss_url": "https://www.ivoox.com/podcast-hoy-hablamos_fg_f1098000_filtro_1.xml"},
     ],
 }
 
