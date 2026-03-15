@@ -22,7 +22,7 @@ STARTER_PODCASTS = {
     ],
     "de": [
         {"title": "Slow German (Annik Rubens)", "rss_url": "https://slowgerman.com/feed/podcast"},
-        {"title": "Tagesschau in 100 Sekunden", "rss_url": "https://www.tagesschau.de/multimedia/sendung/tagesschau_in_100_sekunden/podcast-ts100-video-100~podcast.xml"},
+        {"title": "Tagesschau in 100 Sekunden", "rss_url": "https://www.tagesschau.de/multimedia/sendung/tagesschau_in_100_sekunden/podcast-ts100-audio-100~podcast.xml"},
         {"title": "Easy German Podcast", "rss_url": "https://proxyfeed.svmaudio.com/feeds/easygerman/feed.xml"},
     ],
     "en": [
