@@ -58,13 +58,18 @@ export default function StoryGenerator() {
   const { popover, openPopover, closePopover } = useWordPopover()
   const { settings } = useAuthStore()
 
-  // Set default language when languages load
+  // Exclude mother tongue — same rule as AddWordForm
+  const motherTongue = settings?.mother_tongue
+  const storyLanguages = availableLanguages.filter(l => l.code !== motherTongue)
+
+  // Set default language when languages load — prefer last used, else first available
   useEffect(() => {
-    if (availableLanguages.length > 0 && !language) {
-      // Default to first available language
-      setLanguage(availableLanguages[0].code)
+    if (storyLanguages.length > 0 && !language) {
+      const lastLang = settings?.last_language
+      const preferred = lastLang && storyLanguages.find(l => l.code === lastLang)
+      setLanguage(preferred ? lastLang : storyLanguages[0].code)
     }
-  }, [availableLanguages, language])
+  }, [storyLanguages, language])
 
   // Apply preset values when preset changes
   const applyPreset = (key) => {
@@ -165,7 +170,7 @@ export default function StoryGenerator() {
     )
   }
 
-  if (availableLanguages.length === 0) {
+  if (storyLanguages.length === 0) {
     return (
       <div className="text-center py-16 animate-fade-up">
         <div className="w-20 h-20 bg-warning-light rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -198,7 +203,7 @@ export default function StoryGenerator() {
             style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px', paddingRight: '32px' }}
           >
             <option value="">Language...</option>
-            {availableLanguages.map(lang => (
+            {storyLanguages.map(lang => (
               <option key={lang.code} value={lang.code}>{lang.name}</option>
             ))}
           </select>

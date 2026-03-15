@@ -16,8 +16,8 @@ export default function Podcast() {
   const [selectedPodcast, setSelectedPodcast] = useState(null)
   const [selectedEpisode, setSelectedEpisode] = useState(null)
 
-  // Language filter (same default as Vocabulary page)
-  const [language, setLanguage] = useState(settings?.last_language || 'fr')
+  // Language filter — prefer last used language, fall back to first available
+  const [language, setLanguage] = useState(settings?.last_language || '')
 
   // Podcast list state
   const [podcasts, setPodcasts] = useState([])
@@ -44,8 +44,16 @@ export default function Podcast() {
   // Word popover (shared hook)
   const { popover, openPopover, closePopover } = useWordPopover()
 
+  // Fall back to first available language if nothing is set yet
+  useEffect(() => {
+    if (!language && availableLanguages.length > 0) {
+      setLanguage(availableLanguages[0].code)
+    }
+  }, [availableLanguages, language])
+
   // ── Fetch podcasts when language changes ──
   useEffect(() => {
+    if (!language) return
     setLoadingPodcasts(true)
     podcastApi.list(language)
       .then(({ data }) => setPodcasts(data.podcasts || []))
