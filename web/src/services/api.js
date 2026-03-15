@@ -1,7 +1,10 @@
 import axios from 'axios'
 
+// In dev: VITE_API_URL = 'http://localhost:8000' (different port)
+// In production (Vercel): VITE_API_URL is empty/undefined, 
+// so requests go to same origin where the API is served via rewrites
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL || '',
 })
 
 // Session getter, set by authStore once it initializes.
