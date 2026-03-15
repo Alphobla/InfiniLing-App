@@ -386,26 +386,33 @@ export default function StoryGenerator() {
                 src={audioUrl}
                 onTimeUpdate={(currentTime, duration) => {
                   if (!duration) return
-                  // Estimate which word we're on based on linear time progression
+                  // Estimate which word chunk we're on based on linear time progression
+                  // Highlight chunks of ~8 words at a time for smoother reading
+                  const CHUNK_SIZE = 8
                   const tokens = story.split(/(\s+)/)
                   const totalWords = tokens.filter(t => /\p{L}/u.test(t)).length
-                  const wordIdx = Math.floor((currentTime / duration) * totalWords)
-                  setCurrentWordIndex(wordIdx < totalWords ? wordIdx : -1)
+                  const rawIdx = Math.floor((currentTime / duration) * totalWords)
+                  // Snap to chunk boundaries
+                  const chunkStart = Math.floor(rawIdx / CHUNK_SIZE) * CHUNK_SIZE
+                  setCurrentWordIndex(chunkStart < totalWords ? chunkStart : -1)
                 }}
               />
             </div>
           )}
 
-          {/* Text Content — click a word to translate, highlight current word during playback */}
+          {/* Text Content — click a word to translate, highlight current chunk during playback */}
           <div className="px-6 py-6 relative leading-relaxed text-base">
             {(() => {
+              const CHUNK_SIZE = 8
               const tokens = story.split(/(\s+)/)
               let wordIdx = 0
               return tokens.map((token, i) => {
                 const isWord = /\p{L}/u.test(token)
                 if (isWord) {
                   const thisWordIdx = wordIdx++
-                  const isActive = audioUrl && thisWordIdx === currentWordIndex
+                  // Word is active if it falls within the current chunk
+                  const isActive = audioUrl && currentWordIndex >= 0 &&
+                    thisWordIdx >= currentWordIndex && thisWordIdx < currentWordIndex + CHUNK_SIZE
                   return (
                     <span
                       key={i}
