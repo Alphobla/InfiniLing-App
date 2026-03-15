@@ -405,27 +405,56 @@ export default function StoryGenerator() {
             {(() => {
               const CHUNK_SIZE = 8
               const tokens = story.split(/(\s+)/)
-              let wordIdx = 0
-              return tokens.map((token, i) => {
+              
+              // Group tokens into chunks of CHUNK_SIZE words each
+              const chunks = []
+              let currentChunk = []
+              let wordCount = 0
+              
+              tokens.forEach(token => {
                 const isWord = /\p{L}/u.test(token)
+                currentChunk.push({ token, isWord })
                 if (isWord) {
-                  const thisWordIdx = wordIdx++
-                  // Word is active if it falls within the current chunk
-                  const isActive = audioUrl && currentWordIndex >= 0 &&
-                    thisWordIdx >= currentWordIndex && thisWordIdx < currentWordIndex + CHUNK_SIZE
-                  return (
-                    <span
-                      key={i}
-                      onClick={(e) => handleWordClick(token, e)}
-                      className={`cursor-pointer hover:underline hover:decoration-dotted hover:text-text transition-colors ${
-                        isActive ? 'bg-accent/10 text-text rounded-sm' : 'text-muted'
-                      }`}
-                    >
-                      {token}
-                    </span>
-                  )
+                  wordCount++
+                  if (wordCount % CHUNK_SIZE === 0) {
+                    chunks.push(currentChunk)
+                    currentChunk = []
+                  }
                 }
-                return <span key={i}>{token}</span>
+              })
+              // Push remaining tokens
+              if (currentChunk.length > 0) {
+                chunks.push(currentChunk)
+              }
+              
+              // Calculate which chunk is active based on currentWordIndex
+              const activeChunkIdx = currentWordIndex >= 0 ? Math.floor(currentWordIndex / CHUNK_SIZE) : -1
+              
+              return chunks.map((chunk, chunkIdx) => {
+                const isActiveChunk = audioUrl && chunkIdx === activeChunkIdx
+                return (
+                  <span
+                    key={chunkIdx}
+                    className={`inline ${
+                      isActiveChunk ? 'bg-accent/10 rounded-sm text-text' : 'text-muted'
+                    }`}
+                    style={{ transition: 'all 0.3s ease' }}
+                  >
+                    {chunk.map(({ token, isWord }, j) => (
+                      isWord ? (
+                        <span
+                          key={j}
+                          onClick={(e) => handleWordClick(token, e)}
+                          className="cursor-pointer hover:underline hover:decoration-dotted hover:text-text"
+                        >
+                          {token}
+                        </span>
+                      ) : (
+                        <span key={j}>{token}</span>
+                      )
+                    ))}
+                  </span>
+                )
               })
             })()}
 
