@@ -21,6 +21,7 @@ dependencies = [
     "supabase>=2.27.2",
     "wordfreq>=3.0.0",
     "feedparser>=6.0.0",
+    "imageio-ffmpeg>=0.4.9",
 ]
 
 [project.optional-dependencies]

@@ -100,23 +100,67 @@ def parse_episodes_from_feed(rss_url: str, limit: int = 50) -> list[dict]:
     return episodes
 
 
+def _compress_audio(input_path: str) -> str:
+    """
+    Compress an audio file to mono 32kbps MP3 using the ffmpeg binary bundled
+    inside the `imageio-ffmpeg` Python package.
+
+    Why imageio-ffmpeg: Vercel (and other serverless platforms) don't let you
+    install system packages. imageio-ffmpeg ships a pre-built ffmpeg binary
+    as part of the pip wheel, so it works anywhere Python packages are installed.
+
+    Why compress: Whisper has a 25 MB limit. At 32kbps mono, 20 min ≈ 4.8 MB.
+    Whisper transcription quality is not affected by bitrate reduction.
+    """
+    import subprocess
+    import imageio_ffmpeg  # provides get_ffmpeg_exe() → path to bundled binary
+
+    ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
+    compressed = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
+    compressed.close()
+    subprocess.run(
+        [
+            ffmpeg_exe, "-y",        # -y = overwrite output without asking
+            "-i", input_path,        # input file
+            "-ac", "1",              # mono (1 audio channel)
+            "-ar", "16000",          # 16 kHz sample rate (Whisper's native rate)
+            "-b:a", "32k",           # 32 kbps bitrate
+            compressed.name,
+        ],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
+    return compressed.name
+
+
 def transcribe_audio(audio_url: str, api_key: str) -> list[dict]:
-    """Download audio from URL and transcribe with OpenAI Whisper."""
-    head = requests.head(audio_url, allow_redirects=True, timeout=10)
-    content_length = int(head.headers.get("content-length", 0))
-    if content_length > 25 * 1024 * 1024:
-        raise ValueError(f"Audio file too large ({content_length // (1024*1024)}MB). Whisper API limit is 25MB.")
+    """Download audio from URL and transcribe with OpenAI Whisper.
+
+    If the file exceeds Whisper's 25 MB limit, it is compressed with ffmpeg
+    before being sent (see _compress_audio).
+    """
+    WHISPER_LIMIT = 25 * 1024 * 1024  # 25 MB
 
     tmp = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
+    compressed_path = None
     try:
+        # Download the audio
         response = requests.get(audio_url, stream=True, timeout=300)
         response.raise_for_status()
         for chunk in response.iter_content(chunk_size=8192):
             tmp.write(chunk)
         tmp.close()
 
+        audio_path = tmp.name
+
+        # Compress if needed
+        if os.path.getsize(audio_path) > WHISPER_LIMIT:
+            compressed_path = _compress_audio(audio_path)
+            audio_path = compressed_path
+
         client = OpenAI(api_key=api_key)
-        with open(tmp.name, "rb") as audio_file:
+        with open(audio_path, "rb") as audio_file:
             result = client.audio.transcriptions.create(
                 model="whisper-1",
                 file=audio_file,
@@ -136,3 +180,5 @@ def transcribe_audio(audio_url: str, api_key: str) -> list[dict]:
 
     finally:
         os.unlink(tmp.name)
+        if compressed_path:
+            os.unlink(compressed_path)
