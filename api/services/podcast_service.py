@@ -22,13 +22,13 @@ STARTER_PODCASTS = {
     ],
     "de": [
         {"title": "Slow German (Annik Rubens)", "rss_url": "https://slowgerman.com/feed/podcast"},
-        {"title": "Tagesschau in 100 Sekunden", "rss_url": "https://www.tagesschau.de/multimedia/sendung/tagesschau_in_100_sekunden/podcast-ts100-audio-100~podcast.xml"},
+        {"title": "Tagesschau in 100 Sekunden", "rss_url": "https://www.tagesschau.de/multimedia/sendung/tagesschau_in_100_sekunden/podcast-ts100-video-100~podcast.xml"},
         {"title": "Easy German Podcast", "rss_url": "https://proxyfeed.svmaudio.com/feeds/easygerman/feed.xml"},
     ],
     "en": [
         {"title": "BBC 6 Minute English", "rss_url": "https://podcasts.files.bbci.co.uk/p02pc9tn.rss"},
         {"title": "BBC Global News Podcast", "rss_url": "https://podcasts.files.bbci.co.uk/p02nq0gn.rss"},
-        {"title": "All Ears English", "rss_url": "https://www.allearsenglish.com/feed/podcast"},
+        {"title": "English Learning for Curious Minds", "rss_url": "https://feeds.transistor.fm/leonardo-english-english-language-learning-for-curious-minds"},
     ],
     "fr": [
         {"title": "Tout un monde", "rss_url": "https://www.rts.ch/rts-premiere/programmes/tout-un-monde/podcast/?flux=rss"},
