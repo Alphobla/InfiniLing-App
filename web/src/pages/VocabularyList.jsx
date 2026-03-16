@@ -173,7 +173,6 @@ export default function VocabularyList() {
     <div className="animate-fade-up">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
-        <h1 className="text-2xl font-semibold text-text">My Words</h1>
         <button
           onClick={() => setShowAddForm(true)}
           disabled={showAddForm}
