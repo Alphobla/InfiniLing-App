@@ -15,7 +15,7 @@ const FREQUENCY_COLORS = {
 }
 
 export default function VocabularyList() {
-  const { settings } = useAuthStore()
+  const { settings, updateSettings } = useAuthStore()
   // languageMap: { code: name } lookup, e.g. { en: 'English' }
   const { languages: availableLanguages, languageMap } = useLanguages()
   const [words, setWords] = useState([])
@@ -189,7 +189,10 @@ export default function VocabularyList() {
           {Object.entries(languages).map(([lang, count]) => (
             <button
               key={lang}
-              onClick={() => setActiveTab(lang)}
+              onClick={() => {
+                setActiveTab(lang)
+                updateSettings({ last_language: lang })
+              }}
               className={`nav-link px-5 py-3 font-medium transition-colors flex-shrink-0 ${
                 activeTab === lang
                   ? 'text-accent active'
