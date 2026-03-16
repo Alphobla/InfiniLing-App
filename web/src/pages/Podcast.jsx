@@ -351,7 +351,7 @@ export default function Podcast() {
       {/* Audio player */}
       {/* sticky: sticks to top of viewport when scrolled past, so controls
            are always reachable. z-10 keeps it above transcript text. */}
-      <div className="bg-surface border border-border rounded-xl p-4 mb-6 sticky top-4 z-10 shadow-sm">
+      <div className="bg-surface border border-border rounded-xl p-4 mb-6 sticky top-2 z-10 shadow-sm">
         <AudioPlayer
           src={selectedEpisode?.audio_url}
           onTimeUpdate={handleAudioTimeUpdate}

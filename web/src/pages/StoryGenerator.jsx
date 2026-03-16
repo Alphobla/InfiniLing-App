@@ -389,7 +389,7 @@ export default function StoryGenerator() {
 
           {/* Audio Player */}
           {audioUrl && (
-            <div className="px-6 py-4 border-b border-border sticky top-4 z-10 bg-surface shadow-sm">
+            <div className="px-6 py-4 border-b border-border sticky top-2 z-10 bg-surface shadow-sm">
               <AudioPlayer
                 src={audioUrl}
                 onTimeUpdate={(currentTime, duration) => {
