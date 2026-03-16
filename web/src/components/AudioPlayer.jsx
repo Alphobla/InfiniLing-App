@@ -66,6 +66,18 @@ export default function AudioPlayer({ src, onTimeUpdate }) {
           {isPlaying ? '⏸' : '▶'}
         </button>
 
+        {/* Rewind 5s — seeks the audio element backward by 5 seconds.
+           Math.max(0, ...) prevents seeking before the start of the track. */}
+        <button
+          onClick={() => {
+            if (audioRef.current) audioRef.current.currentTime = Math.max(0, audioRef.current.currentTime - 5)
+          }}
+          className="w-7 h-7 rounded bg-surface border border-border text-muted hover:text-text text-sm flex items-center justify-center flex-shrink-0"
+          title="Rewind 5s"
+        >
+          -5
+        </button>
+
         {/* Progress bar */}
         <div className="flex-1">
           <div
