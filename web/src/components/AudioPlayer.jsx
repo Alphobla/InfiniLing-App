@@ -42,10 +42,10 @@ export default function AudioPlayer({ src, onTimeUpdate }) {
   }
 
   return (
-    {/* sticky — stays at top of viewport once scrolled past.
-         top-0: sticks at the very top. z-10: sits above page content.
-         bg-background: solid background so content doesn't show through.
-         shadow-sm: subtle shadow to visually separate from content below. */}
+    /* sticky — stays at top of viewport once scrolled past.
+       top-0: sticks at the very top. z-10: sits above page content.
+       bg-background: solid background so content doesn't show through.
+       shadow-sm: subtle shadow to visually separate from content below. */
     <div className="sticky top-0 z-10 bg-background py-2 shadow-sm">
       <audio
         ref={audioRef}
