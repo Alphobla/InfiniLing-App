@@ -345,7 +345,9 @@ export default function Podcast() {
       <h2 className="text-lg font-bold text-text mb-4">{selectedEpisode?.title}</h2>
 
       {/* Audio player */}
-      <div className="bg-surface border border-border rounded-xl p-4 mb-6">
+      {/* sticky: sticks to top of viewport when scrolled past, so controls
+           are always reachable. z-10 keeps it above transcript text. */}
+      <div className="bg-surface border border-border rounded-xl p-4 mb-6 sticky top-0 z-10 shadow-sm">
         <AudioPlayer
           src={selectedEpisode?.audio_url}
           onTimeUpdate={handleAudioTimeUpdate}
