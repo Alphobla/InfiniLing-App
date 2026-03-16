@@ -67,7 +67,18 @@ export default function AudioPlayer({ src, onTimeUpdate }) {
           }}
           className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center text-lg flex-shrink-0"
         >
-          {isPlaying ? '⏸' : '▶'}
+          {isPlaying ? (
+            // Pause icon — two vertical bars
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <rect x="6" y="4" width="4" height="16" rx="1" />
+              <rect x="14" y="4" width="4" height="16" rx="1" />
+            </svg>
+          ) : (
+            // Play icon — triangle pointing right
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5.14v13.72a1 1 0 001.5.86l11.04-6.86a1 1 0 000-1.72L9.5 4.28a1 1 0 00-1.5.86z" />
+            </svg>
+          )}
         </button>
 
         {/* Rewind 5s — seeks the audio element backward by 5 seconds.
