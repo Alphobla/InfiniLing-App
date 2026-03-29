@@ -1,202 +1,1002 @@
 [
-  {"word": "yes", "example_sentence": "Yes, I would like some coffee.", "frequency_rank": 1},
-  {"word": "no", "example_sentence": "No, thank you, I am not hungry.", "frequency_rank": 2},
-  {"word": "good", "example_sentence": "This is a very good book.", "frequency_rank": 3},
-  {"word": "water", "example_sentence": "I drink a glass of water every morning.", "frequency_rank": 4},
-  {"word": "day", "example_sentence": "Today is a beautiful day.", "frequency_rank": 5},
-  {"word": "time", "example_sentence": "What time does the train leave?", "frequency_rank": 6},
-  {"word": "people", "example_sentence": "Many people live in this city.", "frequency_rank": 7},
-  {"word": "work", "example_sentence": "I work in an office downtown.", "frequency_rank": 8},
-  {"word": "money", "example_sentence": "She saved enough money to buy a car.", "frequency_rank": 9},
-  {"word": "house", "example_sentence": "They bought a new house last year.", "frequency_rank": 10},
-  {"word": "big", "example_sentence": "That is a very big dog.", "frequency_rank": 11},
-  {"word": "small", "example_sentence": "The small cat hid under the bed.", "frequency_rank": 12},
-  {"word": "eat", "example_sentence": "We eat dinner at seven every evening.", "frequency_rank": 13},
-  {"word": "drink", "example_sentence": "I like to drink tea in the afternoon.", "frequency_rank": 14},
-  {"word": "sleep", "example_sentence": "I usually sleep for eight hours.", "frequency_rank": 15},
-  {"word": "walk", "example_sentence": "Let us walk to the park together.", "frequency_rank": 16},
-  {"word": "run", "example_sentence": "She likes to run in the morning.", "frequency_rank": 17},
-  {"word": "speak", "example_sentence": "He can speak three languages.", "frequency_rank": 18},
-  {"word": "friend", "example_sentence": "My best friend lives next door.", "frequency_rank": 19},
-  {"word": "love", "example_sentence": "I love spending time with my family.", "frequency_rank": 20},
-  {"word": "happy", "example_sentence": "The children are very happy today.", "frequency_rank": 21},
-  {"word": "sad", "example_sentence": "She felt sad after the movie ended.", "frequency_rank": 22},
-  {"word": "help", "example_sentence": "Can you help me carry these bags?", "frequency_rank": 23},
-  {"word": "name", "example_sentence": "My name is Maria.", "frequency_rank": 24},
-  {"word": "year", "example_sentence": "This year has been wonderful so far.", "frequency_rank": 25},
-  {"word": "child", "example_sentence": "The child played happily in the garden.", "frequency_rank": 26},
-  {"word": "woman", "example_sentence": "The woman smiled and waved at us.", "frequency_rank": 27},
-  {"word": "man", "example_sentence": "The man opened the door for her.", "frequency_rank": 28},
-  {"word": "book", "example_sentence": "I read an interesting book last week.", "frequency_rank": 29},
-  {"word": "car", "example_sentence": "He drives his car to work every day.", "frequency_rank": 30},
-  {"word": "school", "example_sentence": "The children walk to school together.", "frequency_rank": 31},
-  {"word": "food", "example_sentence": "The food at this restaurant is delicious.", "frequency_rank": 32},
-  {"word": "morning", "example_sentence": "I enjoy coffee every morning.", "frequency_rank": 33},
-  {"word": "night", "example_sentence": "The stars are bright tonight.", "frequency_rank": 34},
-  {"word": "warm", "example_sentence": "The weather is warm and sunny today.", "frequency_rank": 35},
-  {"word": "cold", "example_sentence": "It is very cold outside in winter.", "frequency_rank": 36},
-  {"word": "fast", "example_sentence": "The train is very fast.", "frequency_rank": 37},
-  {"word": "open", "example_sentence": "Please open the window.", "frequency_rank": 38},
-  {"word": "close", "example_sentence": "Close the door, please.", "frequency_rank": 39},
-  {"word": "buy", "example_sentence": "I want to buy a new phone.", "frequency_rank": 40},
-  {"word": "city", "example_sentence": "Paris is a beautiful city.", "frequency_rank": 41},
-  {"word": "family", "example_sentence": "My family meets every Sunday for dinner.", "frequency_rank": 42},
-  {"word": "music", "example_sentence": "She listens to music while studying.", "frequency_rank": 43},
-  {"word": "answer", "example_sentence": "He gave a clear answer to the question.", "frequency_rank": 44},
-  {"word": "color", "example_sentence": "Blue is my favorite color.", "frequency_rank": 45},
-  {"word": "learn", "example_sentence": "I want to learn a new language.", "frequency_rank": 46},
-  {"word": "teach", "example_sentence": "She teaches math at the university.", "frequency_rank": 47},
-  {"word": "write", "example_sentence": "He likes to write short stories.", "frequency_rank": 48},
-  {"word": "read", "example_sentence": "I read the newspaper every morning.", "frequency_rank": 49},
-  {"word": "play", "example_sentence": "The kids play soccer after school.", "frequency_rank": 50},
-  {"word": "begin", "example_sentence": "The concert will begin at eight.", "frequency_rank": 51},
-  {"word": "end", "example_sentence": "The movie has a surprising end.", "frequency_rank": 52},
-  {"word": "country", "example_sentence": "Japan is a fascinating country.", "frequency_rank": 53},
-  {"word": "hand", "example_sentence": "She held the flower in her hand.", "frequency_rank": 54},
-  {"word": "head", "example_sentence": "He nodded his head in agreement.", "frequency_rank": 55},
-  {"word": "eye", "example_sentence": "She has beautiful green eyes.", "frequency_rank": 56},
-  {"word": "door", "example_sentence": "Someone is knocking at the door.", "frequency_rank": 57},
-  {"word": "room", "example_sentence": "The room is bright and spacious.", "frequency_rank": 58},
-  {"word": "animal", "example_sentence": "The dog is a loyal animal.", "frequency_rank": 59},
-  {"word": "tree", "example_sentence": "A tall tree grows in the garden.", "frequency_rank": 60},
-  {"word": "road", "example_sentence": "The road leads to the village.", "frequency_rank": 61},
-  {"word": "river", "example_sentence": "The river flows through the valley.", "frequency_rank": 62},
-  {"word": "strong", "example_sentence": "He is strong enough to lift the box.", "frequency_rank": 63},
-  {"word": "young", "example_sentence": "She is still very young.", "frequency_rank": 64},
-  {"word": "old", "example_sentence": "This is an old building from the eighteenth century.", "frequency_rank": 65},
-  {"word": "beautiful", "example_sentence": "The sunset was incredibly beautiful.", "frequency_rank": 66},
-  {"word": "important", "example_sentence": "Education is very important.", "frequency_rank": 67},
-  {"word": "different", "example_sentence": "These two shirts are very different.", "frequency_rank": 68},
-  {"word": "always", "example_sentence": "She always arrives on time.", "frequency_rank": 69},
-  {"word": "never", "example_sentence": "I have never been to Australia.", "frequency_rank": 70},
-  {"word": "often", "example_sentence": "We often go hiking on weekends.", "frequency_rank": 71},
-  {"word": "sometimes", "example_sentence": "Sometimes I like to cook at home.", "frequency_rank": 72},
-  {"word": "garden", "example_sentence": "She grows tomatoes in her garden.", "frequency_rank": 73},
-  {"word": "kitchen", "example_sentence": "He is cooking dinner in the kitchen.", "frequency_rank": 74},
-  {"word": "table", "example_sentence": "The plates are already on the table.", "frequency_rank": 75},
-  {"word": "window", "example_sentence": "Open the window to let in fresh air.", "frequency_rank": 76},
-  {"word": "weather", "example_sentence": "The weather is perfect for a picnic.", "frequency_rank": 77},
-  {"word": "summer", "example_sentence": "We go swimming every summer.", "frequency_rank": 78},
-  {"word": "winter", "example_sentence": "Winter is my least favorite season.", "frequency_rank": 79},
-  {"word": "doctor", "example_sentence": "The doctor told me to rest.", "frequency_rank": 80},
-  {"word": "experience", "example_sentence": "Traveling gives you valuable experience.", "frequency_rank": 81},
-  {"word": "knowledge", "example_sentence": "Knowledge is the key to success.", "frequency_rank": 82},
-  {"word": "situation", "example_sentence": "We need to understand the situation first.", "frequency_rank": 83},
-  {"word": "possible", "example_sentence": "Is it possible to change my ticket?", "frequency_rank": 84},
-  {"word": "difficult", "example_sentence": "This exam was really difficult.", "frequency_rank": 85},
-  {"word": "problem", "example_sentence": "We found a solution to the problem.", "frequency_rank": 86},
-  {"word": "idea", "example_sentence": "That is a brilliant idea.", "frequency_rank": 87},
-  {"word": "change", "example_sentence": "The seasons change four times a year.", "frequency_rank": 88},
-  {"word": "believe", "example_sentence": "I believe we can finish on time.", "frequency_rank": 89},
-  {"word": "understand", "example_sentence": "I understand the instructions now.", "frequency_rank": 90},
-  {"word": "remember", "example_sentence": "I remember my first day at school.", "frequency_rank": 91},
-  {"word": "forget", "example_sentence": "Do not forget to lock the door.", "frequency_rank": 92},
-  {"word": "decide", "example_sentence": "You need to decide before tomorrow.", "frequency_rank": 93},
-  {"word": "choose", "example_sentence": "It is hard to choose between the two.", "frequency_rank": 94},
-  {"word": "travel", "example_sentence": "I love to travel to new places.", "frequency_rank": 95},
-  {"word": "village", "example_sentence": "The village is surrounded by mountains.", "frequency_rank": 96},
-  {"word": "mountain", "example_sentence": "They climbed the mountain in six hours.", "frequency_rank": 97},
-  {"word": "ocean", "example_sentence": "The ocean looks endless from the shore.", "frequency_rank": 98},
-  {"word": "island", "example_sentence": "We visited a small island last summer.", "frequency_rank": 99},
-  {"word": "bridge", "example_sentence": "The old bridge crosses the river.", "frequency_rank": 100},
-  {"word": "prepare", "example_sentence": "She needs to prepare for the meeting.", "frequency_rank": 101},
-  {"word": "continue", "example_sentence": "Please continue reading the next chapter.", "frequency_rank": 102},
-  {"word": "develop", "example_sentence": "We want to develop a new app.", "frequency_rank": 103},
-  {"word": "improve", "example_sentence": "Practice will improve your skills.", "frequency_rank": 104},
-  {"word": "achieve", "example_sentence": "Hard work helps you achieve your goals.", "frequency_rank": 105},
-  {"word": "compare", "example_sentence": "Let us compare the two options.", "frequency_rank": 106},
-  {"word": "provide", "example_sentence": "The hotel provides free breakfast.", "frequency_rank": 107},
-  {"word": "require", "example_sentence": "This job requires attention to detail.", "frequency_rank": 108},
-  {"word": "increase", "example_sentence": "Prices increase every year.", "frequency_rank": 109},
-  {"word": "reduce", "example_sentence": "We should reduce our energy use.", "frequency_rank": 110},
-  {"word": "suggest", "example_sentence": "I suggest we leave early.", "frequency_rank": 111},
-  {"word": "describe", "example_sentence": "Can you describe what happened?", "frequency_rank": 112},
-  {"word": "attention", "example_sentence": "Please pay attention to the teacher.", "frequency_rank": 113},
-  {"word": "purpose", "example_sentence": "The purpose of this meeting is to plan ahead.", "frequency_rank": 114},
-  {"word": "opportunity", "example_sentence": "This is a great opportunity for growth.", "frequency_rank": 115},
-  {"word": "success", "example_sentence": "Her success inspired many people.", "frequency_rank": 116},
-  {"word": "mistake", "example_sentence": "Everyone makes a mistake sometimes.", "frequency_rank": 117},
-  {"word": "simple", "example_sentence": "The recipe is quick and simple.", "frequency_rank": 118},
-  {"word": "modern", "example_sentence": "The city has a very modern skyline.", "frequency_rank": 119},
-  {"word": "ancient", "example_sentence": "They explored the ancient ruins.", "frequency_rank": 120},
-  {"word": "consequence", "example_sentence": "Every action has a consequence.", "frequency_rank": 121},
-  {"word": "negotiate", "example_sentence": "They had to negotiate a fair price.", "frequency_rank": 122},
-  {"word": "influence", "example_sentence": "Music has a strong influence on culture.", "frequency_rank": 123},
-  {"word": "tradition", "example_sentence": "This tradition has lasted for centuries.", "frequency_rank": 124},
-  {"word": "responsibility", "example_sentence": "Taking responsibility for your actions is important.", "frequency_rank": 125},
-  {"word": "environment", "example_sentence": "We must protect the environment.", "frequency_rank": 126},
-  {"word": "technology", "example_sentence": "Technology changes the way we live.", "frequency_rank": 127},
-  {"word": "communicate", "example_sentence": "We communicate better face to face.", "frequency_rank": 128},
-  {"word": "establish", "example_sentence": "They plan to establish a new branch.", "frequency_rank": 129},
-  {"word": "appreciate", "example_sentence": "I really appreciate your help.", "frequency_rank": 130},
-  {"word": "recognize", "example_sentence": "I did not recognize her at first.", "frequency_rank": 131},
-  {"word": "contribute", "example_sentence": "Everyone should contribute to the project.", "frequency_rank": 132},
-  {"word": "debate", "example_sentence": "The students had a lively debate.", "frequency_rank": 133},
-  {"word": "generation", "example_sentence": "Each generation brings new ideas.", "frequency_rank": 134},
-  {"word": "independent", "example_sentence": "She became independent at a young age.", "frequency_rank": 135},
-  {"word": "economy", "example_sentence": "The economy is growing steadily.", "frequency_rank": 136},
-  {"word": "accurate", "example_sentence": "The report must be accurate.", "frequency_rank": 137},
-  {"word": "advantage", "example_sentence": "Speaking two languages is a big advantage.", "frequency_rank": 138},
-  {"word": "conflict", "example_sentence": "They resolved the conflict peacefully.", "frequency_rank": 139},
-  {"word": "permission", "example_sentence": "You need permission to enter this area.", "frequency_rank": 140},
-  {"word": "significant", "example_sentence": "There was a significant improvement.", "frequency_rank": 141},
-  {"word": "implement", "example_sentence": "We need to implement the new policy.", "frequency_rank": 142},
-  {"word": "strategy", "example_sentence": "A good strategy is essential for success.", "frequency_rank": 143},
-  {"word": "investigate", "example_sentence": "The police will investigate the incident.", "frequency_rank": 144},
-  {"word": "confident", "example_sentence": "She felt confident before the exam.", "frequency_rank": 145},
-  {"word": "distinguish", "example_sentence": "It is hard to distinguish the twins.", "frequency_rank": 146},
-  {"word": "evaluate", "example_sentence": "The teacher will evaluate your essay.", "frequency_rank": 147},
-  {"word": "guarantee", "example_sentence": "Hard work does not guarantee success.", "frequency_rank": 148},
-  {"word": "imagination", "example_sentence": "Children have a wonderful imagination.", "frequency_rank": 149},
-  {"word": "sympathy", "example_sentence": "He expressed his sympathy for her loss.", "frequency_rank": 150},
-  {"word": "bureaucracy", "example_sentence": "The bureaucracy slowed down the process.", "frequency_rank": 151},
-  {"word": "dilemma", "example_sentence": "She faced a difficult dilemma.", "frequency_rank": 152},
-  {"word": "obstacle", "example_sentence": "Every obstacle is a chance to grow.", "frequency_rank": 153},
-  {"word": "postpone", "example_sentence": "We had to postpone the event.", "frequency_rank": 154},
-  {"word": "reputation", "example_sentence": "He has a reputation for honesty.", "frequency_rank": 155},
-  {"word": "sacrifice", "example_sentence": "Success often requires sacrifice.", "frequency_rank": 156},
-  {"word": "ambitious", "example_sentence": "She is an ambitious young lawyer.", "frequency_rank": 157},
-  {"word": "compromise", "example_sentence": "Both sides reached a compromise.", "frequency_rank": 158},
-  {"word": "discipline", "example_sentence": "Discipline is the key to progress.", "frequency_rank": 159},
-  {"word": "enthusiasm", "example_sentence": "Her enthusiasm was contagious.", "frequency_rank": 160},
-  {"word": "nuance", "example_sentence": "This topic requires attention to nuance.", "frequency_rank": 161},
-  {"word": "resilience", "example_sentence": "Her resilience helped her overcome hardship.", "frequency_rank": 162},
-  {"word": "meticulous", "example_sentence": "He is meticulous about his work.", "frequency_rank": 163},
-  {"word": "ephemeral", "example_sentence": "Fame can be ephemeral.", "frequency_rank": 164},
-  {"word": "eloquent", "example_sentence": "She gave an eloquent speech.", "frequency_rank": 165},
-  {"word": "pragmatic", "example_sentence": "We need a pragmatic solution.", "frequency_rank": 166},
-  {"word": "scrutiny", "example_sentence": "The plan faced intense scrutiny.", "frequency_rank": 167},
-  {"word": "contemplate", "example_sentence": "He sat quietly to contemplate his future.", "frequency_rank": 168},
-  {"word": "perseverance", "example_sentence": "Perseverance leads to great achievements.", "frequency_rank": 169},
-  {"word": "versatile", "example_sentence": "She is a very versatile musician.", "frequency_rank": 170},
-  {"word": "profound", "example_sentence": "The book had a profound impact on me.", "frequency_rank": 171},
-  {"word": "inevitable", "example_sentence": "Change is inevitable in life.", "frequency_rank": 172},
-  {"word": "ambiguous", "example_sentence": "The instructions were ambiguous.", "frequency_rank": 173},
-  {"word": "gratitude", "example_sentence": "I feel deep gratitude for your kindness.", "frequency_rank": 174},
-  {"word": "hypothesis", "example_sentence": "The scientist tested her hypothesis.", "frequency_rank": 175},
-  {"word": "reluctant", "example_sentence": "He was reluctant to accept the offer.", "frequency_rank": 176},
-  {"word": "substantial", "example_sentence": "They made a substantial donation.", "frequency_rank": 177},
-  {"word": "deteriorate", "example_sentence": "The weather began to deteriorate.", "frequency_rank": 178},
-  {"word": "elaborate", "example_sentence": "Could you elaborate on your idea?", "frequency_rank": 179},
-  {"word": "concise", "example_sentence": "Keep your report concise and clear.", "frequency_rank": 180},
-  {"word": "benevolent", "example_sentence": "The benevolent donor helped many families.", "frequency_rank": 181},
-  {"word": "tenacious", "example_sentence": "She is a tenacious negotiator.", "frequency_rank": 182},
-  {"word": "obsolete", "example_sentence": "This technology is now obsolete.", "frequency_rank": 183},
-  {"word": "compensate", "example_sentence": "The company will compensate for the delay.", "frequency_rank": 184},
-  {"word": "phenomenon", "example_sentence": "The northern lights are a natural phenomenon.", "frequency_rank": 185},
-  {"word": "paradox", "example_sentence": "That statement is a true paradox.", "frequency_rank": 186},
-  {"word": "unprecedented", "example_sentence": "The discovery was unprecedented in science.", "frequency_rank": 187},
-  {"word": "controversy", "example_sentence": "The decision caused much controversy.", "frequency_rank": 188},
-  {"word": "indigenous", "example_sentence": "We should respect indigenous cultures.", "frequency_rank": 189},
-  {"word": "sophisticate", "example_sentence": "The design is elegant and sophisticated.", "frequency_rank": 190},
-  {"word": "consolidate", "example_sentence": "They plan to consolidate their resources.", "frequency_rank": 191},
-  {"word": "undermine", "example_sentence": "Lies can undermine trust.", "frequency_rank": 192},
-  {"word": "exquisite", "example_sentence": "The jewelry is truly exquisite.", "frequency_rank": 193},
-  {"word": "encompass", "example_sentence": "The course will encompass many topics.", "frequency_rank": 194},
-  {"word": "illuminate", "example_sentence": "Candles illuminate the dark room.", "frequency_rank": 195},
-  {"word": "fluctuate", "example_sentence": "Prices tend to fluctuate throughout the year.", "frequency_rank": 196},
-  {"word": "diligent", "example_sentence": "She is a diligent and hardworking student.", "frequency_rank": 197},
-  {"word": "candid", "example_sentence": "He gave a candid opinion about the project.", "frequency_rank": 198},
-  {"word": "alleviate", "example_sentence": "This medicine will alleviate the pain.", "frequency_rank": 199},
-  {"word": "quintessential", "example_sentence": "This dish is the quintessential Italian meal.", "frequency_rank": 200}
+  {
+    "word": "yes",
+    "example_sentence": "Yes, I would like some coffee.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "no",
+    "example_sentence": "No, thank you, I am not hungry.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "good",
+    "example_sentence": "This is a very good book.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "water",
+    "example_sentence": "I drink a glass of water every morning.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "day",
+    "example_sentence": "Today is a beautiful day.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "time",
+    "example_sentence": "What time does the train leave?",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "people",
+    "example_sentence": "Many people live in this city.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "work",
+    "example_sentence": "I work in an office downtown.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "money",
+    "example_sentence": "She saved enough money to buy a car.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "house",
+    "example_sentence": "They bought a new house last year.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "big",
+    "example_sentence": "That is a very big dog.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "small",
+    "example_sentence": "The small cat hid under the bed.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "eat",
+    "example_sentence": "We eat dinner at seven every evening.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "drink",
+    "example_sentence": "I like to drink tea in the afternoon.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sleep",
+    "example_sentence": "I usually sleep for eight hours.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "walk",
+    "example_sentence": "Let us walk to the park together.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "run",
+    "example_sentence": "She likes to run in the morning.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "speak",
+    "example_sentence": "He can speak three languages.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "friend",
+    "example_sentence": "My best friend lives next door.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "love",
+    "example_sentence": "I love spending time with my family.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "happy",
+    "example_sentence": "The children are very happy today.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sad",
+    "example_sentence": "She felt sad after the movie ended.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "help",
+    "example_sentence": "Can you help me carry these bags?",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "name",
+    "example_sentence": "My name is Maria.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "year",
+    "example_sentence": "This year has been wonderful so far.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "child",
+    "example_sentence": "The child played happily in the garden.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "woman",
+    "example_sentence": "The woman smiled and waved at us.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "man",
+    "example_sentence": "The man opened the door for her.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "book",
+    "example_sentence": "I read an interesting book last week.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "car",
+    "example_sentence": "He drives his car to work every day.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "school",
+    "example_sentence": "The children walk to school together.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "food",
+    "example_sentence": "The food at this restaurant is delicious.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "morning",
+    "example_sentence": "I enjoy coffee every morning.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "night",
+    "example_sentence": "The stars are bright tonight.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "warm",
+    "example_sentence": "The weather is warm and sunny today.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "cold",
+    "example_sentence": "It is very cold outside in winter.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "fast",
+    "example_sentence": "The train is very fast.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "open",
+    "example_sentence": "Please open the window.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "close",
+    "example_sentence": "Close the door, please.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "buy",
+    "example_sentence": "I want to buy a new phone.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "city",
+    "example_sentence": "Paris is a beautiful city.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "family",
+    "example_sentence": "My family meets every Sunday for dinner.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "music",
+    "example_sentence": "She listens to music while studying.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "answer",
+    "example_sentence": "He gave a clear answer to the question.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "color",
+    "example_sentence": "Blue is my favorite color.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "learn",
+    "example_sentence": "I want to learn a new language.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "teach",
+    "example_sentence": "She teaches math at the university.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "write",
+    "example_sentence": "He likes to write short stories.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "read",
+    "example_sentence": "I read the newspaper every morning.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "play",
+    "example_sentence": "The kids play soccer after school.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "begin",
+    "example_sentence": "The concert will begin at eight.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "end",
+    "example_sentence": "The movie has a surprising end.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "country",
+    "example_sentence": "Japan is a fascinating country.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "hand",
+    "example_sentence": "She held the flower in her hand.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "head",
+    "example_sentence": "He nodded his head in agreement.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "eye",
+    "example_sentence": "She has beautiful green eyes.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "door",
+    "example_sentence": "Someone is knocking at the door.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "room",
+    "example_sentence": "The room is bright and spacious.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "animal",
+    "example_sentence": "The dog is a loyal animal.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "tree",
+    "example_sentence": "A tall tree grows in the garden.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "road",
+    "example_sentence": "The road leads to the village.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "river",
+    "example_sentence": "The river flows through the valley.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "strong",
+    "example_sentence": "He is strong enough to lift the box.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "young",
+    "example_sentence": "She is still very young.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "old",
+    "example_sentence": "This is an old building from the eighteenth century.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "beautiful",
+    "example_sentence": "The sunset was incredibly beautiful.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "important",
+    "example_sentence": "Education is very important.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "different",
+    "example_sentence": "These two shirts are very different.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "always",
+    "example_sentence": "She always arrives on time.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "never",
+    "example_sentence": "I have never been to Australia.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "often",
+    "example_sentence": "We often go hiking on weekends.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sometimes",
+    "example_sentence": "Sometimes I like to cook at home.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "garden",
+    "example_sentence": "She grows tomatoes in her garden.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "kitchen",
+    "example_sentence": "He is cooking dinner in the kitchen.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "table",
+    "example_sentence": "The plates are already on the table.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "window",
+    "example_sentence": "Open the window to let in fresh air.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "weather",
+    "example_sentence": "The weather is perfect for a picnic.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "summer",
+    "example_sentence": "We go swimming every summer.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "winter",
+    "example_sentence": "Winter is my least favorite season.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "doctor",
+    "example_sentence": "The doctor told me to rest.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "experience",
+    "example_sentence": "Traveling gives you valuable experience.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "knowledge",
+    "example_sentence": "Knowledge is the key to success.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "situation",
+    "example_sentence": "We need to understand the situation first.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "possible",
+    "example_sentence": "Is it possible to change my ticket?",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "difficult",
+    "example_sentence": "This exam was really difficult.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "problem",
+    "example_sentence": "We found a solution to the problem.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "idea",
+    "example_sentence": "That is a brilliant idea.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "change",
+    "example_sentence": "The seasons change four times a year.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "believe",
+    "example_sentence": "I believe we can finish on time.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "understand",
+    "example_sentence": "I understand the instructions now.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "remember",
+    "example_sentence": "I remember my first day at school.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "forget",
+    "example_sentence": "Do not forget to lock the door.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "decide",
+    "example_sentence": "You need to decide before tomorrow.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "choose",
+    "example_sentence": "It is hard to choose between the two.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "travel",
+    "example_sentence": "I love to travel to new places.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "village",
+    "example_sentence": "The village is surrounded by mountains.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "mountain",
+    "example_sentence": "They climbed the mountain in six hours.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "ocean",
+    "example_sentence": "The ocean looks endless from the shore.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "island",
+    "example_sentence": "We visited a small island last summer.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "bridge",
+    "example_sentence": "The old bridge crosses the river.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "prepare",
+    "example_sentence": "She needs to prepare for the meeting.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "continue",
+    "example_sentence": "Please continue reading the next chapter.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "develop",
+    "example_sentence": "We want to develop a new app.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "improve",
+    "example_sentence": "Practice will improve your skills.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "achieve",
+    "example_sentence": "Hard work helps you achieve your goals.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "compare",
+    "example_sentence": "Let us compare the two options.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "provide",
+    "example_sentence": "The hotel provides free breakfast.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "require",
+    "example_sentence": "This job requires attention to detail.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "increase",
+    "example_sentence": "Prices increase every year.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "reduce",
+    "example_sentence": "We should reduce our energy use.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "suggest",
+    "example_sentence": "I suggest we leave early.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "describe",
+    "example_sentence": "Can you describe what happened?",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "attention",
+    "example_sentence": "Please pay attention to the teacher.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "purpose",
+    "example_sentence": "The purpose of this meeting is to plan ahead.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "opportunity",
+    "example_sentence": "This is a great opportunity for growth.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "success",
+    "example_sentence": "Her success inspired many people.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "mistake",
+    "example_sentence": "Everyone makes a mistake sometimes.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "simple",
+    "example_sentence": "The recipe is quick and simple.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "modern",
+    "example_sentence": "The city has a very modern skyline.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ancient",
+    "example_sentence": "They explored the ancient ruins.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "consequence",
+    "example_sentence": "Every action has a consequence.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "negotiate",
+    "example_sentence": "They had to negotiate a fair price.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "influence",
+    "example_sentence": "Music has a strong influence on culture.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "tradition",
+    "example_sentence": "This tradition has lasted for centuries.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "responsibility",
+    "example_sentence": "Taking responsibility for your actions is important.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "environment",
+    "example_sentence": "We must protect the environment.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "technology",
+    "example_sentence": "Technology changes the way we live.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "communicate",
+    "example_sentence": "We communicate better face to face.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "establish",
+    "example_sentence": "They plan to establish a new branch.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "appreciate",
+    "example_sentence": "I really appreciate your help.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "recognize",
+    "example_sentence": "I did not recognize her at first.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "contribute",
+    "example_sentence": "Everyone should contribute to the project.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "debate",
+    "example_sentence": "The students had a lively debate.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "generation",
+    "example_sentence": "Each generation brings new ideas.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "independent",
+    "example_sentence": "She became independent at a young age.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "economy",
+    "example_sentence": "The economy is growing steadily.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "accurate",
+    "example_sentence": "The report must be accurate.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "advantage",
+    "example_sentence": "Speaking two languages is a big advantage.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "conflict",
+    "example_sentence": "They resolved the conflict peacefully.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "permission",
+    "example_sentence": "You need permission to enter this area.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "significant",
+    "example_sentence": "There was a significant improvement.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "implement",
+    "example_sentence": "We need to implement the new policy.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "strategy",
+    "example_sentence": "A good strategy is essential for success.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "investigate",
+    "example_sentence": "The police will investigate the incident.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "confident",
+    "example_sentence": "She felt confident before the exam.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "distinguish",
+    "example_sentence": "It is hard to distinguish the twins.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "evaluate",
+    "example_sentence": "The teacher will evaluate your essay.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "guarantee",
+    "example_sentence": "Hard work does not guarantee success.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "imagination",
+    "example_sentence": "Children have a wonderful imagination.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "sympathy",
+    "example_sentence": "He expressed his sympathy for her loss.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "bureaucracy",
+    "example_sentence": "The bureaucracy slowed down the process.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "dilemma",
+    "example_sentence": "She faced a difficult dilemma.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "obstacle",
+    "example_sentence": "Every obstacle is a chance to grow.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "postpone",
+    "example_sentence": "We had to postpone the event.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "reputation",
+    "example_sentence": "He has a reputation for honesty.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sacrifice",
+    "example_sentence": "Success often requires sacrifice.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "ambitious",
+    "example_sentence": "She is an ambitious young lawyer.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "compromise",
+    "example_sentence": "Both sides reached a compromise.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "discipline",
+    "example_sentence": "Discipline is the key to progress.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "enthusiasm",
+    "example_sentence": "Her enthusiasm was contagious.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "nuance",
+    "example_sentence": "This topic requires attention to nuance.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "resilience",
+    "example_sentence": "Her resilience helped her overcome hardship.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "meticulous",
+    "example_sentence": "He is meticulous about his work.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "ephemeral",
+    "example_sentence": "Fame can be ephemeral.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "eloquent",
+    "example_sentence": "She gave an eloquent speech.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "pragmatic",
+    "example_sentence": "We need a pragmatic solution.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "scrutiny",
+    "example_sentence": "The plan faced intense scrutiny.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "contemplate",
+    "example_sentence": "He sat quietly to contemplate his future.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "perseverance",
+    "example_sentence": "Perseverance leads to great achievements.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "versatile",
+    "example_sentence": "She is a very versatile musician.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "profound",
+    "example_sentence": "The book had a profound impact on me.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "inevitable",
+    "example_sentence": "Change is inevitable in life.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ambiguous",
+    "example_sentence": "The instructions were ambiguous.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "gratitude",
+    "example_sentence": "I feel deep gratitude for your kindness.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "hypothesis",
+    "example_sentence": "The scientist tested her hypothesis.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "reluctant",
+    "example_sentence": "He was reluctant to accept the offer.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "substantial",
+    "example_sentence": "They made a substantial donation.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "deteriorate",
+    "example_sentence": "The weather began to deteriorate.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "elaborate",
+    "example_sentence": "Could you elaborate on your idea?",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "concise",
+    "example_sentence": "Keep your report concise and clear.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "benevolent",
+    "example_sentence": "The benevolent donor helped many families.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "tenacious",
+    "example_sentence": "She is a tenacious negotiator.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "obsolete",
+    "example_sentence": "This technology is now obsolete.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "compensate",
+    "example_sentence": "The company will compensate for the delay.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "phenomenon",
+    "example_sentence": "The northern lights are a natural phenomenon.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "paradox",
+    "example_sentence": "That statement is a true paradox.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "unprecedented",
+    "example_sentence": "The discovery was unprecedented in science.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "controversy",
+    "example_sentence": "The decision caused much controversy.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "indigenous",
+    "example_sentence": "We should respect indigenous cultures.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "sophisticate",
+    "example_sentence": "The design is elegant and sophisticated.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "consolidate",
+    "example_sentence": "They plan to consolidate their resources.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "undermine",
+    "example_sentence": "Lies can undermine trust.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "exquisite",
+    "example_sentence": "The jewelry is truly exquisite.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "encompass",
+    "example_sentence": "The course will encompass many topics.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "illuminate",
+    "example_sentence": "Candles illuminate the dark room.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "fluctuate",
+    "example_sentence": "Prices tend to fluctuate throughout the year.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "diligent",
+    "example_sentence": "She is a diligent and hardworking student.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "candid",
+    "example_sentence": "He gave a candid opinion about the project.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "alleviate",
+    "example_sentence": "This medicine will alleviate the pain.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "quintessential",
+    "example_sentence": "This dish is the quintessential Italian meal.",
+    "frequency_level": "Advanced"
+  }
 ]

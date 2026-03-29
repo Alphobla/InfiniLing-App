@@ -1,202 +1,1002 @@
 [
-  {"word": "да", "example_sentence": "Да, я хотел бы кофе.", "frequency_rank": 1},
-  {"word": "нет", "example_sentence": "Нет, спасибо, я не голоден.", "frequency_rank": 2},
-  {"word": "хороший", "example_sentence": "Это очень хорошая книга.", "frequency_rank": 3},
-  {"word": "вода", "example_sentence": "Я пью стакан воды каждое утро.", "frequency_rank": 4},
-  {"word": "день", "example_sentence": "Сегодня прекрасный день.", "frequency_rank": 5},
-  {"word": "время", "example_sentence": "Во сколько отправляется поезд?", "frequency_rank": 6},
-  {"word": "люди", "example_sentence": "Много людей живёт в этом городе.", "frequency_rank": 7},
-  {"word": "работать", "example_sentence": "Я работаю в офисе в центре города.", "frequency_rank": 8},
-  {"word": "деньги", "example_sentence": "Она накопила достаточно денег, чтобы купить машину.", "frequency_rank": 9},
-  {"word": "дом", "example_sentence": "Они купили новый дом в прошлом году.", "frequency_rank": 10},
-  {"word": "большой", "example_sentence": "Это очень большая собака.", "frequency_rank": 11},
-  {"word": "маленький", "example_sentence": "Маленькая кошка спряталась под кроватью.", "frequency_rank": 12},
-  {"word": "есть", "example_sentence": "Мы ужинаем в семь часов каждый вечер.", "frequency_rank": 13},
-  {"word": "пить", "example_sentence": "Я люблю пить чай днём.", "frequency_rank": 14},
-  {"word": "спать", "example_sentence": "Обычно я сплю восемь часов.", "frequency_rank": 15},
-  {"word": "гулять", "example_sentence": "Давай вместе прогуляемся до парка.", "frequency_rank": 16},
-  {"word": "бегать", "example_sentence": "Она любит бегать по утрам.", "frequency_rank": 17},
-  {"word": "говорить", "example_sentence": "Он может говорить на трёх языках.", "frequency_rank": 18},
-  {"word": "друг", "example_sentence": "Мой лучший друг живёт по соседству.", "frequency_rank": 19},
-  {"word": "любовь", "example_sentence": "Я люблю проводить время с семьёй.", "frequency_rank": 20},
-  {"word": "счастливый", "example_sentence": "Дети сегодня очень счастливы.", "frequency_rank": 21},
-  {"word": "грустный", "example_sentence": "Ей стало грустно, когда фильм закончился.", "frequency_rank": 22},
-  {"word": "помогать", "example_sentence": "Ты можешь помочь мне нести эти сумки?", "frequency_rank": 23},
-  {"word": "имя", "example_sentence": "Моё имя — Мария.", "frequency_rank": 24},
-  {"word": "год", "example_sentence": "Этот год был замечательным.", "frequency_rank": 25},
-  {"word": "ребёнок", "example_sentence": "Ребёнок радостно играл в саду.", "frequency_rank": 26},
-  {"word": "женщина", "example_sentence": "Женщина улыбнулась и помахала нам.", "frequency_rank": 27},
-  {"word": "мужчина", "example_sentence": "Мужчина открыл ей дверь.", "frequency_rank": 28},
-  {"word": "книга", "example_sentence": "На прошлой неделе я прочитал интересную книгу.", "frequency_rank": 29},
-  {"word": "машина", "example_sentence": "Он каждый день ездит на работу на машине.", "frequency_rank": 30},
-  {"word": "школа", "example_sentence": "Дети вместе идут в школу.", "frequency_rank": 31},
-  {"word": "еда", "example_sentence": "Еда в этом ресторане восхитительна.", "frequency_rank": 32},
-  {"word": "утро", "example_sentence": "Я наслаждаюсь кофе каждое утро.", "frequency_rank": 33},
-  {"word": "ночь", "example_sentence": "Звёзды сегодня ярко светят.", "frequency_rank": 34},
-  {"word": "тёплый", "example_sentence": "Сегодня тёплая и солнечная погода.", "frequency_rank": 35},
-  {"word": "холодный", "example_sentence": "Зимой на улице очень холодно.", "frequency_rank": 36},
-  {"word": "быстрый", "example_sentence": "Поезд очень быстрый.", "frequency_rank": 37},
-  {"word": "открыть", "example_sentence": "Пожалуйста, откройте окно.", "frequency_rank": 38},
-  {"word": "закрыть", "example_sentence": "Закройте дверь, пожалуйста.", "frequency_rank": 39},
-  {"word": "покупать", "example_sentence": "Я хочу купить новый телефон.", "frequency_rank": 40},
-  {"word": "город", "example_sentence": "Париж — красивый город.", "frequency_rank": 41},
-  {"word": "семья", "example_sentence": "Моя семья собирается каждое воскресенье на ужин.", "frequency_rank": 42},
-  {"word": "музыка", "example_sentence": "Она слушает музыку во время учёбы.", "frequency_rank": 43},
-  {"word": "ответ", "example_sentence": "Он дал чёткий ответ на вопрос.", "frequency_rank": 44},
-  {"word": "цвет", "example_sentence": "Синий — мой любимый цвет.", "frequency_rank": 45},
-  {"word": "учить", "example_sentence": "Я хочу выучить новый язык.", "frequency_rank": 46},
-  {"word": "преподавать", "example_sentence": "Она преподаёт математику в университете.", "frequency_rank": 47},
-  {"word": "писать", "example_sentence": "Он любит писать рассказы.", "frequency_rank": 48},
-  {"word": "читать", "example_sentence": "Я читаю газету каждое утро.", "frequency_rank": 49},
-  {"word": "играть", "example_sentence": "Дети играют в футбол после школы.", "frequency_rank": 50},
-  {"word": "начинать", "example_sentence": "Концерт начнётся в восемь часов.", "frequency_rank": 51},
-  {"word": "конец", "example_sentence": "У фильма неожиданный конец.", "frequency_rank": 52},
-  {"word": "страна", "example_sentence": "Япония — удивительная страна.", "frequency_rank": 53},
-  {"word": "рука", "example_sentence": "Она держала цветок в руке.", "frequency_rank": 54},
-  {"word": "голова", "example_sentence": "Он кивнул головой в знак согласия.", "frequency_rank": 55},
-  {"word": "глаз", "example_sentence": "У неё красивые зелёные глаза.", "frequency_rank": 56},
-  {"word": "дверь", "example_sentence": "Кто-то стучит в дверь.", "frequency_rank": 57},
-  {"word": "комната", "example_sentence": "Комната светлая и просторная.", "frequency_rank": 58},
-  {"word": "животное", "example_sentence": "Собака — верное животное.", "frequency_rank": 59},
-  {"word": "дерево", "example_sentence": "В саду растёт высокое дерево.", "frequency_rank": 60},
-  {"word": "дорога", "example_sentence": "Дорога ведёт к деревне.", "frequency_rank": 61},
-  {"word": "река", "example_sentence": "Река течёт через долину.", "frequency_rank": 62},
-  {"word": "сильный", "example_sentence": "Он достаточно сильный, чтобы поднять коробку.", "frequency_rank": 63},
-  {"word": "молодой", "example_sentence": "Она ещё очень молодая.", "frequency_rank": 64},
-  {"word": "старый", "example_sentence": "Это старое здание восемнадцатого века.", "frequency_rank": 65},
-  {"word": "красивый", "example_sentence": "Закат был невероятно красивым.", "frequency_rank": 66},
-  {"word": "важный", "example_sentence": "Образование очень важно.", "frequency_rank": 67},
-  {"word": "разный", "example_sentence": "Эти две рубашки совсем разные.", "frequency_rank": 68},
-  {"word": "всегда", "example_sentence": "Она всегда приходит вовремя.", "frequency_rank": 69},
-  {"word": "никогда", "example_sentence": "Я никогда не был в Австралии.", "frequency_rank": 70},
-  {"word": "часто", "example_sentence": "По выходным мы часто ходим в поход.", "frequency_rank": 71},
-  {"word": "иногда", "example_sentence": "Иногда я люблю готовить дома.", "frequency_rank": 72},
-  {"word": "сад", "example_sentence": "Она выращивает помидоры в своём саду.", "frequency_rank": 73},
-  {"word": "кухня", "example_sentence": "Он готовит ужин на кухне.", "frequency_rank": 74},
-  {"word": "стол", "example_sentence": "Тарелки уже стоят на столе.", "frequency_rank": 75},
-  {"word": "окно", "example_sentence": "Откройте окно, чтобы впустить свежий воздух.", "frequency_rank": 76},
-  {"word": "погода", "example_sentence": "Погода идеальна для пикника.", "frequency_rank": 77},
-  {"word": "лето", "example_sentence": "Каждое лето мы ходим плавать.", "frequency_rank": 78},
-  {"word": "зима", "example_sentence": "Зима — моё наименее любимое время года.", "frequency_rank": 79},
-  {"word": "врач", "example_sentence": "Врач сказал мне отдыхать.", "frequency_rank": 80},
-  {"word": "опыт", "example_sentence": "Путешествия дают ценный опыт.", "frequency_rank": 81},
-  {"word": "знание", "example_sentence": "Знание — ключ к успеху.", "frequency_rank": 82},
-  {"word": "ситуация", "example_sentence": "Сначала нужно понять ситуацию.", "frequency_rank": 83},
-  {"word": "возможный", "example_sentence": "Возможно ли поменять мой билет?", "frequency_rank": 84},
-  {"word": "трудный", "example_sentence": "Этот экзамен был действительно трудным.", "frequency_rank": 85},
-  {"word": "проблема", "example_sentence": "Мы нашли решение проблемы.", "frequency_rank": 86},
-  {"word": "идея", "example_sentence": "Это блестящая идея.", "frequency_rank": 87},
-  {"word": "изменение", "example_sentence": "Времена года меняются четыре раза в год.", "frequency_rank": 88},
-  {"word": "верить", "example_sentence": "Я верю, что мы успеем вовремя.", "frequency_rank": 89},
-  {"word": "понимать", "example_sentence": "Теперь я понимаю инструкции.", "frequency_rank": 90},
-  {"word": "помнить", "example_sentence": "Я помню свой первый день в школе.", "frequency_rank": 91},
-  {"word": "забывать", "example_sentence": "Не забудь запереть дверь.", "frequency_rank": 92},
-  {"word": "решать", "example_sentence": "Тебе нужно решить до завтра.", "frequency_rank": 93},
-  {"word": "выбирать", "example_sentence": "Трудно выбирать между двумя вариантами.", "frequency_rank": 94},
-  {"word": "путешествовать", "example_sentence": "Я люблю путешествовать в новые места.", "frequency_rank": 95},
-  {"word": "деревня", "example_sentence": "Деревня окружена горами.", "frequency_rank": 96},
-  {"word": "гора", "example_sentence": "Они поднялись на гору за шесть часов.", "frequency_rank": 97},
-  {"word": "океан", "example_sentence": "Океан кажется бесконечным с берега.", "frequency_rank": 98},
-  {"word": "остров", "example_sentence": "Прошлым летом мы посетили маленький остров.", "frequency_rank": 99},
-  {"word": "мост", "example_sentence": "Старый мост пересекает реку.", "frequency_rank": 100},
-  {"word": "готовиться", "example_sentence": "Ей нужно подготовиться к встрече.", "frequency_rank": 101},
-  {"word": "продолжать", "example_sentence": "Пожалуйста, продолжайте читать следующую главу.", "frequency_rank": 102},
-  {"word": "развивать", "example_sentence": "Мы хотим разработать новое приложение.", "frequency_rank": 103},
-  {"word": "улучшать", "example_sentence": "Практика улучшит твои навыки.", "frequency_rank": 104},
-  {"word": "достигать", "example_sentence": "Усердная работа помогает достигать целей.", "frequency_rank": 105},
-  {"word": "сравнивать", "example_sentence": "Давайте сравним оба варианта.", "frequency_rank": 106},
-  {"word": "обеспечивать", "example_sentence": "Отель обеспечивает бесплатный завтрак.", "frequency_rank": 107},
-  {"word": "требовать", "example_sentence": "Эта работа требует внимания к деталям.", "frequency_rank": 108},
-  {"word": "увеличивать", "example_sentence": "Цены увеличиваются каждый год.", "frequency_rank": 109},
-  {"word": "уменьшать", "example_sentence": "Мы должны уменьшить потребление энергии.", "frequency_rank": 110},
-  {"word": "предлагать", "example_sentence": "Я предлагаю выехать пораньше.", "frequency_rank": 111},
-  {"word": "описывать", "example_sentence": "Вы можете описать, что произошло?", "frequency_rank": 112},
-  {"word": "внимание", "example_sentence": "Пожалуйста, обратите внимание на учителя.", "frequency_rank": 113},
-  {"word": "цель", "example_sentence": "Цель этой встречи — спланировать работу.", "frequency_rank": 114},
-  {"word": "возможность", "example_sentence": "Это отличная возможность для роста.", "frequency_rank": 115},
-  {"word": "успех", "example_sentence": "Её успех вдохновил многих людей.", "frequency_rank": 116},
-  {"word": "ошибка", "example_sentence": "Каждый иногда совершает ошибку.", "frequency_rank": 117},
-  {"word": "простой", "example_sentence": "Рецепт быстрый и простой.", "frequency_rank": 118},
-  {"word": "современный", "example_sentence": "У города очень современный облик.", "frequency_rank": 119},
-  {"word": "древний", "example_sentence": "Они исследовали древние руины.", "frequency_rank": 120},
-  {"word": "последствие", "example_sentence": "Каждое действие имеет последствие.", "frequency_rank": 121},
-  {"word": "вести переговоры", "example_sentence": "Им пришлось вести переговоры о справедливой цене.", "frequency_rank": 122},
-  {"word": "влияние", "example_sentence": "Музыка оказывает сильное влияние на культуру.", "frequency_rank": 123},
-  {"word": "традиция", "example_sentence": "Эта традиция существует веками.", "frequency_rank": 124},
-  {"word": "ответственность", "example_sentence": "Брать ответственность за свои поступки важно.", "frequency_rank": 125},
-  {"word": "окружающая среда", "example_sentence": "Мы должны защищать окружающую среду.", "frequency_rank": 126},
-  {"word": "технология", "example_sentence": "Технологии меняют наш образ жизни.", "frequency_rank": 127},
-  {"word": "общаться", "example_sentence": "Мы лучше общаемся лицом к лицу.", "frequency_rank": 128},
-  {"word": "основать", "example_sentence": "Они планируют основать новый филиал.", "frequency_rank": 129},
-  {"word": "ценить", "example_sentence": "Я очень ценю вашу помощь.", "frequency_rank": 130},
-  {"word": "узнавать", "example_sentence": "Сначала я её не узнал.", "frequency_rank": 131},
-  {"word": "вносить вклад", "example_sentence": "Каждый должен внести вклад в проект.", "frequency_rank": 132},
-  {"word": "дебаты", "example_sentence": "Студенты провели оживлённые дебаты.", "frequency_rank": 133},
-  {"word": "поколение", "example_sentence": "Каждое поколение приносит новые идеи.", "frequency_rank": 134},
-  {"word": "независимый", "example_sentence": "Она стала независимой в молодом возрасте.", "frequency_rank": 135},
-  {"word": "экономика", "example_sentence": "Экономика стабильно растёт.", "frequency_rank": 136},
-  {"word": "точный", "example_sentence": "Отчёт должен быть точным.", "frequency_rank": 137},
-  {"word": "преимущество", "example_sentence": "Говорить на двух языках — большое преимущество.", "frequency_rank": 138},
-  {"word": "конфликт", "example_sentence": "Они разрешили конфликт мирным путём.", "frequency_rank": 139},
-  {"word": "разрешение", "example_sentence": "Вам нужно разрешение, чтобы войти в эту зону.", "frequency_rank": 140},
-  {"word": "значительный", "example_sentence": "Было значительное улучшение.", "frequency_rank": 141},
-  {"word": "внедрять", "example_sentence": "Нам нужно внедрить новую политику.", "frequency_rank": 142},
-  {"word": "стратегия", "example_sentence": "Хорошая стратегия необходима для успеха.", "frequency_rank": 143},
-  {"word": "расследовать", "example_sentence": "Полиция расследует инцидент.", "frequency_rank": 144},
-  {"word": "уверенный", "example_sentence": "Она чувствовала себя уверенно перед экзаменом.", "frequency_rank": 145},
-  {"word": "различать", "example_sentence": "Трудно различить близнецов.", "frequency_rank": 146},
-  {"word": "оценивать", "example_sentence": "Учитель оценит ваше сочинение.", "frequency_rank": 147},
-  {"word": "гарантия", "example_sentence": "Упорный труд не гарантирует успех.", "frequency_rank": 148},
-  {"word": "воображение", "example_sentence": "У детей замечательное воображение.", "frequency_rank": 149},
-  {"word": "сочувствие", "example_sentence": "Он выразил сочувствие в связи с её утратой.", "frequency_rank": 150},
-  {"word": "бюрократия", "example_sentence": "Бюрократия замедлила процесс.", "frequency_rank": 151},
-  {"word": "дилемма", "example_sentence": "Она столкнулась с трудной дилеммой.", "frequency_rank": 152},
-  {"word": "препятствие", "example_sentence": "Каждое препятствие — это шанс вырасти.", "frequency_rank": 153},
-  {"word": "откладывать", "example_sentence": "Нам пришлось отложить мероприятие.", "frequency_rank": 154},
-  {"word": "репутация", "example_sentence": "У него репутация честного человека.", "frequency_rank": 155},
-  {"word": "жертва", "example_sentence": "Успех часто требует жертв.", "frequency_rank": 156},
-  {"word": "амбициозный", "example_sentence": "Она амбициозный молодой адвокат.", "frequency_rank": 157},
-  {"word": "компромисс", "example_sentence": "Обе стороны достигли компромисса.", "frequency_rank": 158},
-  {"word": "дисциплина", "example_sentence": "Дисциплина — ключ к прогрессу.", "frequency_rank": 159},
-  {"word": "энтузиазм", "example_sentence": "Её энтузиазм был заразителен.", "frequency_rank": 160},
-  {"word": "нюанс", "example_sentence": "Эта тема требует внимания к нюансам.", "frequency_rank": 161},
-  {"word": "стойкость", "example_sentence": "Её стойкость помогла преодолеть трудности.", "frequency_rank": 162},
-  {"word": "скрупулёзный", "example_sentence": "Он скрупулёзен в своей работе.", "frequency_rank": 163},
-  {"word": "мимолётный", "example_sentence": "Слава может быть мимолётной.", "frequency_rank": 164},
-  {"word": "красноречивый", "example_sentence": "Она произнесла красноречивую речь.", "frequency_rank": 165},
-  {"word": "прагматичный", "example_sentence": "Нам нужно прагматичное решение.", "frequency_rank": 166},
-  {"word": "тщательная проверка", "example_sentence": "План подвергся тщательной проверке.", "frequency_rank": 167},
-  {"word": "размышлять", "example_sentence": "Он тихо сидел и размышлял о будущем.", "frequency_rank": 168},
-  {"word": "настойчивость", "example_sentence": "Настойчивость ведёт к великим достижениям.", "frequency_rank": 169},
-  {"word": "разносторонний", "example_sentence": "Она очень разносторонний музыкант.", "frequency_rank": 170},
-  {"word": "глубокий", "example_sentence": "Книга оказала на меня глубокое влияние.", "frequency_rank": 171},
-  {"word": "неизбежный", "example_sentence": "Перемены в жизни неизбежны.", "frequency_rank": 172},
-  {"word": "двусмысленный", "example_sentence": "Инструкции были двусмысленными.", "frequency_rank": 173},
-  {"word": "благодарность", "example_sentence": "Я испытываю глубокую благодарность за вашу доброту.", "frequency_rank": 174},
-  {"word": "гипотеза", "example_sentence": "Учёная проверила свою гипотезу.", "frequency_rank": 175},
-  {"word": "неохотный", "example_sentence": "Он неохотно принял предложение.", "frequency_rank": 176},
-  {"word": "существенный", "example_sentence": "Они сделали существенное пожертвование.", "frequency_rank": 177},
-  {"word": "ухудшаться", "example_sentence": "Погода начала ухудшаться.", "frequency_rank": 178},
-  {"word": "подробно объяснять", "example_sentence": "Не могли бы вы подробнее объяснить свою идею?", "frequency_rank": 179},
-  {"word": "краткий", "example_sentence": "Сделайте отчёт кратким и ясным.", "frequency_rank": 180},
-  {"word": "доброжелательный", "example_sentence": "Доброжелательный донор помог многим семьям.", "frequency_rank": 181},
-  {"word": "упорный", "example_sentence": "Она упорный переговорщик.", "frequency_rank": 182},
-  {"word": "устаревший", "example_sentence": "Эта технология уже устарела.", "frequency_rank": 183},
-  {"word": "компенсировать", "example_sentence": "Компания компенсирует задержку.", "frequency_rank": 184},
-  {"word": "явление", "example_sentence": "Северное сияние — природное явление.", "frequency_rank": 185},
-  {"word": "парадокс", "example_sentence": "Это утверждение — настоящий парадокс.", "frequency_rank": 186},
-  {"word": "беспрецедентный", "example_sentence": "Открытие было беспрецедентным в науке.", "frequency_rank": 187},
-  {"word": "полемика", "example_sentence": "Решение вызвало много полемики.", "frequency_rank": 188},
-  {"word": "коренной", "example_sentence": "Мы должны уважать коренные культуры.", "frequency_rank": 189},
-  {"word": "утончённый", "example_sentence": "Дизайн элегантный и утончённый.", "frequency_rank": 190},
-  {"word": "консолидировать", "example_sentence": "Они планируют консолидировать свои ресурсы.", "frequency_rank": 191},
-  {"word": "подрывать", "example_sentence": "Ложь может подрывать доверие.", "frequency_rank": 192},
-  {"word": "изысканный", "example_sentence": "Украшения поистине изысканные.", "frequency_rank": 193},
-  {"word": "охватывать", "example_sentence": "Курс будет охватывать множество тем.", "frequency_rank": 194},
-  {"word": "освещать", "example_sentence": "Свечи освещают тёмную комнату.", "frequency_rank": 195},
-  {"word": "колебаться", "example_sentence": "Цены склонны колебаться в течение года.", "frequency_rank": 196},
-  {"word": "усердный", "example_sentence": "Она усердная и трудолюбивая студентка.", "frequency_rank": 197},
-  {"word": "откровенный", "example_sentence": "Он высказал откровенное мнение о проекте.", "frequency_rank": 198},
-  {"word": "облегчать", "example_sentence": "Это лекарство облегчит боль.", "frequency_rank": 199},
-  {"word": "типичнейший", "example_sentence": "Это блюдо — типичнейшая итальянская еда.", "frequency_rank": 200}
+  {
+    "word": "да",
+    "example_sentence": "Да, я хотел бы кофе.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "нет",
+    "example_sentence": "Нет, спасибо, я не голоден.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "хороший",
+    "example_sentence": "Это очень хорошая книга.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "вода",
+    "example_sentence": "Я пью стакан воды каждое утро.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "день",
+    "example_sentence": "Сегодня прекрасный день.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "время",
+    "example_sentence": "Во сколько отправляется поезд?",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "люди",
+    "example_sentence": "Много людей живёт в этом городе.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "работать",
+    "example_sentence": "Я работаю в офисе в центре города.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "деньги",
+    "example_sentence": "Она накопила достаточно денег, чтобы купить машину.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "дом",
+    "example_sentence": "Они купили новый дом в прошлом году.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "большой",
+    "example_sentence": "Это очень большая собака.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "маленький",
+    "example_sentence": "Маленькая кошка спряталась под кроватью.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "есть",
+    "example_sentence": "Мы ужинаем в семь часов каждый вечер.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "пить",
+    "example_sentence": "Я люблю пить чай днём.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "спать",
+    "example_sentence": "Обычно я сплю восемь часов.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "гулять",
+    "example_sentence": "Давай вместе прогуляемся до парка.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "бегать",
+    "example_sentence": "Она любит бегать по утрам.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "говорить",
+    "example_sentence": "Он может говорить на трёх языках.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "друг",
+    "example_sentence": "Мой лучший друг живёт по соседству.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "любовь",
+    "example_sentence": "Я люблю проводить время с семьёй.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "счастливый",
+    "example_sentence": "Дети сегодня очень счастливы.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "грустный",
+    "example_sentence": "Ей стало грустно, когда фильм закончился.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "помогать",
+    "example_sentence": "Ты можешь помочь мне нести эти сумки?",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "имя",
+    "example_sentence": "Моё имя — Мария.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "год",
+    "example_sentence": "Этот год был замечательным.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ребёнок",
+    "example_sentence": "Ребёнок радостно играл в саду.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "женщина",
+    "example_sentence": "Женщина улыбнулась и помахала нам.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "мужчина",
+    "example_sentence": "Мужчина открыл ей дверь.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "книга",
+    "example_sentence": "На прошлой неделе я прочитал интересную книгу.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "машина",
+    "example_sentence": "Он каждый день ездит на работу на машине.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "школа",
+    "example_sentence": "Дети вместе идут в школу.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "еда",
+    "example_sentence": "Еда в этом ресторане восхитительна.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "утро",
+    "example_sentence": "Я наслаждаюсь кофе каждое утро.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ночь",
+    "example_sentence": "Звёзды сегодня ярко светят.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "тёплый",
+    "example_sentence": "Сегодня тёплая и солнечная погода.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "холодный",
+    "example_sentence": "Зимой на улице очень холодно.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "быстрый",
+    "example_sentence": "Поезд очень быстрый.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "открыть",
+    "example_sentence": "Пожалуйста, откройте окно.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "закрыть",
+    "example_sentence": "Закройте дверь, пожалуйста.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "покупать",
+    "example_sentence": "Я хочу купить новый телефон.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "город",
+    "example_sentence": "Париж — красивый город.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "семья",
+    "example_sentence": "Моя семья собирается каждое воскресенье на ужин.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "музыка",
+    "example_sentence": "Она слушает музыку во время учёбы.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ответ",
+    "example_sentence": "Он дал чёткий ответ на вопрос.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "цвет",
+    "example_sentence": "Синий — мой любимый цвет.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "учить",
+    "example_sentence": "Я хочу выучить новый язык.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "преподавать",
+    "example_sentence": "Она преподаёт математику в университете.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "писать",
+    "example_sentence": "Он любит писать рассказы.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "читать",
+    "example_sentence": "Я читаю газету каждое утро.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "играть",
+    "example_sentence": "Дети играют в футбол после школы.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "начинать",
+    "example_sentence": "Концерт начнётся в восемь часов.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "конец",
+    "example_sentence": "У фильма неожиданный конец.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "страна",
+    "example_sentence": "Япония — удивительная страна.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "рука",
+    "example_sentence": "Она держала цветок в руке.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "голова",
+    "example_sentence": "Он кивнул головой в знак согласия.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "глаз",
+    "example_sentence": "У неё красивые зелёные глаза.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "дверь",
+    "example_sentence": "Кто-то стучит в дверь.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "комната",
+    "example_sentence": "Комната светлая и просторная.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "животное",
+    "example_sentence": "Собака — верное животное.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "дерево",
+    "example_sentence": "В саду растёт высокое дерево.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "дорога",
+    "example_sentence": "Дорога ведёт к деревне.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "река",
+    "example_sentence": "Река течёт через долину.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "сильный",
+    "example_sentence": "Он достаточно сильный, чтобы поднять коробку.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "молодой",
+    "example_sentence": "Она ещё очень молодая.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "старый",
+    "example_sentence": "Это старое здание восемнадцатого века.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "красивый",
+    "example_sentence": "Закат был невероятно красивым.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "важный",
+    "example_sentence": "Образование очень важно.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "разный",
+    "example_sentence": "Эти две рубашки совсем разные.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "всегда",
+    "example_sentence": "Она всегда приходит вовремя.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "никогда",
+    "example_sentence": "Я никогда не был в Австралии.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "часто",
+    "example_sentence": "По выходным мы часто ходим в поход.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "иногда",
+    "example_sentence": "Иногда я люблю готовить дома.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "сад",
+    "example_sentence": "Она выращивает помидоры в своём саду.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "кухня",
+    "example_sentence": "Он готовит ужин на кухне.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "стол",
+    "example_sentence": "Тарелки уже стоят на столе.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "окно",
+    "example_sentence": "Откройте окно, чтобы впустить свежий воздух.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "погода",
+    "example_sentence": "Погода идеальна для пикника.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "лето",
+    "example_sentence": "Каждое лето мы ходим плавать.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "зима",
+    "example_sentence": "Зима — моё наименее любимое время года.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "врач",
+    "example_sentence": "Врач сказал мне отдыхать.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "опыт",
+    "example_sentence": "Путешествия дают ценный опыт.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "знание",
+    "example_sentence": "Знание — ключ к успеху.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ситуация",
+    "example_sentence": "Сначала нужно понять ситуацию.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "возможный",
+    "example_sentence": "Возможно ли поменять мой билет?",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "трудный",
+    "example_sentence": "Этот экзамен был действительно трудным.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "проблема",
+    "example_sentence": "Мы нашли решение проблемы.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "идея",
+    "example_sentence": "Это блестящая идея.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "изменение",
+    "example_sentence": "Времена года меняются четыре раза в год.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "верить",
+    "example_sentence": "Я верю, что мы успеем вовремя.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "понимать",
+    "example_sentence": "Теперь я понимаю инструкции.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "помнить",
+    "example_sentence": "Я помню свой первый день в школе.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "забывать",
+    "example_sentence": "Не забудь запереть дверь.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "решать",
+    "example_sentence": "Тебе нужно решить до завтра.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "выбирать",
+    "example_sentence": "Трудно выбирать между двумя вариантами.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "путешествовать",
+    "example_sentence": "Я люблю путешествовать в новые места.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "деревня",
+    "example_sentence": "Деревня окружена горами.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "гора",
+    "example_sentence": "Они поднялись на гору за шесть часов.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "океан",
+    "example_sentence": "Океан кажется бесконечным с берега.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "остров",
+    "example_sentence": "Прошлым летом мы посетили маленький остров.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "мост",
+    "example_sentence": "Старый мост пересекает реку.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "готовиться",
+    "example_sentence": "Ей нужно подготовиться к встрече.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "продолжать",
+    "example_sentence": "Пожалуйста, продолжайте читать следующую главу.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "развивать",
+    "example_sentence": "Мы хотим разработать новое приложение.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "улучшать",
+    "example_sentence": "Практика улучшит твои навыки.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "достигать",
+    "example_sentence": "Усердная работа помогает достигать целей.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "сравнивать",
+    "example_sentence": "Давайте сравним оба варианта.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "обеспечивать",
+    "example_sentence": "Отель обеспечивает бесплатный завтрак.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "требовать",
+    "example_sentence": "Эта работа требует внимания к деталям.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "увеличивать",
+    "example_sentence": "Цены увеличиваются каждый год.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "уменьшать",
+    "example_sentence": "Мы должны уменьшить потребление энергии.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "предлагать",
+    "example_sentence": "Я предлагаю выехать пораньше.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "описывать",
+    "example_sentence": "Вы можете описать, что произошло?",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "внимание",
+    "example_sentence": "Пожалуйста, обратите внимание на учителя.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "цель",
+    "example_sentence": "Цель этой встречи — спланировать работу.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "возможность",
+    "example_sentence": "Это отличная возможность для роста.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "успех",
+    "example_sentence": "Её успех вдохновил многих людей.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ошибка",
+    "example_sentence": "Каждый иногда совершает ошибку.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "простой",
+    "example_sentence": "Рецепт быстрый и простой.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "современный",
+    "example_sentence": "У города очень современный облик.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "древний",
+    "example_sentence": "Они исследовали древние руины.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "последствие",
+    "example_sentence": "Каждое действие имеет последствие.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "вести переговоры",
+    "example_sentence": "Им пришлось вести переговоры о справедливой цене.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "влияние",
+    "example_sentence": "Музыка оказывает сильное влияние на культуру.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "традиция",
+    "example_sentence": "Эта традиция существует веками.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ответственность",
+    "example_sentence": "Брать ответственность за свои поступки важно.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "окружающая среда",
+    "example_sentence": "Мы должны защищать окружающую среду.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "технология",
+    "example_sentence": "Технологии меняют наш образ жизни.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "общаться",
+    "example_sentence": "Мы лучше общаемся лицом к лицу.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "основать",
+    "example_sentence": "Они планируют основать новый филиал.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ценить",
+    "example_sentence": "Я очень ценю вашу помощь.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "узнавать",
+    "example_sentence": "Сначала я её не узнал.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "вносить вклад",
+    "example_sentence": "Каждый должен внести вклад в проект.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "дебаты",
+    "example_sentence": "Студенты провели оживлённые дебаты.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "поколение",
+    "example_sentence": "Каждое поколение приносит новые идеи.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "независимый",
+    "example_sentence": "Она стала независимой в молодом возрасте.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "экономика",
+    "example_sentence": "Экономика стабильно растёт.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "точный",
+    "example_sentence": "Отчёт должен быть точным.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "преимущество",
+    "example_sentence": "Говорить на двух языках — большое преимущество.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "конфликт",
+    "example_sentence": "Они разрешили конфликт мирным путём.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "разрешение",
+    "example_sentence": "Вам нужно разрешение, чтобы войти в эту зону.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "значительный",
+    "example_sentence": "Было значительное улучшение.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "внедрять",
+    "example_sentence": "Нам нужно внедрить новую политику.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "стратегия",
+    "example_sentence": "Хорошая стратегия необходима для успеха.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "расследовать",
+    "example_sentence": "Полиция расследует инцидент.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "уверенный",
+    "example_sentence": "Она чувствовала себя уверенно перед экзаменом.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "различать",
+    "example_sentence": "Трудно различить близнецов.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "оценивать",
+    "example_sentence": "Учитель оценит ваше сочинение.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "гарантия",
+    "example_sentence": "Упорный труд не гарантирует успех.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "воображение",
+    "example_sentence": "У детей замечательное воображение.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "сочувствие",
+    "example_sentence": "Он выразил сочувствие в связи с её утратой.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "бюрократия",
+    "example_sentence": "Бюрократия замедлила процесс.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "дилемма",
+    "example_sentence": "Она столкнулась с трудной дилеммой.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "препятствие",
+    "example_sentence": "Каждое препятствие — это шанс вырасти.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "откладывать",
+    "example_sentence": "Нам пришлось отложить мероприятие.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "репутация",
+    "example_sentence": "У него репутация честного человека.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "жертва",
+    "example_sentence": "Успех часто требует жертв.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "амбициозный",
+    "example_sentence": "Она амбициозный молодой адвокат.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "компромисс",
+    "example_sentence": "Обе стороны достигли компромисса.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "дисциплина",
+    "example_sentence": "Дисциплина — ключ к прогрессу.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "энтузиазм",
+    "example_sentence": "Её энтузиазм был заразителен.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "нюанс",
+    "example_sentence": "Эта тема требует внимания к нюансам.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "стойкость",
+    "example_sentence": "Её стойкость помогла преодолеть трудности.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "скрупулёзный",
+    "example_sentence": "Он скрупулёзен в своей работе.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "мимолётный",
+    "example_sentence": "Слава может быть мимолётной.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "красноречивый",
+    "example_sentence": "Она произнесла красноречивую речь.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "прагматичный",
+    "example_sentence": "Нам нужно прагматичное решение.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "тщательная проверка",
+    "example_sentence": "План подвергся тщательной проверке.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "размышлять",
+    "example_sentence": "Он тихо сидел и размышлял о будущем.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "настойчивость",
+    "example_sentence": "Настойчивость ведёт к великим достижениям.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "разносторонний",
+    "example_sentence": "Она очень разносторонний музыкант.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "глубокий",
+    "example_sentence": "Книга оказала на меня глубокое влияние.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "неизбежный",
+    "example_sentence": "Перемены в жизни неизбежны.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "двусмысленный",
+    "example_sentence": "Инструкции были двусмысленными.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "благодарность",
+    "example_sentence": "Я испытываю глубокую благодарность за вашу доброту.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "гипотеза",
+    "example_sentence": "Учёная проверила свою гипотезу.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "неохотный",
+    "example_sentence": "Он неохотно принял предложение.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "существенный",
+    "example_sentence": "Они сделали существенное пожертвование.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ухудшаться",
+    "example_sentence": "Погода начала ухудшаться.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "подробно объяснять",
+    "example_sentence": "Не могли бы вы подробнее объяснить свою идею?",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "краткий",
+    "example_sentence": "Сделайте отчёт кратким и ясным.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "доброжелательный",
+    "example_sentence": "Доброжелательный донор помог многим семьям.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "упорный",
+    "example_sentence": "Она упорный переговорщик.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "устаревший",
+    "example_sentence": "Эта технология уже устарела.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "компенсировать",
+    "example_sentence": "Компания компенсирует задержку.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "явление",
+    "example_sentence": "Северное сияние — природное явление.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "парадокс",
+    "example_sentence": "Это утверждение — настоящий парадокс.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "беспрецедентный",
+    "example_sentence": "Открытие было беспрецедентным в науке.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "полемика",
+    "example_sentence": "Решение вызвало много полемики.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "коренной",
+    "example_sentence": "Мы должны уважать коренные культуры.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "утончённый",
+    "example_sentence": "Дизайн элегантный и утончённый.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "консолидировать",
+    "example_sentence": "Они планируют консолидировать свои ресурсы.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "подрывать",
+    "example_sentence": "Ложь может подрывать доверие.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "изысканный",
+    "example_sentence": "Украшения поистине изысканные.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "охватывать",
+    "example_sentence": "Курс будет охватывать множество тем.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "освещать",
+    "example_sentence": "Свечи освещают тёмную комнату.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "колебаться",
+    "example_sentence": "Цены склонны колебаться в течение года.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "усердный",
+    "example_sentence": "Она усердная и трудолюбивая студентка.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "откровенный",
+    "example_sentence": "Он высказал откровенное мнение о проекте.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "облегчать",
+    "example_sentence": "Это лекарство облегчит боль.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "типичнейший",
+    "example_sentence": "Это блюдо — типичнейшая итальянская еда.",
+    "frequency_level": "Advanced"
+  }
 ]

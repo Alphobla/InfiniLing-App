@@ -51,8 +51,8 @@ def export_vocabulary(
         output = StringIO()
         if words:
             fieldnames = ["word", "lemma", "translation", "secondary_translation",
-                         "language_from", "language_to", "frequency_rank",
-                         "frequency_level", "example_sentence_original",
+                         "language_from", "language_to", "frequency_level",
+                         "example_sentence_original",
                          "example_sentence_translation", "created_at"]
             writer = csv.DictWriter(output, fieldnames=fieldnames, extrasaction='ignore')
             writer.writeheader()
@@ -122,7 +122,7 @@ async def import_vocabulary(
                         "updated_at": datetime.utcnow().isoformat()
                     }
                     # Add optional fields if present
-                    for field in ["lemma", "secondary_translation", "frequency_rank"]:
+                    for field in ["lemma", "secondary_translation", "frequency_level"]:
                         if word_data.get(field):
                             update_data[field] = word_data[field]
 
@@ -142,7 +142,6 @@ async def import_vocabulary(
                 "language_from": language_from,
                 "language_to": language_to,
                 "secondary_translation": word_data.get("secondary_translation"),
-                "frequency_rank": word_data.get("frequency_rank"),
                 "frequency_level": word_data.get("frequency_level"),
                 "example_sentence_original": word_data.get("example_sentence_original"),
                 "example_sentence_translation": word_data.get("example_sentence_translation")

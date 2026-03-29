@@ -1,56 +1,78 @@
 """OpenAI service for word enhancement and generation."""
 
-import json
-from typing import Optional, Dict, List
+from typing import Dict, List, Literal, Optional
+
 from openai import OpenAI
-from wordfreq import zipf_frequency
-from api.services.text_utils import strip_prefix_words
+from pydantic import BaseModel, Field
+
 from api.services.language_prompts import get_language_rules
 
 
-def get_frequency_info(word: str, language: str) -> Dict:
-    """Get word frequency information using wordfreq."""
-    zipf_freq = zipf_frequency(word.lower(), language)
+FrequencyLevel = Literal["Essential", "Common", "Intermediate", "Advanced", "Rare"]
 
-    if zipf_freq <= 0:
-        return {"rank": None, "level": "Unknown"}
 
-    rank = int(10 ** (8 - zipf_freq))
+class EnhanceWordResult(BaseModel):
+    lemma: str = Field(..., min_length=1)
+    is_fixed_expression: bool
+    translation: str = Field(..., min_length=1)
+    secondary_translation: Optional[str] = None
+    frequency_level: FrequencyLevel
+    example_sentence: str = Field(..., min_length=1)
+    example_sentence_translation: str = Field(..., min_length=1)
 
-    if rank <= 1000:
-        level = "Top 1,000"
-    elif rank <= 5000:
-        level = "Top 5,000"
-    elif rank <= 10000:
-        level = "Top 10,000"
-    elif rank <= 20000:
-        level = "Top 20,000"
-    else:
-        level = "Rare"
 
-    return {"rank": rank, "level": level}
+class GenerateTextResult(BaseModel):
+    title: str = Field(..., min_length=1)
+    story: str = Field(..., min_length=1)
 
 
 class OpenAIService:
     """Service for OpenAI API calls."""
 
-    def __init__(self, api_key: str, max_tokens: int, temperature: float):
+    def __init__(
+        self,
+        api_key: str,
+        max_tokens: int,
+        temperature: float,
+        text_model: str = "gpt-5.4-mini",
+        tts_model: str = "gpt-4o-mini-tts",
+    ):
         self.client = OpenAI(api_key=api_key)
         self.max_tokens = max_tokens
         self.temperature = temperature
+        self.text_model = text_model
+        self.tts_model = tts_model
+
+    @staticmethod
+    def _get_total_tokens(response) -> int:
+        """Best-effort extraction of total token usage across SDK response shapes."""
+        usage = getattr(response, "usage", None)
+        if usage is None:
+            return 0
+
+        total_tokens = getattr(usage, "total_tokens", None)
+        if isinstance(total_tokens, int):
+            return total_tokens
+
+        input_tokens = getattr(usage, "input_tokens", 0) or 0
+        output_tokens = getattr(usage, "output_tokens", 0) or 0
+        if isinstance(input_tokens, int) and isinstance(output_tokens, int):
+            return input_tokens + output_tokens
+
+        return 0
 
     def enhance_word(
         self,
         word: str,
         language_from: str,
         language_to: str,
-        existing_translation: Optional[str] = None
+        existing_translation: Optional[str] = None,
     ) -> Dict:
         """
         Enhance a word with lemmatization, translation, example sentence, and frequency.
 
         Returns dict with: lemma, is_fixed_expression, translation, secondary_translation,
-        example_sentence, example_sentence_translation, frequency_rank, frequency_level, tokens_used
+        example_sentence, example_sentence_translation, frequency_level, tokens_used
 
         If enhancement fails, returns dict with "enhancement_failed": True and "tokens_used".
         """
@@ -58,7 +80,8 @@ class OpenAIService:
 
         context_line = (
             f'CONTEXT: Existing translation "{existing_translation}" may help disambiguate meaning.\n\n'
-            if existing_translation else ""
+            if existing_translation
+            else ""
         )
 
         prompt = f"""You are a professional lexicographer normalizing vocabulary entries.
@@ -75,64 +98,58 @@ TRANSLATION RULES:
   Do not invent a secondary meaning for words with one dominant sense.
   For Russian verbs: secondary_translation holds the perfective aspect partner only (e.g. "написать"), not a meaning.
 
+FREQUENCY RULES:
+- Judge how common the word/expression is for a native speaker.
+- Return one of exactly these labels: "Essential", "Common", "Intermediate", "Advanced", "Rare".
+  - Essential: top ~500 most basic words (e.g. "the", "be", "have", "yes", "water")
+  - Common: everyday vocabulary roughly in the top 3,000
+  - Intermediate: solid conversational range, roughly top 10,000
+  - Advanced: literary, technical, or niche, roughly top 30,000
+  - Rare: uncommon or highly specialized
+
 EXAMPLE SENTENCE RULES:
 - Write one natural sentence in {language_from} that uses the full lemma exactly as written.
 - Do not use only part of a fixed expression.
 - Length: 8-18 words.
 - Translate the sentence into {language_to}.
-
-OUTPUT: JSON only, no markdown.
-{{
-  "lemma": "...",
-  "is_fixed_expression": true/false,
-  "translation": "...",
-  "secondary_translation": "...",
-  "example_sentence": "...",
-  "example_sentence_translation": "..."
-}}"""
-
-        response = self.client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=self.max_tokens,
-            temperature=self.temperature
-        )
-
-        content = response.choices[0].message.content.strip()
-
-        # Strip markdown code blocks if present
-        if content.startswith("```"):
-            lines = content.splitlines()
-            content = "\n".join(lines[1:-1])
+"""
 
         try:
-            result = json.loads(content)
-        except (json.JSONDecodeError, ValueError):
+            response = self.client.responses.parse(
+                model=self.text_model,
+                input=[
+                    {
+                        "role": "developer",
+                        "content": "Return only the requested structured result.",
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    },
+                ],
+                text_format=EnhanceWordResult,
+                max_output_tokens=self.max_tokens,
+                temperature=self.temperature,
+            )
+
+            result = response.output_parsed
+            tokens_used = self._get_total_tokens(response)
+
+            if not result or not result.lemma or result.lemma.lower() in {"none", "null", ""}:
+                return {
+                    "enhancement_failed": True,
+                    "tokens_used": tokens_used,
+                }
+
+            data = result.model_dump()
+            data["tokens_used"] = tokens_used
+            return data
+
+        except Exception:
             return {
                 "enhancement_failed": True,
-                "tokens_used": response.usage.total_tokens
+                "tokens_used": 0,
             }
-
-        # Validate that lemma was identified
-        lemma = result.get("lemma")
-        if not lemma or lemma.lower() in ["none", "null", ""]:
-            return {
-                "enhancement_failed": True,
-                "tokens_used": response.usage.total_tokens
-            }
-
-        # Add frequency info — skip strip_prefix_words for fixed expressions
-        if not result.get("is_fixed_expression"):
-            core_expression = strip_prefix_words(lemma, language_from)
-        else:
-            core_expression = lemma
-        freq_info = get_frequency_info(core_expression, language_from)
-
-        result["frequency_rank"] = freq_info["rank"]
-        result["frequency_level"] = freq_info["level"]
-        result["tokens_used"] = response.usage.total_tokens
-
-        return result
 
     def generate_text(
         self,
@@ -146,7 +163,7 @@ OUTPUT: JSON only, no markdown.
         """
         Generate a text that naturally incorporates vocabulary words.
 
-        Returns dict with: story, tokens_used
+        Returns dict with: title, story, tokens_used
         """
         words_str = ", ".join(words)
 
@@ -168,33 +185,32 @@ Requirements:
 - Incorporate all the words naturally — they should feel like a seamless part of the text
 - Make it engaging, coherent, and well-written
 - The text should flow naturally and read like authentic {language} writing{refinements_block}
+"""
 
-Output JSON only, no markdown formatting.
-{{
-  "title": "<short creative title for the text, in {language}>",
-  "story": "<the full text>"
-}}"""
-
-        response = self.client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=self.max_tokens,
-            temperature=self.temperature
+        response = self.client.responses.parse(
+            model=self.text_model,
+            input=[
+                {
+                    "role": "developer",
+                    "content": "Return only the requested structured result.",
+                },
+                {
+                    "role": "user",
+                    "content": prompt,
+                },
+            ],
+            text_format=GenerateTextResult,
+            max_output_tokens=self.max_tokens,
+            temperature=self.temperature,
         )
 
-        content = response.choices[0].message.content.strip()
-
-        # Clean markdown code blocks if present
-        if content.startswith("```"):
-            lines = content.splitlines()
-            content = "\n".join(lines[1:-1])
-
-        result = json.loads(content)
+        result = response.output_parsed
+        tokens_used = self._get_total_tokens(response)
 
         return {
-            "title": result.get("title", ""),
-            "story": result.get("story", content),
-            "tokens_used": response.usage.total_tokens
+            "title": result.title,
+            "story": result.story,
+            "tokens_used": tokens_used,
         }
 
     def generate_audio(self, text: str, voice: str = "alloy") -> bytes:
@@ -204,9 +220,9 @@ Output JSON only, no markdown formatting.
         Returns audio bytes (mp3 format).
         """
         response = self.client.audio.speech.create(
-            model="gpt-4o-mini-tts",
+            model=self.tts_model,
             voice=voice,
-            input=text
+            input=text,
         )
 
         return response.content

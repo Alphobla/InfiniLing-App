@@ -14,7 +14,7 @@ class OnboardingWord(BaseModel):
     """Schema for a single onboarding word."""
     word: str
     example_sentence: str
-    frequency_rank: int
+    frequency_level: str
 
 
 class OnboardingWordsResponse(BaseModel):
@@ -91,7 +91,7 @@ def bulk_add_onboarding_words(
             "translation": native["word"],
             "language_from": request.language_from,
             "language_to": request.language_to,
-            "frequency_rank": target["frequency_rank"],
+            "frequency_level": target["frequency_level"],
             "example_sentence_original": target["example_sentence"],
             "example_sentence_translation": native["example_sentence"],
         })

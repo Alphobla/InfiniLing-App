@@ -19,7 +19,6 @@ dependencies = [
     "requests>=2.31.0",
     "sqlalchemy>=2.0.0",
     "supabase>=2.27.2",
-    "wordfreq>=3.0.0",
     "feedparser>=6.0.0",
     "imageio-ffmpeg>=0.4.9",
 ]

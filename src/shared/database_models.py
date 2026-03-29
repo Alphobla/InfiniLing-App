@@ -7,7 +7,6 @@ designed to be compatible with the existing selector.py spaced repetition algori
 
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Float, ForeignKey, Text, Index
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
-from src.shared.frequency_analysis import get_word_frequency_category, get_word_frequency_rank
 from datetime import datetime, timezone
 from typing import Optional
 from contextlib import contextmanager
@@ -463,19 +462,6 @@ class DatabaseManager:
             word.primary_translation = analysis.get("primary_translation", "")
             word.secondary_translation = analysis.get("secondary_translation")
 
-            # Helper to strip articles and gender markers for lookups
-            def strip_to_core_word(word_form):
-                """Strip articles, gender markers, and extra formatting from word."""
-                import re
-                core = re.sub(r'\s*\([mf]\.\)$', '', word_form)
-                return core.strip()
-
-            # Add frequency data (use stripped word - wordfreq won't find "chien (m.)")
-            core_word = strip_to_core_word(root_word)
-            frequency = get_word_frequency_category(core_word, word.language_from)
-            word.frequency_level = frequency.get('level')
-            word.frequency_rank = frequency.get('rank')
-            
             return word
             
         except Exception as e:

@@ -1,202 +1,1002 @@
 [
-  {"word": "sì", "example_sentence": "Sì, vorrei un caffè.", "frequency_rank": 1},
-  {"word": "no", "example_sentence": "No, grazie, non ho fame.", "frequency_rank": 2},
-  {"word": "buono", "example_sentence": "Questo è un libro molto buono.", "frequency_rank": 3},
-  {"word": "acqua", "example_sentence": "Bevo un bicchiere d'acqua ogni mattina.", "frequency_rank": 4},
-  {"word": "giorno", "example_sentence": "Oggi è una bella giornata.", "frequency_rank": 5},
-  {"word": "tempo", "example_sentence": "A che ora parte il treno?", "frequency_rank": 6},
-  {"word": "gente", "example_sentence": "Molta gente vive in questa città.", "frequency_rank": 7},
-  {"word": "lavorare", "example_sentence": "Lavoro in un ufficio in centro.", "frequency_rank": 8},
-  {"word": "denaro", "example_sentence": "Ha risparmiato abbastanza denaro per comprare un'auto.", "frequency_rank": 9},
-  {"word": "casa", "example_sentence": "Hanno comprato una casa nuova l'anno scorso.", "frequency_rank": 10},
-  {"word": "grande", "example_sentence": "Quello è un cane molto grande.", "frequency_rank": 11},
-  {"word": "piccolo", "example_sentence": "Il piccolo gatto si è nascosto sotto il letto.", "frequency_rank": 12},
-  {"word": "mangiare", "example_sentence": "Ceniamo alle sette ogni sera.", "frequency_rank": 13},
-  {"word": "bere", "example_sentence": "Mi piace bere il tè nel pomeriggio.", "frequency_rank": 14},
-  {"word": "dormire", "example_sentence": "Di solito dormo otto ore.", "frequency_rank": 15},
-  {"word": "camminare", "example_sentence": "Andiamo a camminare insieme al parco.", "frequency_rank": 16},
-  {"word": "correre", "example_sentence": "Le piace correre al mattino.", "frequency_rank": 17},
-  {"word": "parlare", "example_sentence": "Lui sa parlare tre lingue.", "frequency_rank": 18},
-  {"word": "amico", "example_sentence": "Il mio migliore amico abita accanto.", "frequency_rank": 19},
-  {"word": "amore", "example_sentence": "Amo passare del tempo con la mia famiglia.", "frequency_rank": 20},
-  {"word": "felice", "example_sentence": "I bambini sono molto felici oggi.", "frequency_rank": 21},
-  {"word": "triste", "example_sentence": "Si è sentita triste quando il film è finito.", "frequency_rank": 22},
-  {"word": "aiutare", "example_sentence": "Puoi aiutarmi a portare queste borse?", "frequency_rank": 23},
-  {"word": "nome", "example_sentence": "Il mio nome è Maria.", "frequency_rank": 24},
-  {"word": "anno", "example_sentence": "Quest'anno è stato meraviglioso finora.", "frequency_rank": 25},
-  {"word": "bambino", "example_sentence": "Il bambino giocava felicemente in giardino.", "frequency_rank": 26},
-  {"word": "donna", "example_sentence": "La donna ha sorriso e ci ha salutato.", "frequency_rank": 27},
-  {"word": "uomo", "example_sentence": "L'uomo le ha aperto la porta.", "frequency_rank": 28},
-  {"word": "libro", "example_sentence": "Ho letto un libro interessante la settimana scorsa.", "frequency_rank": 29},
-  {"word": "macchina", "example_sentence": "Lui guida la macchina al lavoro ogni giorno.", "frequency_rank": 30},
-  {"word": "scuola", "example_sentence": "I bambini vanno a scuola insieme.", "frequency_rank": 31},
-  {"word": "cibo", "example_sentence": "Il cibo in questo ristorante è delizioso.", "frequency_rank": 32},
-  {"word": "mattina", "example_sentence": "Mi godo il caffè ogni mattina.", "frequency_rank": 33},
-  {"word": "notte", "example_sentence": "Le stelle brillano stasera.", "frequency_rank": 34},
-  {"word": "caldo", "example_sentence": "Il tempo è caldo e soleggiato oggi.", "frequency_rank": 35},
-  {"word": "freddo", "example_sentence": "Fa molto freddo fuori in inverno.", "frequency_rank": 36},
-  {"word": "veloce", "example_sentence": "Il treno è molto veloce.", "frequency_rank": 37},
-  {"word": "aprire", "example_sentence": "Per favore, apri la finestra.", "frequency_rank": 38},
-  {"word": "chiudere", "example_sentence": "Chiudi la porta, per favore.", "frequency_rank": 39},
-  {"word": "comprare", "example_sentence": "Voglio comprare un telefono nuovo.", "frequency_rank": 40},
-  {"word": "città", "example_sentence": "Parigi è una bella città.", "frequency_rank": 41},
-  {"word": "famiglia", "example_sentence": "La mia famiglia si riunisce ogni domenica per cena.", "frequency_rank": 42},
-  {"word": "musica", "example_sentence": "Ascolta musica mentre studia.", "frequency_rank": 43},
-  {"word": "risposta", "example_sentence": "Ha dato una risposta chiara alla domanda.", "frequency_rank": 44},
-  {"word": "colore", "example_sentence": "Il blu è il mio colore preferito.", "frequency_rank": 45},
-  {"word": "imparare", "example_sentence": "Voglio imparare una nuova lingua.", "frequency_rank": 46},
-  {"word": "insegnare", "example_sentence": "Lei insegna matematica all'università.", "frequency_rank": 47},
-  {"word": "scrivere", "example_sentence": "Gli piace scrivere racconti.", "frequency_rank": 48},
-  {"word": "leggere", "example_sentence": "Leggo il giornale ogni mattina.", "frequency_rank": 49},
-  {"word": "giocare", "example_sentence": "I bambini giocano a calcio dopo la scuola.", "frequency_rank": 50},
-  {"word": "iniziare", "example_sentence": "Il concerto inizierà alle otto.", "frequency_rank": 51},
-  {"word": "fine", "example_sentence": "Il film ha un finale sorprendente.", "frequency_rank": 52},
-  {"word": "paese", "example_sentence": "Il Giappone è un paese affascinante.", "frequency_rank": 53},
-  {"word": "mano", "example_sentence": "Teneva il fiore nella mano.", "frequency_rank": 54},
-  {"word": "testa", "example_sentence": "Ha annuito con la testa.", "frequency_rank": 55},
-  {"word": "occhio", "example_sentence": "Ha dei bellissimi occhi verdi.", "frequency_rank": 56},
-  {"word": "porta", "example_sentence": "Qualcuno sta bussando alla porta.", "frequency_rank": 57},
-  {"word": "stanza", "example_sentence": "La stanza è luminosa e spaziosa.", "frequency_rank": 58},
-  {"word": "animale", "example_sentence": "Il cane è un animale fedele.", "frequency_rank": 59},
-  {"word": "albero", "example_sentence": "Un albero alto cresce nel giardino.", "frequency_rank": 60},
-  {"word": "strada", "example_sentence": "La strada porta al villaggio.", "frequency_rank": 61},
-  {"word": "fiume", "example_sentence": "Il fiume scorre attraverso la valle.", "frequency_rank": 62},
-  {"word": "forte", "example_sentence": "È abbastanza forte da sollevare la scatola.", "frequency_rank": 63},
-  {"word": "giovane", "example_sentence": "È ancora molto giovane.", "frequency_rank": 64},
-  {"word": "vecchio", "example_sentence": "Questo è un vecchio edificio del diciottesimo secolo.", "frequency_rank": 65},
-  {"word": "bello", "example_sentence": "Il tramonto era incredibilmente bello.", "frequency_rank": 66},
-  {"word": "importante", "example_sentence": "L'istruzione è molto importante.", "frequency_rank": 67},
-  {"word": "diverso", "example_sentence": "Queste due camicie sono molto diverse.", "frequency_rank": 68},
-  {"word": "sempre", "example_sentence": "Lei arriva sempre in orario.", "frequency_rank": 69},
-  {"word": "mai", "example_sentence": "Non sono mai stato in Australia.", "frequency_rank": 70},
-  {"word": "spesso", "example_sentence": "Spesso andiamo a fare escursioni nel fine settimana.", "frequency_rank": 71},
-  {"word": "a volte", "example_sentence": "A volte mi piace cucinare a casa.", "frequency_rank": 72},
-  {"word": "giardino", "example_sentence": "Coltiva pomodori nel suo giardino.", "frequency_rank": 73},
-  {"word": "cucina", "example_sentence": "Sta cucinando la cena in cucina.", "frequency_rank": 74},
-  {"word": "tavolo", "example_sentence": "I piatti sono già sul tavolo.", "frequency_rank": 75},
-  {"word": "finestra", "example_sentence": "Apri la finestra per far entrare aria fresca.", "frequency_rank": 76},
-  {"word": "tempo atmosferico", "example_sentence": "Il tempo è perfetto per un picnic.", "frequency_rank": 77},
-  {"word": "estate", "example_sentence": "Andiamo a nuotare ogni estate.", "frequency_rank": 78},
-  {"word": "inverno", "example_sentence": "L'inverno è la mia stagione meno preferita.", "frequency_rank": 79},
-  {"word": "medico", "example_sentence": "Il medico mi ha detto di riposare.", "frequency_rank": 80},
-  {"word": "esperienza", "example_sentence": "Viaggiare ti dà un'esperienza preziosa.", "frequency_rank": 81},
-  {"word": "conoscenza", "example_sentence": "La conoscenza è la chiave del successo.", "frequency_rank": 82},
-  {"word": "situazione", "example_sentence": "Dobbiamo prima capire la situazione.", "frequency_rank": 83},
-  {"word": "possibile", "example_sentence": "È possibile cambiare il mio biglietto?", "frequency_rank": 84},
-  {"word": "difficile", "example_sentence": "Questo esame è stato davvero difficile.", "frequency_rank": 85},
-  {"word": "problema", "example_sentence": "Abbiamo trovato una soluzione al problema.", "frequency_rank": 86},
-  {"word": "idea", "example_sentence": "Quella è un'idea brillante.", "frequency_rank": 87},
-  {"word": "cambiamento", "example_sentence": "Le stagioni cambiano quattro volte all'anno.", "frequency_rank": 88},
-  {"word": "credere", "example_sentence": "Credo che possiamo finire in tempo.", "frequency_rank": 89},
-  {"word": "capire", "example_sentence": "Ora capisco le istruzioni.", "frequency_rank": 90},
-  {"word": "ricordare", "example_sentence": "Ricordo il mio primo giorno di scuola.", "frequency_rank": 91},
-  {"word": "dimenticare", "example_sentence": "Non dimenticare di chiudere la porta a chiave.", "frequency_rank": 92},
-  {"word": "decidere", "example_sentence": "Devi decidere entro domani.", "frequency_rank": 93},
-  {"word": "scegliere", "example_sentence": "È difficile scegliere tra i due.", "frequency_rank": 94},
-  {"word": "viaggiare", "example_sentence": "Adoro viaggiare in posti nuovi.", "frequency_rank": 95},
-  {"word": "villaggio", "example_sentence": "Il villaggio è circondato da montagne.", "frequency_rank": 96},
-  {"word": "montagna", "example_sentence": "Hanno scalato la montagna in sei ore.", "frequency_rank": 97},
-  {"word": "oceano", "example_sentence": "L'oceano sembra infinito dalla riva.", "frequency_rank": 98},
-  {"word": "isola", "example_sentence": "Abbiamo visitato una piccola isola l'estate scorsa.", "frequency_rank": 99},
-  {"word": "ponte", "example_sentence": "Il vecchio ponte attraversa il fiume.", "frequency_rank": 100},
-  {"word": "preparare", "example_sentence": "Deve prepararsi per la riunione.", "frequency_rank": 101},
-  {"word": "continuare", "example_sentence": "Per favore, continua a leggere il prossimo capitolo.", "frequency_rank": 102},
-  {"word": "sviluppare", "example_sentence": "Vogliamo sviluppare una nuova app.", "frequency_rank": 103},
-  {"word": "migliorare", "example_sentence": "La pratica migliorerà le tue abilità.", "frequency_rank": 104},
-  {"word": "raggiungere", "example_sentence": "Il duro lavoro ti aiuta a raggiungere i tuoi obiettivi.", "frequency_rank": 105},
-  {"word": "confrontare", "example_sentence": "Confrontiamo le due opzioni.", "frequency_rank": 106},
-  {"word": "fornire", "example_sentence": "L'hotel fornisce la colazione gratuita.", "frequency_rank": 107},
-  {"word": "richiedere", "example_sentence": "Questo lavoro richiede attenzione ai dettagli.", "frequency_rank": 108},
-  {"word": "aumentare", "example_sentence": "I prezzi aumentano ogni anno.", "frequency_rank": 109},
-  {"word": "ridurre", "example_sentence": "Dovremmo ridurre il nostro consumo energetico.", "frequency_rank": 110},
-  {"word": "suggerire", "example_sentence": "Suggerisco di partire presto.", "frequency_rank": 111},
-  {"word": "descrivere", "example_sentence": "Puoi descrivere cosa è successo?", "frequency_rank": 112},
-  {"word": "attenzione", "example_sentence": "Per favore, fai attenzione all'insegnante.", "frequency_rank": 113},
-  {"word": "scopo", "example_sentence": "Lo scopo di questa riunione è pianificare.", "frequency_rank": 114},
-  {"word": "opportunità", "example_sentence": "Questa è una grande opportunità di crescita.", "frequency_rank": 115},
-  {"word": "successo", "example_sentence": "Il suo successo ha ispirato molte persone.", "frequency_rank": 116},
-  {"word": "errore", "example_sentence": "Tutti commettono un errore qualche volta.", "frequency_rank": 117},
-  {"word": "semplice", "example_sentence": "La ricetta è veloce e semplice.", "frequency_rank": 118},
-  {"word": "moderno", "example_sentence": "La città ha uno skyline molto moderno.", "frequency_rank": 119},
-  {"word": "antico", "example_sentence": "Hanno esplorato le rovine antiche.", "frequency_rank": 120},
-  {"word": "conseguenza", "example_sentence": "Ogni azione ha una conseguenza.", "frequency_rank": 121},
-  {"word": "negoziare", "example_sentence": "Hanno dovuto negoziare un prezzo equo.", "frequency_rank": 122},
-  {"word": "influenza", "example_sentence": "La musica ha una forte influenza sulla cultura.", "frequency_rank": 123},
-  {"word": "tradizione", "example_sentence": "Questa tradizione dura da secoli.", "frequency_rank": 124},
-  {"word": "responsabilità", "example_sentence": "Assumersi la responsabilità delle proprie azioni è importante.", "frequency_rank": 125},
-  {"word": "ambiente", "example_sentence": "Dobbiamo proteggere l'ambiente.", "frequency_rank": 126},
-  {"word": "tecnologia", "example_sentence": "La tecnologia cambia il nostro modo di vivere.", "frequency_rank": 127},
-  {"word": "comunicare", "example_sentence": "Comunichiamo meglio faccia a faccia.", "frequency_rank": 128},
-  {"word": "stabilire", "example_sentence": "Progettano di stabilire una nuova filiale.", "frequency_rank": 129},
-  {"word": "apprezzare", "example_sentence": "Apprezzo davvero il tuo aiuto.", "frequency_rank": 130},
-  {"word": "riconoscere", "example_sentence": "Non l'ho riconosciuta all'inizio.", "frequency_rank": 131},
-  {"word": "contribuire", "example_sentence": "Ognuno dovrebbe contribuire al progetto.", "frequency_rank": 132},
-  {"word": "dibattito", "example_sentence": "Gli studenti hanno avuto un vivace dibattito.", "frequency_rank": 133},
-  {"word": "generazione", "example_sentence": "Ogni generazione porta nuove idee.", "frequency_rank": 134},
-  {"word": "indipendente", "example_sentence": "È diventata indipendente in giovane età.", "frequency_rank": 135},
-  {"word": "economia", "example_sentence": "L'economia sta crescendo costantemente.", "frequency_rank": 136},
-  {"word": "preciso", "example_sentence": "Il rapporto deve essere preciso.", "frequency_rank": 137},
-  {"word": "vantaggio", "example_sentence": "Parlare due lingue è un grande vantaggio.", "frequency_rank": 138},
-  {"word": "conflitto", "example_sentence": "Hanno risolto il conflitto pacificamente.", "frequency_rank": 139},
-  {"word": "permesso", "example_sentence": "Hai bisogno del permesso per entrare in quest'area.", "frequency_rank": 140},
-  {"word": "significativo", "example_sentence": "C'è stato un miglioramento significativo.", "frequency_rank": 141},
-  {"word": "implementare", "example_sentence": "Dobbiamo implementare la nuova politica.", "frequency_rank": 142},
-  {"word": "strategia", "example_sentence": "Una buona strategia è essenziale per il successo.", "frequency_rank": 143},
-  {"word": "indagare", "example_sentence": "La polizia indagherà sull'incidente.", "frequency_rank": 144},
-  {"word": "sicuro di sé", "example_sentence": "Si sentiva sicura di sé prima dell'esame.", "frequency_rank": 145},
-  {"word": "distinguere", "example_sentence": "È difficile distinguere i gemelli.", "frequency_rank": 146},
-  {"word": "valutare", "example_sentence": "L'insegnante valuterà il tuo saggio.", "frequency_rank": 147},
-  {"word": "garanzia", "example_sentence": "Il duro lavoro non garantisce il successo.", "frequency_rank": 148},
-  {"word": "immaginazione", "example_sentence": "I bambini hanno una meravigliosa immaginazione.", "frequency_rank": 149},
-  {"word": "simpatia", "example_sentence": "Ha espresso la sua simpatia per la sua perdita.", "frequency_rank": 150},
-  {"word": "burocrazia", "example_sentence": "La burocrazia ha rallentato il processo.", "frequency_rank": 151},
-  {"word": "dilemma", "example_sentence": "Ha affrontato un dilemma difficile.", "frequency_rank": 152},
-  {"word": "ostacolo", "example_sentence": "Ogni ostacolo è un'opportunità di crescita.", "frequency_rank": 153},
-  {"word": "rimandare", "example_sentence": "Abbiamo dovuto rimandare l'evento.", "frequency_rank": 154},
-  {"word": "reputazione", "example_sentence": "Ha una reputazione di onestà.", "frequency_rank": 155},
-  {"word": "sacrificio", "example_sentence": "Il successo spesso richiede sacrificio.", "frequency_rank": 156},
-  {"word": "ambizioso", "example_sentence": "Lei è una giovane avvocata ambiziosa.", "frequency_rank": 157},
-  {"word": "compromesso", "example_sentence": "Entrambe le parti hanno raggiunto un compromesso.", "frequency_rank": 158},
-  {"word": "disciplina", "example_sentence": "La disciplina è la chiave del progresso.", "frequency_rank": 159},
-  {"word": "entusiasmo", "example_sentence": "Il suo entusiasmo era contagioso.", "frequency_rank": 160},
-  {"word": "sfumatura", "example_sentence": "Questo argomento richiede attenzione alle sfumature.", "frequency_rank": 161},
-  {"word": "resilienza", "example_sentence": "La sua resilienza l'ha aiutata a superare le difficoltà.", "frequency_rank": 162},
-  {"word": "meticoloso", "example_sentence": "È meticoloso nel suo lavoro.", "frequency_rank": 163},
-  {"word": "effimero", "example_sentence": "La fama può essere effimera.", "frequency_rank": 164},
-  {"word": "eloquente", "example_sentence": "Ha tenuto un discorso eloquente.", "frequency_rank": 165},
-  {"word": "pragmatico", "example_sentence": "Abbiamo bisogno di una soluzione pragmatica.", "frequency_rank": 166},
-  {"word": "esame attento", "example_sentence": "Il piano è stato sottoposto a un esame attento.", "frequency_rank": 167},
-  {"word": "contemplare", "example_sentence": "Si è seduto tranquillamente a contemplare il suo futuro.", "frequency_rank": 168},
-  {"word": "perseveranza", "example_sentence": "La perseveranza porta a grandi risultati.", "frequency_rank": 169},
-  {"word": "versatile", "example_sentence": "È una musicista molto versatile.", "frequency_rank": 170},
-  {"word": "profondo", "example_sentence": "Il libro ha avuto un impatto profondo su di me.", "frequency_rank": 171},
-  {"word": "inevitabile", "example_sentence": "Il cambiamento è inevitabile nella vita.", "frequency_rank": 172},
-  {"word": "ambiguo", "example_sentence": "Le istruzioni erano ambigue.", "frequency_rank": 173},
-  {"word": "gratitudine", "example_sentence": "Provo una profonda gratitudine per la tua gentilezza.", "frequency_rank": 174},
-  {"word": "ipotesi", "example_sentence": "La scienziata ha testato la sua ipotesi.", "frequency_rank": 175},
-  {"word": "riluttante", "example_sentence": "Era riluttante ad accettare l'offerta.", "frequency_rank": 176},
-  {"word": "sostanziale", "example_sentence": "Hanno fatto una donazione sostanziale.", "frequency_rank": 177},
-  {"word": "deteriorare", "example_sentence": "Il tempo ha cominciato a deteriorarsi.", "frequency_rank": 178},
-  {"word": "elaborare", "example_sentence": "Potrebbe elaborare la sua idea?", "frequency_rank": 179},
-  {"word": "conciso", "example_sentence": "Mantieni il tuo rapporto conciso e chiaro.", "frequency_rank": 180},
-  {"word": "benevolo", "example_sentence": "Il donatore benevolo ha aiutato molte famiglie.", "frequency_rank": 181},
-  {"word": "tenace", "example_sentence": "È una negoziatrice tenace.", "frequency_rank": 182},
-  {"word": "obsoleto", "example_sentence": "Questa tecnologia è ormai obsoleta.", "frequency_rank": 183},
-  {"word": "compensare", "example_sentence": "L'azienda compenserà il ritardo.", "frequency_rank": 184},
-  {"word": "fenomeno", "example_sentence": "L'aurora boreale è un fenomeno naturale.", "frequency_rank": 185},
-  {"word": "paradosso", "example_sentence": "Quell'affermazione è un vero paradosso.", "frequency_rank": 186},
-  {"word": "senza precedenti", "example_sentence": "La scoperta è stata senza precedenti nella scienza.", "frequency_rank": 187},
-  {"word": "controversia", "example_sentence": "La decisione ha causato molta controversia.", "frequency_rank": 188},
-  {"word": "indigeno", "example_sentence": "Dovremmo rispettare le culture indigene.", "frequency_rank": 189},
-  {"word": "sofisticato", "example_sentence": "Il design è elegante e sofisticato.", "frequency_rank": 190},
-  {"word": "consolidare", "example_sentence": "Progettano di consolidare le loro risorse.", "frequency_rank": 191},
-  {"word": "minare", "example_sentence": "Le bugie possono minare la fiducia.", "frequency_rank": 192},
-  {"word": "squisito", "example_sentence": "I gioielli sono davvero squisiti.", "frequency_rank": 193},
-  {"word": "comprendere", "example_sentence": "Il corso comprenderà molti argomenti.", "frequency_rank": 194},
-  {"word": "illuminare", "example_sentence": "Le candele illuminano la stanza buia.", "frequency_rank": 195},
-  {"word": "fluttuare", "example_sentence": "I prezzi tendono a fluttuare durante l'anno.", "frequency_rank": 196},
-  {"word": "diligente", "example_sentence": "È una studentessa diligente e laboriosa.", "frequency_rank": 197},
-  {"word": "schietto", "example_sentence": "Ha dato un'opinione schietta sul progetto.", "frequency_rank": 198},
-  {"word": "alleviare", "example_sentence": "Questa medicina allevierà il dolore.", "frequency_rank": 199},
-  {"word": "per eccellenza", "example_sentence": "Questo piatto è il pasto italiano per eccellenza.", "frequency_rank": 200}
+  {
+    "word": "sì",
+    "example_sentence": "Sì, vorrei un caffè.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "no",
+    "example_sentence": "No, grazie, non ho fame.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "buono",
+    "example_sentence": "Questo è un libro molto buono.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "acqua",
+    "example_sentence": "Bevo un bicchiere d'acqua ogni mattina.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "giorno",
+    "example_sentence": "Oggi è una bella giornata.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "tempo",
+    "example_sentence": "A che ora parte il treno?",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "gente",
+    "example_sentence": "Molta gente vive in questa città.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "lavorare",
+    "example_sentence": "Lavoro in un ufficio in centro.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "denaro",
+    "example_sentence": "Ha risparmiato abbastanza denaro per comprare un'auto.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "casa",
+    "example_sentence": "Hanno comprato una casa nuova l'anno scorso.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "grande",
+    "example_sentence": "Quello è un cane molto grande.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "piccolo",
+    "example_sentence": "Il piccolo gatto si è nascosto sotto il letto.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "mangiare",
+    "example_sentence": "Ceniamo alle sette ogni sera.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "bere",
+    "example_sentence": "Mi piace bere il tè nel pomeriggio.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "dormire",
+    "example_sentence": "Di solito dormo otto ore.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "camminare",
+    "example_sentence": "Andiamo a camminare insieme al parco.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "correre",
+    "example_sentence": "Le piace correre al mattino.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "parlare",
+    "example_sentence": "Lui sa parlare tre lingue.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "amico",
+    "example_sentence": "Il mio migliore amico abita accanto.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "amore",
+    "example_sentence": "Amo passare del tempo con la mia famiglia.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "felice",
+    "example_sentence": "I bambini sono molto felici oggi.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "triste",
+    "example_sentence": "Si è sentita triste quando il film è finito.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "aiutare",
+    "example_sentence": "Puoi aiutarmi a portare queste borse?",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "nome",
+    "example_sentence": "Il mio nome è Maria.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "anno",
+    "example_sentence": "Quest'anno è stato meraviglioso finora.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "bambino",
+    "example_sentence": "Il bambino giocava felicemente in giardino.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "donna",
+    "example_sentence": "La donna ha sorriso e ci ha salutato.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "uomo",
+    "example_sentence": "L'uomo le ha aperto la porta.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "libro",
+    "example_sentence": "Ho letto un libro interessante la settimana scorsa.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "macchina",
+    "example_sentence": "Lui guida la macchina al lavoro ogni giorno.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "scuola",
+    "example_sentence": "I bambini vanno a scuola insieme.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "cibo",
+    "example_sentence": "Il cibo in questo ristorante è delizioso.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "mattina",
+    "example_sentence": "Mi godo il caffè ogni mattina.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "notte",
+    "example_sentence": "Le stelle brillano stasera.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "caldo",
+    "example_sentence": "Il tempo è caldo e soleggiato oggi.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "freddo",
+    "example_sentence": "Fa molto freddo fuori in inverno.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "veloce",
+    "example_sentence": "Il treno è molto veloce.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "aprire",
+    "example_sentence": "Per favore, apri la finestra.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "chiudere",
+    "example_sentence": "Chiudi la porta, per favore.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "comprare",
+    "example_sentence": "Voglio comprare un telefono nuovo.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "città",
+    "example_sentence": "Parigi è una bella città.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "famiglia",
+    "example_sentence": "La mia famiglia si riunisce ogni domenica per cena.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "musica",
+    "example_sentence": "Ascolta musica mentre studia.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "risposta",
+    "example_sentence": "Ha dato una risposta chiara alla domanda.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "colore",
+    "example_sentence": "Il blu è il mio colore preferito.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "imparare",
+    "example_sentence": "Voglio imparare una nuova lingua.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "insegnare",
+    "example_sentence": "Lei insegna matematica all'università.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "scrivere",
+    "example_sentence": "Gli piace scrivere racconti.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "leggere",
+    "example_sentence": "Leggo il giornale ogni mattina.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "giocare",
+    "example_sentence": "I bambini giocano a calcio dopo la scuola.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "iniziare",
+    "example_sentence": "Il concerto inizierà alle otto.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "fine",
+    "example_sentence": "Il film ha un finale sorprendente.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "paese",
+    "example_sentence": "Il Giappone è un paese affascinante.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "mano",
+    "example_sentence": "Teneva il fiore nella mano.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "testa",
+    "example_sentence": "Ha annuito con la testa.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "occhio",
+    "example_sentence": "Ha dei bellissimi occhi verdi.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "porta",
+    "example_sentence": "Qualcuno sta bussando alla porta.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "stanza",
+    "example_sentence": "La stanza è luminosa e spaziosa.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "animale",
+    "example_sentence": "Il cane è un animale fedele.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "albero",
+    "example_sentence": "Un albero alto cresce nel giardino.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "strada",
+    "example_sentence": "La strada porta al villaggio.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "fiume",
+    "example_sentence": "Il fiume scorre attraverso la valle.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "forte",
+    "example_sentence": "È abbastanza forte da sollevare la scatola.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "giovane",
+    "example_sentence": "È ancora molto giovane.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "vecchio",
+    "example_sentence": "Questo è un vecchio edificio del diciottesimo secolo.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "bello",
+    "example_sentence": "Il tramonto era incredibilmente bello.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "importante",
+    "example_sentence": "L'istruzione è molto importante.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "diverso",
+    "example_sentence": "Queste due camicie sono molto diverse.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sempre",
+    "example_sentence": "Lei arriva sempre in orario.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "mai",
+    "example_sentence": "Non sono mai stato in Australia.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "spesso",
+    "example_sentence": "Spesso andiamo a fare escursioni nel fine settimana.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "a volte",
+    "example_sentence": "A volte mi piace cucinare a casa.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "giardino",
+    "example_sentence": "Coltiva pomodori nel suo giardino.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "cucina",
+    "example_sentence": "Sta cucinando la cena in cucina.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "tavolo",
+    "example_sentence": "I piatti sono già sul tavolo.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "finestra",
+    "example_sentence": "Apri la finestra per far entrare aria fresca.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "tempo atmosferico",
+    "example_sentence": "Il tempo è perfetto per un picnic.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "estate",
+    "example_sentence": "Andiamo a nuotare ogni estate.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "inverno",
+    "example_sentence": "L'inverno è la mia stagione meno preferita.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "medico",
+    "example_sentence": "Il medico mi ha detto di riposare.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "esperienza",
+    "example_sentence": "Viaggiare ti dà un'esperienza preziosa.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "conoscenza",
+    "example_sentence": "La conoscenza è la chiave del successo.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "situazione",
+    "example_sentence": "Dobbiamo prima capire la situazione.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "possibile",
+    "example_sentence": "È possibile cambiare il mio biglietto?",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "difficile",
+    "example_sentence": "Questo esame è stato davvero difficile.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "problema",
+    "example_sentence": "Abbiamo trovato una soluzione al problema.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "idea",
+    "example_sentence": "Quella è un'idea brillante.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "cambiamento",
+    "example_sentence": "Le stagioni cambiano quattro volte all'anno.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "credere",
+    "example_sentence": "Credo che possiamo finire in tempo.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "capire",
+    "example_sentence": "Ora capisco le istruzioni.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ricordare",
+    "example_sentence": "Ricordo il mio primo giorno di scuola.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "dimenticare",
+    "example_sentence": "Non dimenticare di chiudere la porta a chiave.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "decidere",
+    "example_sentence": "Devi decidere entro domani.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "scegliere",
+    "example_sentence": "È difficile scegliere tra i due.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "viaggiare",
+    "example_sentence": "Adoro viaggiare in posti nuovi.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "villaggio",
+    "example_sentence": "Il villaggio è circondato da montagne.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "montagna",
+    "example_sentence": "Hanno scalato la montagna in sei ore.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "oceano",
+    "example_sentence": "L'oceano sembra infinito dalla riva.",
+    "frequency_level": "Rare"
+  },
+  {
+    "word": "isola",
+    "example_sentence": "Abbiamo visitato una piccola isola l'estate scorsa.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ponte",
+    "example_sentence": "Il vecchio ponte attraversa il fiume.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "preparare",
+    "example_sentence": "Deve prepararsi per la riunione.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "continuare",
+    "example_sentence": "Per favore, continua a leggere il prossimo capitolo.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sviluppare",
+    "example_sentence": "Vogliamo sviluppare una nuova app.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "migliorare",
+    "example_sentence": "La pratica migliorerà le tue abilità.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "raggiungere",
+    "example_sentence": "Il duro lavoro ti aiuta a raggiungere i tuoi obiettivi.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "confrontare",
+    "example_sentence": "Confrontiamo le due opzioni.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "fornire",
+    "example_sentence": "L'hotel fornisce la colazione gratuita.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "richiedere",
+    "example_sentence": "Questo lavoro richiede attenzione ai dettagli.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "aumentare",
+    "example_sentence": "I prezzi aumentano ogni anno.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "ridurre",
+    "example_sentence": "Dovremmo ridurre il nostro consumo energetico.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "suggerire",
+    "example_sentence": "Suggerisco di partire presto.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "descrivere",
+    "example_sentence": "Puoi descrivere cosa è successo?",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "attenzione",
+    "example_sentence": "Per favore, fai attenzione all'insegnante.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "scopo",
+    "example_sentence": "Lo scopo di questa riunione è pianificare.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "opportunità",
+    "example_sentence": "Questa è una grande opportunità di crescita.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "successo",
+    "example_sentence": "Il suo successo ha ispirato molte persone.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "errore",
+    "example_sentence": "Tutti commettono un errore qualche volta.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "semplice",
+    "example_sentence": "La ricetta è veloce e semplice.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "moderno",
+    "example_sentence": "La città ha uno skyline molto moderno.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "antico",
+    "example_sentence": "Hanno esplorato le rovine antiche.",
+    "frequency_level": "Rare"
+  },
+  {
+    "word": "conseguenza",
+    "example_sentence": "Ogni azione ha una conseguenza.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "negoziare",
+    "example_sentence": "Hanno dovuto negoziare un prezzo equo.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "influenza",
+    "example_sentence": "La musica ha una forte influenza sulla cultura.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "tradizione",
+    "example_sentence": "Questa tradizione dura da secoli.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "responsabilità",
+    "example_sentence": "Assumersi la responsabilità delle proprie azioni è importante.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ambiente",
+    "example_sentence": "Dobbiamo proteggere l'ambiente.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "tecnologia",
+    "example_sentence": "La tecnologia cambia il nostro modo di vivere.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "comunicare",
+    "example_sentence": "Comunichiamo meglio faccia a faccia.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "stabilire",
+    "example_sentence": "Progettano di stabilire una nuova filiale.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "apprezzare",
+    "example_sentence": "Apprezzo davvero il tuo aiuto.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "riconoscere",
+    "example_sentence": "Non l'ho riconosciuta all'inizio.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "contribuire",
+    "example_sentence": "Ognuno dovrebbe contribuire al progetto.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "dibattito",
+    "example_sentence": "Gli studenti hanno avuto un vivace dibattito.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "generazione",
+    "example_sentence": "Ogni generazione porta nuove idee.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "indipendente",
+    "example_sentence": "È diventata indipendente in giovane età.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "economia",
+    "example_sentence": "L'economia sta crescendo costantemente.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "preciso",
+    "example_sentence": "Il rapporto deve essere preciso.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "vantaggio",
+    "example_sentence": "Parlare due lingue è un grande vantaggio.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "conflitto",
+    "example_sentence": "Hanno risolto il conflitto pacificamente.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "permesso",
+    "example_sentence": "Hai bisogno del permesso per entrare in quest'area.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "significativo",
+    "example_sentence": "C'è stato un miglioramento significativo.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "implementare",
+    "example_sentence": "Dobbiamo implementare la nuova politica.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "strategia",
+    "example_sentence": "Una buona strategia è essenziale per il successo.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "indagare",
+    "example_sentence": "La polizia indagherà sull'incidente.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "sicuro di sé",
+    "example_sentence": "Si sentiva sicura di sé prima dell'esame.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "distinguere",
+    "example_sentence": "È difficile distinguere i gemelli.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "valutare",
+    "example_sentence": "L'insegnante valuterà il tuo saggio.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "garanzia",
+    "example_sentence": "Il duro lavoro non garantisce il successo.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "immaginazione",
+    "example_sentence": "I bambini hanno una meravigliosa immaginazione.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "simpatia",
+    "example_sentence": "Ha espresso la sua simpatia per la sua perdita.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "burocrazia",
+    "example_sentence": "La burocrazia ha rallentato il processo.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "dilemma",
+    "example_sentence": "Ha affrontato un dilemma difficile.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "ostacolo",
+    "example_sentence": "Ogni ostacolo è un'opportunità di crescita.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "rimandare",
+    "example_sentence": "Abbiamo dovuto rimandare l'evento.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "reputazione",
+    "example_sentence": "Ha una reputazione di onestà.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "sacrificio",
+    "example_sentence": "Il successo spesso richiede sacrificio.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "ambizioso",
+    "example_sentence": "Lei è una giovane avvocata ambiziosa.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "compromesso",
+    "example_sentence": "Entrambe le parti hanno raggiunto un compromesso.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "disciplina",
+    "example_sentence": "La disciplina è la chiave del progresso.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "entusiasmo",
+    "example_sentence": "Il suo entusiasmo era contagioso.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sfumatura",
+    "example_sentence": "Questo argomento richiede attenzione alle sfumature.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "resilienza",
+    "example_sentence": "La sua resilienza l'ha aiutata a superare le difficoltà.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "meticoloso",
+    "example_sentence": "È meticoloso nel suo lavoro.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "effimero",
+    "example_sentence": "La fama può essere effimera.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "eloquente",
+    "example_sentence": "Ha tenuto un discorso eloquente.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "pragmatico",
+    "example_sentence": "Abbiamo bisogno di una soluzione pragmatica.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "esame attento",
+    "example_sentence": "Il piano è stato sottoposto a un esame attento.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "contemplare",
+    "example_sentence": "Si è seduto tranquillamente a contemplare il suo futuro.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "perseveranza",
+    "example_sentence": "La perseveranza porta a grandi risultati.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "versatile",
+    "example_sentence": "È una musicista molto versatile.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "profondo",
+    "example_sentence": "Il libro ha avuto un impatto profondo su di me.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "inevitabile",
+    "example_sentence": "Il cambiamento è inevitabile nella vita.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ambiguo",
+    "example_sentence": "Le istruzioni erano ambigue.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "gratitudine",
+    "example_sentence": "Provo una profonda gratitudine per la tua gentilezza.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ipotesi",
+    "example_sentence": "La scienziata ha testato la sua ipotesi.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "riluttante",
+    "example_sentence": "Era riluttante ad accettare l'offerta.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "sostanziale",
+    "example_sentence": "Hanno fatto una donazione sostanziale.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "deteriorare",
+    "example_sentence": "Il tempo ha cominciato a deteriorarsi.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "elaborare",
+    "example_sentence": "Potrebbe elaborare la sua idea?",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "conciso",
+    "example_sentence": "Mantieni il tuo rapporto conciso e chiaro.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "benevolo",
+    "example_sentence": "Il donatore benevolo ha aiutato molte famiglie.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "tenace",
+    "example_sentence": "È una negoziatrice tenace.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "obsoleto",
+    "example_sentence": "Questa tecnologia è ormai obsoleta.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "compensare",
+    "example_sentence": "L'azienda compenserà il ritardo.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "fenomeno",
+    "example_sentence": "L'aurora boreale è un fenomeno naturale.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "paradosso",
+    "example_sentence": "Quell'affermazione è un vero paradosso.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "senza precedenti",
+    "example_sentence": "La scoperta è stata senza precedenti nella scienza.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "controversia",
+    "example_sentence": "La decisione ha causato molta controversia.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "indigeno",
+    "example_sentence": "Dovremmo rispettare le culture indigene.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "sofisticato",
+    "example_sentence": "Il design è elegante e sofisticato.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "consolidare",
+    "example_sentence": "Progettano di consolidare le loro risorse.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "minare",
+    "example_sentence": "Le bugie possono minare la fiducia.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "squisito",
+    "example_sentence": "I gioielli sono davvero squisiti.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "comprendere",
+    "example_sentence": "Il corso comprenderà molti argomenti.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "illuminare",
+    "example_sentence": "Le candele illuminano la stanza buia.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "fluttuare",
+    "example_sentence": "I prezzi tendono a fluttuare durante l'anno.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "diligente",
+    "example_sentence": "È una studentessa diligente e laboriosa.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "schietto",
+    "example_sentence": "Ha dato un'opinione schietta sul progetto.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "alleviare",
+    "example_sentence": "Questa medicina allevierà il dolore.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "per eccellenza",
+    "example_sentence": "Questo piatto è il pasto italiano per eccellenza.",
+    "frequency_level": "Advanced"
+  }
 ]

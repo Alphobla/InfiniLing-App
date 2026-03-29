@@ -1,202 +1,1002 @@
 [
-  {"word": "نعم", "example_sentence": "نعم، أودّ أن أشرب قهوة.", "frequency_rank": 1},
-  {"word": "لا", "example_sentence": "لا، شكراً، لست جائعاً.", "frequency_rank": 2},
-  {"word": "جيّد", "example_sentence": "هذا كتاب جيّد جداً.", "frequency_rank": 3},
-  {"word": "ماء", "example_sentence": "أشرب كوباً من الماء كل صباح.", "frequency_rank": 4},
-  {"word": "يوم", "example_sentence": "اليوم يوم جميل.", "frequency_rank": 5},
-  {"word": "وقت", "example_sentence": "في أي وقت يغادر القطار؟", "frequency_rank": 6},
-  {"word": "ناس", "example_sentence": "كثير من الناس يعيشون في هذه المدينة.", "frequency_rank": 7},
-  {"word": "يعمل", "example_sentence": "أعمل في مكتب في وسط المدينة.", "frequency_rank": 8},
-  {"word": "مال", "example_sentence": "ادّخرت ما يكفي من المال لشراء سيارة.", "frequency_rank": 9},
-  {"word": "بيت", "example_sentence": "اشتروا بيتاً جديداً العام الماضي.", "frequency_rank": 10},
-  {"word": "كبير", "example_sentence": "ذلك كلب كبير جداً.", "frequency_rank": 11},
-  {"word": "صغير", "example_sentence": "اختبأ القطّ الصغير تحت السرير.", "frequency_rank": 12},
-  {"word": "يأكل", "example_sentence": "نتناول العشاء في السابعة كل مساء.", "frequency_rank": 13},
-  {"word": "يشرب", "example_sentence": "أحبّ أن أشرب الشاي بعد الظهر.", "frequency_rank": 14},
-  {"word": "ينام", "example_sentence": "عادةً أنام ثماني ساعات.", "frequency_rank": 15},
-  {"word": "يمشي", "example_sentence": "لنمشِ معاً إلى الحديقة.", "frequency_rank": 16},
-  {"word": "يركض", "example_sentence": "تحبّ أن تركض في الصباح.", "frequency_rank": 17},
-  {"word": "يتكلّم", "example_sentence": "يستطيع أن يتكلّم ثلاث لغات.", "frequency_rank": 18},
-  {"word": "صديق", "example_sentence": "أفضل صديق لي يسكن بجواري.", "frequency_rank": 19},
-  {"word": "حبّ", "example_sentence": "أحبّ قضاء الوقت مع عائلتي.", "frequency_rank": 20},
-  {"word": "سعيد", "example_sentence": "الأطفال سعداء جداً اليوم.", "frequency_rank": 21},
-  {"word": "حزين", "example_sentence": "شعرت بالحزن عندما انتهى الفيلم.", "frequency_rank": 22},
-  {"word": "يساعد", "example_sentence": "هل يمكنك مساعدتي في حمل هذه الحقائب؟", "frequency_rank": 23},
-  {"word": "اسم", "example_sentence": "اسمي ماريا.", "frequency_rank": 24},
-  {"word": "سنة", "example_sentence": "كانت هذه السنة رائعة حتى الآن.", "frequency_rank": 25},
-  {"word": "طفل", "example_sentence": "لعب الطفل بسعادة في الحديقة.", "frequency_rank": 26},
-  {"word": "امرأة", "example_sentence": "ابتسمت المرأة ولوّحت لنا.", "frequency_rank": 27},
-  {"word": "رجل", "example_sentence": "فتح الرجل الباب لها.", "frequency_rank": 28},
-  {"word": "كتاب", "example_sentence": "قرأت كتاباً مثيراً الأسبوع الماضي.", "frequency_rank": 29},
-  {"word": "سيارة", "example_sentence": "يقود سيارته إلى العمل كل يوم.", "frequency_rank": 30},
-  {"word": "مدرسة", "example_sentence": "يمشي الأطفال إلى المدرسة معاً.", "frequency_rank": 31},
-  {"word": "طعام", "example_sentence": "الطعام في هذا المطعم لذيذ.", "frequency_rank": 32},
-  {"word": "صباح", "example_sentence": "أستمتع بالقهوة كل صباح.", "frequency_rank": 33},
-  {"word": "ليل", "example_sentence": "النجوم ساطعة الليلة.", "frequency_rank": 34},
-  {"word": "دافئ", "example_sentence": "الطقس دافئ ومشمس اليوم.", "frequency_rank": 35},
-  {"word": "بارد", "example_sentence": "الجو بارد جداً في الخارج في الشتاء.", "frequency_rank": 36},
-  {"word": "سريع", "example_sentence": "القطار سريع جداً.", "frequency_rank": 37},
-  {"word": "يفتح", "example_sentence": "من فضلك افتح النافذة.", "frequency_rank": 38},
-  {"word": "يُغلق", "example_sentence": "أغلق الباب من فضلك.", "frequency_rank": 39},
-  {"word": "يشتري", "example_sentence": "أريد أن أشتري هاتفاً جديداً.", "frequency_rank": 40},
-  {"word": "مدينة", "example_sentence": "باريس مدينة جميلة.", "frequency_rank": 41},
-  {"word": "عائلة", "example_sentence": "تجتمع عائلتي كل يوم أحد على العشاء.", "frequency_rank": 42},
-  {"word": "موسيقى", "example_sentence": "تستمع إلى الموسيقى أثناء الدراسة.", "frequency_rank": 43},
-  {"word": "إجابة", "example_sentence": "أعطى إجابة واضحة على السؤال.", "frequency_rank": 44},
-  {"word": "لون", "example_sentence": "الأزرق هو لوني المفضّل.", "frequency_rank": 45},
-  {"word": "يتعلّم", "example_sentence": "أريد أن أتعلّم لغة جديدة.", "frequency_rank": 46},
-  {"word": "يُعلّم", "example_sentence": "تُعلّم الرياضيات في الجامعة.", "frequency_rank": 47},
-  {"word": "يكتب", "example_sentence": "يحبّ أن يكتب قصصاً قصيرة.", "frequency_rank": 48},
-  {"word": "يقرأ", "example_sentence": "أقرأ الجريدة كل صباح.", "frequency_rank": 49},
-  {"word": "يلعب", "example_sentence": "يلعب الأطفال كرة القدم بعد المدرسة.", "frequency_rank": 50},
-  {"word": "يبدأ", "example_sentence": "سيبدأ الحفل في الثامنة.", "frequency_rank": 51},
-  {"word": "نهاية", "example_sentence": "للفيلم نهاية مفاجئة.", "frequency_rank": 52},
-  {"word": "بلد", "example_sentence": "اليابان بلد رائع.", "frequency_rank": 53},
-  {"word": "يد", "example_sentence": "أمسكت الزهرة في يدها.", "frequency_rank": 54},
-  {"word": "رأس", "example_sentence": "أومأ برأسه موافقاً.", "frequency_rank": 55},
-  {"word": "عين", "example_sentence": "لديها عيون خضراء جميلة.", "frequency_rank": 56},
-  {"word": "باب", "example_sentence": "أحدهم يطرق الباب.", "frequency_rank": 57},
-  {"word": "غرفة", "example_sentence": "الغرفة مشرقة وواسعة.", "frequency_rank": 58},
-  {"word": "حيوان", "example_sentence": "الكلب حيوان وفيّ.", "frequency_rank": 59},
-  {"word": "شجرة", "example_sentence": "تنمو شجرة طويلة في الحديقة.", "frequency_rank": 60},
-  {"word": "طريق", "example_sentence": "يؤدّي الطريق إلى القرية.", "frequency_rank": 61},
-  {"word": "نهر", "example_sentence": "يجري النهر عبر الوادي.", "frequency_rank": 62},
-  {"word": "قويّ", "example_sentence": "هو قويّ بما يكفي لرفع الصندوق.", "frequency_rank": 63},
-  {"word": "شابّ", "example_sentence": "ما زالت شابّة جداً.", "frequency_rank": 64},
-  {"word": "قديم", "example_sentence": "هذا مبنى قديم من القرن الثامن عشر.", "frequency_rank": 65},
-  {"word": "جميل", "example_sentence": "كان الغروب جميلاً للغاية.", "frequency_rank": 66},
-  {"word": "مهمّ", "example_sentence": "التعليم مهمّ جداً.", "frequency_rank": 67},
-  {"word": "مختلف", "example_sentence": "هذان القميصان مختلفان جداً.", "frequency_rank": 68},
-  {"word": "دائماً", "example_sentence": "تصل دائماً في الوقت المحدّد.", "frequency_rank": 69},
-  {"word": "أبداً", "example_sentence": "لم أذهب إلى أستراليا أبداً.", "frequency_rank": 70},
-  {"word": "غالباً", "example_sentence": "غالباً ما نذهب للتنزّه في عطلة نهاية الأسبوع.", "frequency_rank": 71},
-  {"word": "أحياناً", "example_sentence": "أحياناً أحبّ أن أطبخ في البيت.", "frequency_rank": 72},
-  {"word": "حديقة", "example_sentence": "تزرع الطماطم في حديقتها.", "frequency_rank": 73},
-  {"word": "مطبخ", "example_sentence": "يطبخ العشاء في المطبخ.", "frequency_rank": 74},
-  {"word": "طاولة", "example_sentence": "الأطباق موجودة بالفعل على الطاولة.", "frequency_rank": 75},
-  {"word": "نافذة", "example_sentence": "افتح النافذة ليدخل الهواء النقيّ.", "frequency_rank": 76},
-  {"word": "طقس", "example_sentence": "الطقس مثالي لنزهة.", "frequency_rank": 77},
-  {"word": "صيف", "example_sentence": "نذهب للسباحة كل صيف.", "frequency_rank": 78},
-  {"word": "شتاء", "example_sentence": "الشتاء هو فصلي الأقلّ تفضيلاً.", "frequency_rank": 79},
-  {"word": "طبيب", "example_sentence": "أخبرني الطبيب أن أستريح.", "frequency_rank": 80},
-  {"word": "خبرة", "example_sentence": "السفر يمنحك خبرة قيّمة.", "frequency_rank": 81},
-  {"word": "معرفة", "example_sentence": "المعرفة هي مفتاح النجاح.", "frequency_rank": 82},
-  {"word": "وضع", "example_sentence": "علينا أن نفهم الوضع أوّلاً.", "frequency_rank": 83},
-  {"word": "ممكن", "example_sentence": "هل من الممكن تغيير تذكرتي؟", "frequency_rank": 84},
-  {"word": "صعب", "example_sentence": "كان هذا الامتحان صعباً حقاً.", "frequency_rank": 85},
-  {"word": "مشكلة", "example_sentence": "وجدنا حلاً للمشكلة.", "frequency_rank": 86},
-  {"word": "فكرة", "example_sentence": "تلك فكرة رائعة.", "frequency_rank": 87},
-  {"word": "تغيير", "example_sentence": "تتغيّر الفصول أربع مرّات في السنة.", "frequency_rank": 88},
-  {"word": "يؤمن", "example_sentence": "أؤمن بأنّنا نستطيع الانتهاء في الوقت.", "frequency_rank": 89},
-  {"word": "يفهم", "example_sentence": "الآن أفهم التعليمات.", "frequency_rank": 90},
-  {"word": "يتذكّر", "example_sentence": "أتذكّر يومي الأوّل في المدرسة.", "frequency_rank": 91},
-  {"word": "ينسى", "example_sentence": "لا تنسَ أن تقفل الباب.", "frequency_rank": 92},
-  {"word": "يقرّر", "example_sentence": "عليك أن تقرّر قبل الغد.", "frequency_rank": 93},
-  {"word": "يختار", "example_sentence": "من الصعب أن تختار بين الاثنين.", "frequency_rank": 94},
-  {"word": "يسافر", "example_sentence": "أحبّ أن أسافر إلى أماكن جديدة.", "frequency_rank": 95},
-  {"word": "قرية", "example_sentence": "القرية محاطة بالجبال.", "frequency_rank": 96},
-  {"word": "جبل", "example_sentence": "تسلّقوا الجبل في ستّ ساعات.", "frequency_rank": 97},
-  {"word": "محيط", "example_sentence": "يبدو المحيط لا نهائياً من الشاطئ.", "frequency_rank": 98},
-  {"word": "جزيرة", "example_sentence": "زرنا جزيرة صغيرة الصيف الماضي.", "frequency_rank": 99},
-  {"word": "جسر", "example_sentence": "يعبر الجسر القديم النهر.", "frequency_rank": 100},
-  {"word": "يستعدّ", "example_sentence": "عليها أن تستعدّ للاجتماع.", "frequency_rank": 101},
-  {"word": "يستمرّ", "example_sentence": "من فضلك استمرّ في قراءة الفصل التالي.", "frequency_rank": 102},
-  {"word": "يطوّر", "example_sentence": "نريد أن نطوّر تطبيقاً جديداً.", "frequency_rank": 103},
-  {"word": "يحسّن", "example_sentence": "التمرين سيحسّن مهاراتك.", "frequency_rank": 104},
-  {"word": "يحقّق", "example_sentence": "العمل الجادّ يساعدك على تحقيق أهدافك.", "frequency_rank": 105},
-  {"word": "يقارن", "example_sentence": "لنقارن بين الخيارين.", "frequency_rank": 106},
-  {"word": "يوفّر", "example_sentence": "يوفّر الفندق إفطاراً مجانياً.", "frequency_rank": 107},
-  {"word": "يتطلّب", "example_sentence": "هذا العمل يتطلّب الاهتمام بالتفاصيل.", "frequency_rank": 108},
-  {"word": "يزداد", "example_sentence": "تزداد الأسعار كل سنة.", "frequency_rank": 109},
-  {"word": "يقلّل", "example_sentence": "يجب أن نقلّل استهلاكنا للطاقة.", "frequency_rank": 110},
-  {"word": "يقترح", "example_sentence": "أقترح أن نغادر باكراً.", "frequency_rank": 111},
-  {"word": "يصف", "example_sentence": "هل يمكنك أن تصف ما حدث؟", "frequency_rank": 112},
-  {"word": "انتباه", "example_sentence": "من فضلك انتبه للمعلّم.", "frequency_rank": 113},
-  {"word": "هدف", "example_sentence": "هدف هذا الاجتماع هو التخطيط.", "frequency_rank": 114},
-  {"word": "فرصة", "example_sentence": "هذه فرصة رائعة للنموّ.", "frequency_rank": 115},
-  {"word": "نجاح", "example_sentence": "نجاحها ألهم الكثير من الناس.", "frequency_rank": 116},
-  {"word": "خطأ", "example_sentence": "الجميع يرتكب خطأ أحياناً.", "frequency_rank": 117},
-  {"word": "بسيط", "example_sentence": "الوصفة سريعة وبسيطة.", "frequency_rank": 118},
-  {"word": "حديث", "example_sentence": "المدينة لديها أفق حديث جداً.", "frequency_rank": 119},
-  {"word": "قديم الأثر", "example_sentence": "استكشفوا الآثار القديمة.", "frequency_rank": 120},
-  {"word": "عاقبة", "example_sentence": "لكل فعل عاقبة.", "frequency_rank": 121},
-  {"word": "يتفاوض", "example_sentence": "كان عليهم أن يتفاوضوا على سعر عادل.", "frequency_rank": 122},
-  {"word": "تأثير", "example_sentence": "للموسيقى تأثير قويّ على الثقافة.", "frequency_rank": 123},
-  {"word": "تقليد", "example_sentence": "هذا التقليد موجود منذ قرون.", "frequency_rank": 124},
-  {"word": "مسؤولية", "example_sentence": "تحمّل المسؤولية عن أفعالك أمر مهمّ.", "frequency_rank": 125},
-  {"word": "بيئة", "example_sentence": "يجب أن نحمي البيئة.", "frequency_rank": 126},
-  {"word": "تكنولوجيا", "example_sentence": "التكنولوجيا تغيّر طريقة حياتنا.", "frequency_rank": 127},
-  {"word": "يتواصل", "example_sentence": "نتواصل بشكل أفضل وجهاً لوجه.", "frequency_rank": 128},
-  {"word": "يؤسّس", "example_sentence": "يخطّطون لتأسيس فرع جديد.", "frequency_rank": 129},
-  {"word": "يقدّر", "example_sentence": "أقدّر مساعدتك كثيراً.", "frequency_rank": 130},
-  {"word": "يتعرّف على", "example_sentence": "لم أتعرّف عليها في البداية.", "frequency_rank": 131},
-  {"word": "يساهم", "example_sentence": "يجب أن يساهم الجميع في المشروع.", "frequency_rank": 132},
-  {"word": "نقاش", "example_sentence": "أجرى الطلاب نقاشاً حيوياً.", "frequency_rank": 133},
-  {"word": "جيل", "example_sentence": "كل جيل يجلب أفكاراً جديدة.", "frequency_rank": 134},
-  {"word": "مستقلّ", "example_sentence": "أصبحت مستقلّة في سنّ مبكرة.", "frequency_rank": 135},
-  {"word": "اقتصاد", "example_sentence": "الاقتصاد ينمو بثبات.", "frequency_rank": 136},
-  {"word": "دقيق", "example_sentence": "يجب أن يكون التقرير دقيقاً.", "frequency_rank": 137},
-  {"word": "ميزة", "example_sentence": "التحدّث بلغتين ميزة كبيرة.", "frequency_rank": 138},
-  {"word": "نزاع", "example_sentence": "حلّوا النزاع بطريقة سلمية.", "frequency_rank": 139},
-  {"word": "إذن", "example_sentence": "تحتاج إلى إذن لدخول هذه المنطقة.", "frequency_rank": 140},
-  {"word": "كبير الأهمية", "example_sentence": "كان هناك تحسّن كبير.", "frequency_rank": 141},
-  {"word": "ينفّذ", "example_sentence": "علينا أن ننفّذ السياسة الجديدة.", "frequency_rank": 142},
-  {"word": "استراتيجية", "example_sentence": "الاستراتيجية الجيّدة ضرورية للنجاح.", "frequency_rank": 143},
-  {"word": "يحقّق في", "example_sentence": "ستحقّق الشرطة في الحادثة.", "frequency_rank": 144},
-  {"word": "واثق", "example_sentence": "شعرت بالثقة قبل الامتحان.", "frequency_rank": 145},
-  {"word": "يميّز", "example_sentence": "من الصعب أن تميّز بين التوأمين.", "frequency_rank": 146},
-  {"word": "يقيّم", "example_sentence": "سيقيّم المعلّم مقالتك.", "frequency_rank": 147},
-  {"word": "ضمان", "example_sentence": "العمل الشاقّ لا يضمن النجاح.", "frequency_rank": 148},
-  {"word": "خيال", "example_sentence": "لدى الأطفال خيال رائع.", "frequency_rank": 149},
-  {"word": "تعاطف", "example_sentence": "عبّر عن تعاطفه لخسارتها.", "frequency_rank": 150},
-  {"word": "بيروقراطية", "example_sentence": "أبطأت البيروقراطية العملية.", "frequency_rank": 151},
-  {"word": "معضلة", "example_sentence": "واجهت معضلة صعبة.", "frequency_rank": 152},
-  {"word": "عقبة", "example_sentence": "كل عقبة هي فرصة للنموّ.", "frequency_rank": 153},
-  {"word": "يؤجّل", "example_sentence": "اضطررنا إلى تأجيل الحدث.", "frequency_rank": 154},
-  {"word": "سمعة", "example_sentence": "لديه سمعة بالصدق.", "frequency_rank": 155},
-  {"word": "تضحية", "example_sentence": "النجاح غالباً يتطلّب تضحية.", "frequency_rank": 156},
-  {"word": "طموح", "example_sentence": "هي محامية شابّة وطموحة.", "frequency_rank": 157},
-  {"word": "حلّ وسط", "example_sentence": "توصّل الطرفان إلى حلّ وسط.", "frequency_rank": 158},
-  {"word": "انضباط", "example_sentence": "الانضباط هو مفتاح التقدّم.", "frequency_rank": 159},
-  {"word": "حماس", "example_sentence": "كان حماسها معدياً.", "frequency_rank": 160},
-  {"word": "فارق دقيق", "example_sentence": "يتطلّب هذا الموضوع الانتباه إلى الفوارق الدقيقة.", "frequency_rank": 161},
-  {"word": "صمود", "example_sentence": "ساعدها صمودها على تجاوز الصعوبات.", "frequency_rank": 162},
-  {"word": "دقيق في عمله", "example_sentence": "هو دقيق جداً في عمله.", "frequency_rank": 163},
-  {"word": "زائل", "example_sentence": "الشهرة قد تكون زائلة.", "frequency_rank": 164},
-  {"word": "بليغ", "example_sentence": "ألقت خطاباً بليغاً.", "frequency_rank": 165},
-  {"word": "عملي", "example_sentence": "نحتاج إلى حلّ عملي.", "frequency_rank": 166},
-  {"word": "تدقيق", "example_sentence": "خضعت الخطّة لتدقيق مكثّف.", "frequency_rank": 167},
-  {"word": "يتأمّل", "example_sentence": "جلس بهدوء يتأمّل مستقبله.", "frequency_rank": 168},
-  {"word": "مثابرة", "example_sentence": "المثابرة تؤدّي إلى إنجازات عظيمة.", "frequency_rank": 169},
-  {"word": "متعدّد المواهب", "example_sentence": "هي موسيقية متعدّدة المواهب.", "frequency_rank": 170},
-  {"word": "عميق", "example_sentence": "كان للكتاب تأثير عميق عليّ.", "frequency_rank": 171},
-  {"word": "حتمي", "example_sentence": "التغيير حتمي في الحياة.", "frequency_rank": 172},
-  {"word": "غامض", "example_sentence": "كانت التعليمات غامضة.", "frequency_rank": 173},
-  {"word": "امتنان", "example_sentence": "أشعر بامتنان عميق لطيبتك.", "frequency_rank": 174},
-  {"word": "فرضية", "example_sentence": "اختبرت العالمة فرضيّتها.", "frequency_rank": 175},
-  {"word": "متردّد", "example_sentence": "كان متردّداً في قبول العرض.", "frequency_rank": 176},
-  {"word": "كبير الحجم", "example_sentence": "قدّموا تبرّعاً كبيراً.", "frequency_rank": 177},
-  {"word": "يتدهور", "example_sentence": "بدأ الطقس يتدهور.", "frequency_rank": 178},
-  {"word": "يفصّل", "example_sentence": "هل يمكنك أن تفصّل فكرتك؟", "frequency_rank": 179},
-  {"word": "موجز", "example_sentence": "اجعل تقريرك موجزاً وواضحاً.", "frequency_rank": 180},
-  {"word": "خيّر", "example_sentence": "ساعد المتبرّع الخيّر عائلات كثيرة.", "frequency_rank": 181},
-  {"word": "عنيد", "example_sentence": "هي مفاوضة عنيدة.", "frequency_rank": 182},
-  {"word": "عفا عليه الزمن", "example_sentence": "هذه التكنولوجيا عفا عليها الزمن.", "frequency_rank": 183},
-  {"word": "يعوّض", "example_sentence": "ستعوّض الشركة عن التأخير.", "frequency_rank": 184},
-  {"word": "ظاهرة", "example_sentence": "الشفق القطبي ظاهرة طبيعية.", "frequency_rank": 185},
-  {"word": "مفارقة", "example_sentence": "تلك العبارة مفارقة حقيقية.", "frequency_rank": 186},
-  {"word": "غير مسبوق", "example_sentence": "كان الاكتشاف غير مسبوق في العلم.", "frequency_rank": 187},
-  {"word": "جدل", "example_sentence": "سبّب القرار الكثير من الجدل.", "frequency_rank": 188},
-  {"word": "أصلي", "example_sentence": "يجب أن نحترم الثقافات الأصلية.", "frequency_rank": 189},
-  {"word": "راقٍ", "example_sentence": "التصميم أنيق وراقٍ.", "frequency_rank": 190},
-  {"word": "يوحّد", "example_sentence": "يخطّطون لتوحيد مواردهم.", "frequency_rank": 191},
-  {"word": "يقوّض", "example_sentence": "الكذب يمكن أن يقوّض الثقة.", "frequency_rank": 192},
-  {"word": "رائع الجمال", "example_sentence": "المجوهرات رائعة الجمال حقاً.", "frequency_rank": 193},
-  {"word": "يشمل", "example_sentence": "سيشمل المقرّر مواضيع كثيرة.", "frequency_rank": 194},
-  {"word": "يُنير", "example_sentence": "تُنير الشموع الغرفة المظلمة.", "frequency_rank": 195},
-  {"word": "يتذبذب", "example_sentence": "تميل الأسعار إلى التذبذب على مدار السنة.", "frequency_rank": 196},
-  {"word": "مجتهد", "example_sentence": "هي طالبة مجتهدة وعاملة بجدّ.", "frequency_rank": 197},
-  {"word": "صريح", "example_sentence": "أعطى رأياً صريحاً عن المشروع.", "frequency_rank": 198},
-  {"word": "يخفّف", "example_sentence": "هذا الدواء سيخفّف الألم.", "frequency_rank": 199},
-  {"word": "نموذجي", "example_sentence": "هذا الطبق هو الوجبة الإيطالية النموذجية.", "frequency_rank": 200}
+  {
+    "word": "نعم",
+    "example_sentence": "نعم، أودّ أن أشرب قهوة.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "لا",
+    "example_sentence": "لا، شكراً، لست جائعاً.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "جيّد",
+    "example_sentence": "هذا كتاب جيّد جداً.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "ماء",
+    "example_sentence": "أشرب كوباً من الماء كل صباح.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "يوم",
+    "example_sentence": "اليوم يوم جميل.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "وقت",
+    "example_sentence": "في أي وقت يغادر القطار؟",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "ناس",
+    "example_sentence": "كثير من الناس يعيشون في هذه المدينة.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "يعمل",
+    "example_sentence": "أعمل في مكتب في وسط المدينة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مال",
+    "example_sentence": "ادّخرت ما يكفي من المال لشراء سيارة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "بيت",
+    "example_sentence": "اشتروا بيتاً جديداً العام الماضي.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "كبير",
+    "example_sentence": "ذلك كلب كبير جداً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "صغير",
+    "example_sentence": "اختبأ القطّ الصغير تحت السرير.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يأكل",
+    "example_sentence": "نتناول العشاء في السابعة كل مساء.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يشرب",
+    "example_sentence": "أحبّ أن أشرب الشاي بعد الظهر.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ينام",
+    "example_sentence": "عادةً أنام ثماني ساعات.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يمشي",
+    "example_sentence": "لنمشِ معاً إلى الحديقة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يركض",
+    "example_sentence": "تحبّ أن تركض في الصباح.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يتكلّم",
+    "example_sentence": "يستطيع أن يتكلّم ثلاث لغات.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "صديق",
+    "example_sentence": "أفضل صديق لي يسكن بجواري.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "حبّ",
+    "example_sentence": "أحبّ قضاء الوقت مع عائلتي.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "سعيد",
+    "example_sentence": "الأطفال سعداء جداً اليوم.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "حزين",
+    "example_sentence": "شعرت بالحزن عندما انتهى الفيلم.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يساعد",
+    "example_sentence": "هل يمكنك مساعدتي في حمل هذه الحقائب؟",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "اسم",
+    "example_sentence": "اسمي ماريا.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "سنة",
+    "example_sentence": "كانت هذه السنة رائعة حتى الآن.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "طفل",
+    "example_sentence": "لعب الطفل بسعادة في الحديقة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "امرأة",
+    "example_sentence": "ابتسمت المرأة ولوّحت لنا.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "رجل",
+    "example_sentence": "فتح الرجل الباب لها.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "كتاب",
+    "example_sentence": "قرأت كتاباً مثيراً الأسبوع الماضي.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "سيارة",
+    "example_sentence": "يقود سيارته إلى العمل كل يوم.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مدرسة",
+    "example_sentence": "يمشي الأطفال إلى المدرسة معاً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "طعام",
+    "example_sentence": "الطعام في هذا المطعم لذيذ.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "صباح",
+    "example_sentence": "أستمتع بالقهوة كل صباح.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ليل",
+    "example_sentence": "النجوم ساطعة الليلة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "دافئ",
+    "example_sentence": "الطقس دافئ ومشمس اليوم.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "بارد",
+    "example_sentence": "الجو بارد جداً في الخارج في الشتاء.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "سريع",
+    "example_sentence": "القطار سريع جداً.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "يفتح",
+    "example_sentence": "من فضلك افتح النافذة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يُغلق",
+    "example_sentence": "أغلق الباب من فضلك.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يشتري",
+    "example_sentence": "أريد أن أشتري هاتفاً جديداً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مدينة",
+    "example_sentence": "باريس مدينة جميلة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "عائلة",
+    "example_sentence": "تجتمع عائلتي كل يوم أحد على العشاء.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "موسيقى",
+    "example_sentence": "تستمع إلى الموسيقى أثناء الدراسة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "إجابة",
+    "example_sentence": "أعطى إجابة واضحة على السؤال.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "لون",
+    "example_sentence": "الأزرق هو لوني المفضّل.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يتعلّم",
+    "example_sentence": "أريد أن أتعلّم لغة جديدة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يُعلّم",
+    "example_sentence": "تُعلّم الرياضيات في الجامعة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يكتب",
+    "example_sentence": "يحبّ أن يكتب قصصاً قصيرة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يقرأ",
+    "example_sentence": "أقرأ الجريدة كل صباح.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يلعب",
+    "example_sentence": "يلعب الأطفال كرة القدم بعد المدرسة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يبدأ",
+    "example_sentence": "سيبدأ الحفل في الثامنة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "نهاية",
+    "example_sentence": "للفيلم نهاية مفاجئة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "بلد",
+    "example_sentence": "اليابان بلد رائع.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يد",
+    "example_sentence": "أمسكت الزهرة في يدها.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "رأس",
+    "example_sentence": "أومأ برأسه موافقاً.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "عين",
+    "example_sentence": "لديها عيون خضراء جميلة.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "باب",
+    "example_sentence": "أحدهم يطرق الباب.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "غرفة",
+    "example_sentence": "الغرفة مشرقة وواسعة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "حيوان",
+    "example_sentence": "الكلب حيوان وفيّ.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "شجرة",
+    "example_sentence": "تنمو شجرة طويلة في الحديقة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "طريق",
+    "example_sentence": "يؤدّي الطريق إلى القرية.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "نهر",
+    "example_sentence": "يجري النهر عبر الوادي.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "قويّ",
+    "example_sentence": "هو قويّ بما يكفي لرفع الصندوق.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "شابّ",
+    "example_sentence": "ما زالت شابّة جداً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "قديم",
+    "example_sentence": "هذا مبنى قديم من القرن الثامن عشر.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "جميل",
+    "example_sentence": "كان الغروب جميلاً للغاية.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مهمّ",
+    "example_sentence": "التعليم مهمّ جداً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مختلف",
+    "example_sentence": "هذان القميصان مختلفان جداً.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "دائماً",
+    "example_sentence": "تصل دائماً في الوقت المحدّد.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "أبداً",
+    "example_sentence": "لم أذهب إلى أستراليا أبداً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "غالباً",
+    "example_sentence": "غالباً ما نذهب للتنزّه في عطلة نهاية الأسبوع.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "أحياناً",
+    "example_sentence": "أحياناً أحبّ أن أطبخ في البيت.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "حديقة",
+    "example_sentence": "تزرع الطماطم في حديقتها.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مطبخ",
+    "example_sentence": "يطبخ العشاء في المطبخ.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "طاولة",
+    "example_sentence": "الأطباق موجودة بالفعل على الطاولة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "نافذة",
+    "example_sentence": "افتح النافذة ليدخل الهواء النقيّ.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "طقس",
+    "example_sentence": "الطقس مثالي لنزهة.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "صيف",
+    "example_sentence": "نذهب للسباحة كل صيف.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "شتاء",
+    "example_sentence": "الشتاء هو فصلي الأقلّ تفضيلاً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "طبيب",
+    "example_sentence": "أخبرني الطبيب أن أستريح.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "خبرة",
+    "example_sentence": "السفر يمنحك خبرة قيّمة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "معرفة",
+    "example_sentence": "المعرفة هي مفتاح النجاح.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "وضع",
+    "example_sentence": "علينا أن نفهم الوضع أوّلاً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ممكن",
+    "example_sentence": "هل من الممكن تغيير تذكرتي؟",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "صعب",
+    "example_sentence": "كان هذا الامتحان صعباً حقاً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مشكلة",
+    "example_sentence": "وجدنا حلاً للمشكلة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "فكرة",
+    "example_sentence": "تلك فكرة رائعة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "تغيير",
+    "example_sentence": "تتغيّر الفصول أربع مرّات في السنة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يؤمن",
+    "example_sentence": "أؤمن بأنّنا نستطيع الانتهاء في الوقت.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "يفهم",
+    "example_sentence": "الآن أفهم التعليمات.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يتذكّر",
+    "example_sentence": "أتذكّر يومي الأوّل في المدرسة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ينسى",
+    "example_sentence": "لا تنسَ أن تقفل الباب.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يقرّر",
+    "example_sentence": "عليك أن تقرّر قبل الغد.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يختار",
+    "example_sentence": "من الصعب أن تختار بين الاثنين.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يسافر",
+    "example_sentence": "أحبّ أن أسافر إلى أماكن جديدة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "قرية",
+    "example_sentence": "القرية محاطة بالجبال.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "جبل",
+    "example_sentence": "تسلّقوا الجبل في ستّ ساعات.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "محيط",
+    "example_sentence": "يبدو المحيط لا نهائياً من الشاطئ.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "جزيرة",
+    "example_sentence": "زرنا جزيرة صغيرة الصيف الماضي.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "جسر",
+    "example_sentence": "يعبر الجسر القديم النهر.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يستعدّ",
+    "example_sentence": "عليها أن تستعدّ للاجتماع.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "يستمرّ",
+    "example_sentence": "من فضلك استمرّ في قراءة الفصل التالي.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "يطوّر",
+    "example_sentence": "نريد أن نطوّر تطبيقاً جديداً.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يحسّن",
+    "example_sentence": "التمرين سيحسّن مهاراتك.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يحقّق",
+    "example_sentence": "العمل الجادّ يساعدك على تحقيق أهدافك.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يقارن",
+    "example_sentence": "لنقارن بين الخيارين.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يوفّر",
+    "example_sentence": "يوفّر الفندق إفطاراً مجانياً.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يتطلّب",
+    "example_sentence": "هذا العمل يتطلّب الاهتمام بالتفاصيل.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يزداد",
+    "example_sentence": "تزداد الأسعار كل سنة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يقلّل",
+    "example_sentence": "يجب أن نقلّل استهلاكنا للطاقة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يقترح",
+    "example_sentence": "أقترح أن نغادر باكراً.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يصف",
+    "example_sentence": "هل يمكنك أن تصف ما حدث؟",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "انتباه",
+    "example_sentence": "من فضلك انتبه للمعلّم.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "هدف",
+    "example_sentence": "هدف هذا الاجتماع هو التخطيط.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "فرصة",
+    "example_sentence": "هذه فرصة رائعة للنموّ.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "نجاح",
+    "example_sentence": "نجاحها ألهم الكثير من الناس.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "خطأ",
+    "example_sentence": "الجميع يرتكب خطأ أحياناً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "بسيط",
+    "example_sentence": "الوصفة سريعة وبسيطة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "حديث",
+    "example_sentence": "المدينة لديها أفق حديث جداً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "قديم الأثر",
+    "example_sentence": "استكشفوا الآثار القديمة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "عاقبة",
+    "example_sentence": "لكل فعل عاقبة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يتفاوض",
+    "example_sentence": "كان عليهم أن يتفاوضوا على سعر عادل.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "تأثير",
+    "example_sentence": "للموسيقى تأثير قويّ على الثقافة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "تقليد",
+    "example_sentence": "هذا التقليد موجود منذ قرون.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مسؤولية",
+    "example_sentence": "تحمّل المسؤولية عن أفعالك أمر مهمّ.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "بيئة",
+    "example_sentence": "يجب أن نحمي البيئة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "تكنولوجيا",
+    "example_sentence": "التكنولوجيا تغيّر طريقة حياتنا.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يتواصل",
+    "example_sentence": "نتواصل بشكل أفضل وجهاً لوجه.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يؤسّس",
+    "example_sentence": "يخطّطون لتأسيس فرع جديد.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يقدّر",
+    "example_sentence": "أقدّر مساعدتك كثيراً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يتعرّف على",
+    "example_sentence": "لم أتعرّف عليها في البداية.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "يساهم",
+    "example_sentence": "يجب أن يساهم الجميع في المشروع.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "نقاش",
+    "example_sentence": "أجرى الطلاب نقاشاً حيوياً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "جيل",
+    "example_sentence": "كل جيل يجلب أفكاراً جديدة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مستقلّ",
+    "example_sentence": "أصبحت مستقلّة في سنّ مبكرة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "اقتصاد",
+    "example_sentence": "الاقتصاد ينمو بثبات.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "دقيق",
+    "example_sentence": "يجب أن يكون التقرير دقيقاً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ميزة",
+    "example_sentence": "التحدّث بلغتين ميزة كبيرة.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "نزاع",
+    "example_sentence": "حلّوا النزاع بطريقة سلمية.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "إذن",
+    "example_sentence": "تحتاج إلى إذن لدخول هذه المنطقة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "كبير الأهمية",
+    "example_sentence": "كان هناك تحسّن كبير.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "ينفّذ",
+    "example_sentence": "علينا أن ننفّذ السياسة الجديدة.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "استراتيجية",
+    "example_sentence": "الاستراتيجية الجيّدة ضرورية للنجاح.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يحقّق في",
+    "example_sentence": "ستحقّق الشرطة في الحادثة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "واثق",
+    "example_sentence": "شعرت بالثقة قبل الامتحان.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يميّز",
+    "example_sentence": "من الصعب أن تميّز بين التوأمين.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "يقيّم",
+    "example_sentence": "سيقيّم المعلّم مقالتك.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "ضمان",
+    "example_sentence": "العمل الشاقّ لا يضمن النجاح.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "خيال",
+    "example_sentence": "لدى الأطفال خيال رائع.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "تعاطف",
+    "example_sentence": "عبّر عن تعاطفه لخسارتها.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "بيروقراطية",
+    "example_sentence": "أبطأت البيروقراطية العملية.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "معضلة",
+    "example_sentence": "واجهت معضلة صعبة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "عقبة",
+    "example_sentence": "كل عقبة هي فرصة للنموّ.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "يؤجّل",
+    "example_sentence": "اضطررنا إلى تأجيل الحدث.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "سمعة",
+    "example_sentence": "لديه سمعة بالصدق.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "تضحية",
+    "example_sentence": "النجاح غالباً يتطلّب تضحية.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "طموح",
+    "example_sentence": "هي محامية شابّة وطموحة.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "حلّ وسط",
+    "example_sentence": "توصّل الطرفان إلى حلّ وسط.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "انضباط",
+    "example_sentence": "الانضباط هو مفتاح التقدّم.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "حماس",
+    "example_sentence": "كان حماسها معدياً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "فارق دقيق",
+    "example_sentence": "يتطلّب هذا الموضوع الانتباه إلى الفوارق الدقيقة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "صمود",
+    "example_sentence": "ساعدها صمودها على تجاوز الصعوبات.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "دقيق في عمله",
+    "example_sentence": "هو دقيق جداً في عمله.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "زائل",
+    "example_sentence": "الشهرة قد تكون زائلة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "بليغ",
+    "example_sentence": "ألقت خطاباً بليغاً.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "عملي",
+    "example_sentence": "نحتاج إلى حلّ عملي.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "تدقيق",
+    "example_sentence": "خضعت الخطّة لتدقيق مكثّف.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يتأمّل",
+    "example_sentence": "جلس بهدوء يتأمّل مستقبله.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "مثابرة",
+    "example_sentence": "المثابرة تؤدّي إلى إنجازات عظيمة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "متعدّد المواهب",
+    "example_sentence": "هي موسيقية متعدّدة المواهب.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "عميق",
+    "example_sentence": "كان للكتاب تأثير عميق عليّ.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "حتمي",
+    "example_sentence": "التغيير حتمي في الحياة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "غامض",
+    "example_sentence": "كانت التعليمات غامضة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "امتنان",
+    "example_sentence": "أشعر بامتنان عميق لطيبتك.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "فرضية",
+    "example_sentence": "اختبرت العالمة فرضيّتها.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "متردّد",
+    "example_sentence": "كان متردّداً في قبول العرض.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "كبير الحجم",
+    "example_sentence": "قدّموا تبرّعاً كبيراً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يتدهور",
+    "example_sentence": "بدأ الطقس يتدهور.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يفصّل",
+    "example_sentence": "هل يمكنك أن تفصّل فكرتك؟",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "موجز",
+    "example_sentence": "اجعل تقريرك موجزاً وواضحاً.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "خيّر",
+    "example_sentence": "ساعد المتبرّع الخيّر عائلات كثيرة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "عنيد",
+    "example_sentence": "هي مفاوضة عنيدة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "عفا عليه الزمن",
+    "example_sentence": "هذه التكنولوجيا عفا عليها الزمن.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يعوّض",
+    "example_sentence": "ستعوّض الشركة عن التأخير.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "ظاهرة",
+    "example_sentence": "الشفق القطبي ظاهرة طبيعية.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "مفارقة",
+    "example_sentence": "تلك العبارة مفارقة حقيقية.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "غير مسبوق",
+    "example_sentence": "كان الاكتشاف غير مسبوق في العلم.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "جدل",
+    "example_sentence": "سبّب القرار الكثير من الجدل.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "أصلي",
+    "example_sentence": "يجب أن نحترم الثقافات الأصلية.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "راقٍ",
+    "example_sentence": "التصميم أنيق وراقٍ.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يوحّد",
+    "example_sentence": "يخطّطون لتوحيد مواردهم.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يقوّض",
+    "example_sentence": "الكذب يمكن أن يقوّض الثقة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "رائع الجمال",
+    "example_sentence": "المجوهرات رائعة الجمال حقاً.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يشمل",
+    "example_sentence": "سيشمل المقرّر مواضيع كثيرة.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يُنير",
+    "example_sentence": "تُنير الشموع الغرفة المظلمة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "يتذبذب",
+    "example_sentence": "تميل الأسعار إلى التذبذب على مدار السنة.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "مجتهد",
+    "example_sentence": "هي طالبة مجتهدة وعاملة بجدّ.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "صريح",
+    "example_sentence": "أعطى رأياً صريحاً عن المشروع.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "يخفّف",
+    "example_sentence": "هذا الدواء سيخفّف الألم.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "نموذجي",
+    "example_sentence": "هذا الطبق هو الوجبة الإيطالية النموذجية.",
+    "frequency_level": "Common"
+  }
 ]

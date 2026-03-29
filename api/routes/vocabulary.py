@@ -28,7 +28,6 @@ class VocabularyCreate(BaseModel):
     # Enhanced fields (optional, populated after enhance call)
     lemma: Optional[str] = None
     secondary_translation: Optional[str] = None
-    frequency_rank: Optional[int] = None
     frequency_level: Optional[str] = None
     example_sentence_original: Optional[str] = None
     example_sentence_translation: Optional[str] = None
@@ -52,7 +51,6 @@ class VocabularyResponse(BaseModel):
     translation: Optional[str]
     language_from: str
     language_to: str
-    frequency_rank: Optional[int]
     frequency_level: Optional[str]
     example_sentence_original: Optional[str]
     example_sentence_translation: Optional[str]
@@ -76,7 +74,6 @@ class EnhanceResponse(BaseModel):
     lemma: str
     translation: str
     secondary_translation: Optional[str]
-    frequency_rank: Optional[int]
     frequency_level: str
     example_sentence_original: Optional[str] = None
     example_sentence_translation: Optional[str] = None
@@ -318,7 +315,6 @@ def enhance_word(
             lemma=request.word,
             translation="Unknown",
             secondary_translation=None,
-            frequency_rank=None,
             frequency_level="Unknown",
             enhancement_failed=True
         )
@@ -331,7 +327,6 @@ def enhance_word(
         lemma=result["lemma"],
         translation=result["translation"],
         secondary_translation=result.get("secondary_translation"),
-        frequency_rank=result.get("frequency_rank"),
         frequency_level=result.get("frequency_level", "Unknown"),
         example_sentence_original=example_original,
         example_sentence_translation=example_translation,

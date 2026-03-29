@@ -71,8 +71,8 @@ class TestEnhanceWordPrompt:
         svc.enhance_word("chat", "fr", "de")
         assert "de" in captured_messages[0]["content"]
 
-    def test_fixed_expression_skips_strip_prefix(self):
-        """is_fixed_expression=true must prevent strip_prefix_words from being applied."""
+    def test_frequency_level_returned(self):
+        """Result must include frequency_level from the LLM response."""
         svc = _make_service()
 
         good_json = json.dumps({
@@ -80,36 +80,15 @@ class TestEnhanceWordPrompt:
             "is_fixed_expression": True,
             "translation": "am Anfang",
             "secondary_translation": "zu Beginn",
+            "frequency_level": "Common",
             "example_sentence": "Au début, il ne savait pas quoi faire de sa vie.",
             "example_sentence_translation": "Am Anfang wusste er nicht, was er mit seinem Leben anfangen sollte.",
         })
 
         svc.client.chat.completions.create = MagicMock(return_value=_mock_response(good_json))
+        result = svc.enhance_word("au début", "fr", "de")
 
-        with patch("api.services.openai_service.strip_prefix_words") as mock_strip:
-            result = svc.enhance_word("au début", "fr", "de")
-            mock_strip.assert_not_called()
-
-        assert result["lemma"] == "au début"
-
-    def test_non_fixed_expression_calls_strip_prefix(self):
-        """is_fixed_expression=false must allow strip_prefix_words to run."""
-        svc = _make_service()
-
-        good_json = json.dumps({
-            "lemma": "le chien",
-            "is_fixed_expression": False,
-            "translation": "der Hund",
-            "secondary_translation": None,
-            "example_sentence": "Le chien aboie très fort quand il entend la sonnette.",
-            "example_sentence_translation": "Der Hund bellt sehr laut, wenn er die Klingel hört.",
-        })
-
-        svc.client.chat.completions.create = MagicMock(return_value=_mock_response(good_json))
-
-        with patch("api.services.openai_service.strip_prefix_words", return_value="chien") as mock_strip:
-            svc.enhance_word("le chien", "fr", "de")
-            mock_strip.assert_called_once_with("le chien", "fr")
+        assert result["frequency_level"] == "Common"
 
     def test_malformed_json_returns_enhancement_failed(self):
         """A non-JSON LLM response must return enhancement_failed=True, not raise."""

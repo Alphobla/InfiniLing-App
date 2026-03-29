@@ -3,16 +3,18 @@ import { vocabularyApi } from '../services/api'
 import { useAuthStore } from '../stores/authStore'
 import { useLanguages } from '../hooks/useLanguages'
 
-// Frequency badge colors - more refined palette
+// 5-level frequency scale judged by the LLM
 const FREQUENCY_COLORS = {
-  'Top 1,000': { bg: '#2D8A7B', text: 'white' },
-  'Top 5,000': { bg: '#3D9E8C', text: 'white' },
-  'Top 10,000': { bg: '#5AAF8F', text: 'white' },
-  'Top 20,000': { bg: '#D4880F', text: 'white' },
-  'Top 50,000': { bg: '#E69B3A', text: 'white' },
+  'Essential': { bg: '#2D8A7B', text: 'white' },
+  'Common': { bg: '#3D9E8C', text: 'white' },
+  'Intermediate': { bg: '#5AAF8F', text: 'white' },
+  'Advanced': { bg: '#D4880F', text: 'white' },
   'Rare': { bg: '#C53030', text: 'white' },
   'Unknown': { bg: '#78756F', text: 'white' },
 }
+
+// Sorting order: more common levels first
+const FREQUENCY_ORDER = { Essential: 0, Common: 1, Intermediate: 2, Advanced: 3, Rare: 4, Unknown: 5 }
 
 export default function VocabularyList() {
   const { settings, updateSettings } = useAuthStore()
@@ -86,9 +88,9 @@ export default function VocabularyList() {
       if (sortBy === 'date') {
         cmp = new Date(b.created_at) - new Date(a.created_at)
       } else if (sortBy === 'frequency') {
-        // Lower rank = more common = should come first
-        const rankA = a.frequency_rank || 999999
-        const rankB = b.frequency_rank || 999999
+        // Sort by frequency level: Essential first, Rare last
+        const rankA = FREQUENCY_ORDER[a.frequency_level] ?? 5
+        const rankB = FREQUENCY_ORDER[b.frequency_level] ?? 5
         cmp = rankA - rankB
       } else if (sortBy === 'due') {
         // null (new) and past dates first
@@ -287,11 +289,24 @@ function SortButton({ children, active, asc, onClick }) {
   )
 }
 
-function FrequencyBadge({ level }) {
+function FrequencyBadge({ level, compact = false }) {
   const colors = FREQUENCY_COLORS[level] || FREQUENCY_COLORS['Unknown']
+  
+  // compact: colored square only (for list view)
+  // full: badge with text label (for expanded/detail view)
+  if (compact) {
+    return (
+      <span
+        className="w-4 h-4 rounded inline-block flex-shrink-0"
+        style={{ backgroundColor: colors.bg }}
+        title={level || 'Unknown'}
+      />
+    )
+  }
+  
   return (
     <span
-      className="px-2 py-0.5 rounded text-xs font-medium"
+      className="px-2 py-0.5 rounded text-xs font-medium min-w-[85px] inline-block text-center"
       style={{ backgroundColor: colors.bg, color: colors.text }}
     >
       {level || 'Unknown'}
@@ -352,7 +367,7 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
           </div>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-          <FrequencyBadge level={word.frequency_level} />
+          <FrequencyBadge level={word.frequency_level} compact />
           <DueIndicator nextReviewDate={word.next_review_date} />
         </div>
       </div>
@@ -433,9 +448,6 @@ function WordCard({ word, expanded, editing, onExpand, onEdit, onCancelEdit, onS
             <span className="text-muted text-sm">Frequency</span>
             <div className="flex items-center gap-2">
               <FrequencyBadge level={word.frequency_level} />
-              {word.frequency_rank && (
-                <span className="text-muted text-sm">(#{word.frequency_rank.toLocaleString()})</span>
-              )}
             </div>
           </div>
 
@@ -563,7 +575,6 @@ function AddWordForm({ defaultLanguage, motherTongue, availableLanguages, onComp
         secondary_translation: form.secondary_translation || null,
         language_from: language,
         language_to: motherTongue,
-        frequency_rank: enhanced?.frequency_rank,
         frequency_level: enhanced?.frequency_level,
         example_sentence_original: form.example_sentence_original || null,
         example_sentence_translation: form.example_sentence_translation || null,
@@ -682,9 +693,6 @@ function AddWordForm({ defaultLanguage, motherTongue, availableLanguages, onComp
             <span className="text-muted text-sm">Frequency</span>
             <div className="flex items-center gap-2">
               <FrequencyBadge level={enhanced.frequency_level} />
-              {enhanced.frequency_rank && (
-                <span className="text-muted text-sm">(#{enhanced.frequency_rank.toLocaleString()})</span>
-              )}
             </div>
           </div>
 

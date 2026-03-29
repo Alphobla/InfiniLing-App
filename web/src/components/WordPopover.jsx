@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { vocabularyApi } from '../services/api'
 
+// 5-level frequency scale judged by the LLM
 const FREQUENCY_COLORS = {
-  'Top 1,000': { bg: '#2D8A7B', text: 'white' },
-  'Top 5,000': { bg: '#3D9E8C', text: 'white' },
-  'Top 10,000': { bg: '#5AAF8F', text: 'white' },
-  'Top 20,000': { bg: '#D4880F', text: 'white' },
-  'Top 50,000': { bg: '#E69B3A', text: 'white' },
+  'Essential': { bg: '#2D8A7B', text: 'white' },
+  'Common': { bg: '#3D9E8C', text: 'white' },
+  'Intermediate': { bg: '#5AAF8F', text: 'white' },
+  'Advanced': { bg: '#D4880F', text: 'white' },
   'Rare': { bg: '#C53030', text: 'white' },
   'Unknown': { bg: '#78756F', text: 'white' },
 }
@@ -96,7 +96,6 @@ export default function WordPopover({ word, rect, language, motherTongue, onClos
         secondary_translation: data.secondary_translation || null,
         language_from: language,
         language_to: motherTongue,
-        frequency_rank: data.frequency_rank,
         frequency_level: data.frequency_level,
         example_sentence_original: data.example_sentence_original || null,
         example_sentence_translation: data.example_sentence_translation || null,
