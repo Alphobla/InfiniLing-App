@@ -37,7 +37,10 @@ export default function Onboarding() {
     )
   }
   if (!user) return <Navigate to="/login" replace />
-  if (settings) return <Navigate to="/" replace />
+  // Only redirect if settings exist AND we're still on the first screen.
+  // Once createSettings runs (screen 1 → 2), settings becomes truthy,
+  // but we need to stay on onboarding to finish the remaining screens.
+  if (settings && screen === 'languages') return <Navigate to="/" replace />
 
   // Filter target languages: exclude the selected native language
   const targetLanguages = languages.filter(l => l.name !== motherTongue)
