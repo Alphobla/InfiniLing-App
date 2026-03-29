@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.routes import vocabulary, user, generate, import_export, podcast
+from api.routes import vocabulary, user, generate, import_export, podcast, onboarding_words
 from api.services.languages import get_all_languages
 
 app = FastAPI(
@@ -27,6 +27,7 @@ app.include_router(user.router)
 app.include_router(generate.router)
 app.include_router(import_export.router)
 app.include_router(podcast.router)
+app.include_router(onboarding_words.router)
 
 
 @app.get("/api/health")
