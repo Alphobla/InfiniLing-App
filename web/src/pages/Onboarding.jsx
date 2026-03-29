@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 import { useLanguages } from '../hooks/useLanguages'
@@ -8,6 +8,11 @@ export default function Onboarding() {
   const { user, settings, loading, createSettings } = useAuthStore()
   const { languages, loading: loadingLanguages } = useLanguages()
   const navigate = useNavigate()
+
+  // Ref to track that the user has started onboarding (survived createSettings re-render).
+  // Unlike useState, a ref update is synchronous and doesn't wait for React to re-render,
+  // so it's already true by the time Zustand's set({ settings }) triggers a re-render.
+  const onboardingStarted = useRef(false)
 
   // Which screen is active: 'languages' | 'paths' | 'wordPicker' | 'import'
   const [screen, setScreen] = useState('languages')
@@ -37,10 +42,11 @@ export default function Onboarding() {
     )
   }
   if (!user) return <Navigate to="/login" replace />
-  // Only redirect if settings exist AND we're still on the first screen.
-  // Once createSettings runs (screen 1 → 2), settings becomes truthy,
-  // but we need to stay on onboarding to finish the remaining screens.
-  if (settings && screen === 'languages') return <Navigate to="/" replace />
+  // Only redirect if settings already exist AND onboarding hasn't started yet.
+  // This means the user completed onboarding previously and navigated here by accident.
+  // Once onboardingStarted is set (before createSettings), we stay put even though
+  // settings becomes truthy mid-flow.
+  if (settings && !onboardingStarted.current) return <Navigate to="/" replace />
 
   // Filter target languages: exclude the selected native language
   const targetLanguages = languages.filter(l => l.name !== motherTongue)
@@ -49,6 +55,11 @@ export default function Onboarding() {
   const handleLanguagesContinue = async () => {
     setSaving(true)
     try {
+      // Mark onboarding as in-progress BEFORE the async call.
+      // createSettings will set({ settings }) in Zustand, triggering a re-render.
+      // Without this ref, the guard would see settings=truthy and redirect to '/'.
+      onboardingStarted.current = true
+
       // motherTongue is the language name (e.g. "German"), backend converts to code
       // targetLanguage is also a name — we need the code for last_language
       const targetCode = languages.find(l => l.name === targetLanguage)?.code
