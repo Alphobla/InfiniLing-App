@@ -63,10 +63,6 @@ export const useAuthStore = create((set) => ({
   signIn: async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
-    // Update user/session immediately so navigation can proceed without waiting for onAuthStateChange.
-    // onAuthStateChange will still fire and fetch settings, but this prevents the race condition
-    // where navigate('/') happens before the auth state is updated.
-    set({ user: data.user, session: data.session, loading: true })
     return data
   },
 
