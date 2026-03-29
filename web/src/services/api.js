@@ -53,13 +53,6 @@ export const generateApi = {
   languages: () => api.get('/api/vocabulary/languages'),
 }
 
-// Starter words
-export const starterWordsApi = {
-  getLanguages: () => api.get('/api/starter-words/languages'),
-  getWords: (language, difficulty) =>
-    api.get(`/api/starter-words/${language}`, { params: { difficulty } }),
-}
-
 // Import/Export
 export const importExportApi = {
   export: (format, languageFrom) =>
