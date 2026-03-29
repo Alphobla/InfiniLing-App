@@ -56,7 +56,7 @@ export default function StoryGenerator() {
 
   // Word popover state
   const { popover, openPopover, closePopover } = useWordPopover()
-  const { settings } = useAuthStore()
+  const { settings, updateSettings } = useAuthStore()
 
   // Exclude mother tongue — same rule as AddWordForm
   const motherTongue = settings?.mother_tongue
@@ -198,7 +198,10 @@ export default function StoryGenerator() {
           />
           <select
             value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+            onChange={(e) => {
+              setLanguage(e.target.value)
+              updateSettings({ last_language: e.target.value })
+            }}
             className="px-4 py-3 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer"
             style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px', paddingRight: '32px' }}
           >
@@ -386,7 +389,7 @@ export default function StoryGenerator() {
 
           {/* Audio Player */}
           {audioUrl && (
-            <div className="px-6 py-4 border-b border-border">
+            <div className="px-6 py-4 border-b border-border sticky top-2 z-10 bg-surface shadow-sm">
               <AudioPlayer
                 src={audioUrl}
                 onTimeUpdate={(currentTime, duration) => {

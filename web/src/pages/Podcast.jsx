@@ -7,7 +7,7 @@ import WordPopover from '../components/WordPopover'
 import AudioPlayer from '../components/AudioPlayer'
 
 export default function Podcast() {
-  const { settings } = useAuthStore()
+  const { settings, updateSettings } = useAuthStore()
   // Languages from single source of truth
   const { languages: availableLanguages } = useLanguages()
 
@@ -194,7 +194,11 @@ export default function Podcast() {
         {/* Language selector */}
         <select
           value={language}
-          onChange={(e) => setLanguage(e.target.value)}
+          onChange={(e) => {
+            setLanguage(e.target.value)
+            // Persist the selected language so it's remembered next time
+            updateSettings({ last_language: e.target.value })
+          }}
           className="mb-6 px-4 py-2.5 bg-surface border border-border rounded-xl text-text text-sm appearance-none cursor-pointer focus:outline-none focus:border-accent"
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px' }}
         >
@@ -345,7 +349,9 @@ export default function Podcast() {
       <h2 className="text-lg font-bold text-text mb-4">{selectedEpisode?.title}</h2>
 
       {/* Audio player */}
-      <div className="bg-surface border border-border rounded-xl p-4 mb-6">
+      {/* sticky: sticks to top of viewport when scrolled past, so controls
+           are always reachable. z-10 keeps it above transcript text. */}
+      <div className="bg-surface border border-border rounded-xl p-4 mb-6 sticky top-2 z-10 shadow-sm">
         <AudioPlayer
           src={selectedEpisode?.audio_url}
           onTimeUpdate={handleAudioTimeUpdate}
