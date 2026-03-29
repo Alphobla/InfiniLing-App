@@ -71,8 +71,14 @@ export const useAuthStore = create((set) => ({
     set({ user: null, session: null, settings: null })
   },
 
-  createSettings: async (motherTongue) => {
+  createSettings: async (motherTongue, targetLanguage) => {
     const { data } = await userApi.createSettings({ mother_tongue: motherTongue })
+    // Set the target language as last_language so the app knows what they're learning
+    if (targetLanguage) {
+      const { data: updated } = await userApi.updateSettings({ last_language: targetLanguage })
+      set({ settings: updated })
+      return updated
+    }
     set({ settings: data })
     return data
   },

@@ -46,6 +46,12 @@ export const userApi = {
   removeApiKey: () => api.delete('/api/user/api-key'),
 }
 
+// Onboarding words
+export const onboardingApi = {
+  getWords: (languageCode) => api.get(`/api/onboarding-words/${languageCode}`),
+  addWords: (data) => api.post('/api/onboarding-words/add', data),
+}
+
 // Generate
 export const generateApi = {
   story: (data) => api.post('/api/generate/story', data),
