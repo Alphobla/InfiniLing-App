@@ -230,6 +230,42 @@ input[type="range"] {
   }
 }
 
+/* Display serif font for headings */
+.font-display {
+  font-family: 'Instrument Serif', Georgia, serif;
+}
+
+/* Onboarding step progress bar */
+@keyframes progressFill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.progress-fill {
+  animation: progressFill 0.5s ease-out forwards;
+}
+
+/* Gentle pulse for selected items */
+@keyframes gentlePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(197, 48, 48, 0.15); }
+  50% { box-shadow: 0 0 0 6px rgba(197, 48, 48, 0); }
+}
+
+.pulse-accent {
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+/* Checkmark pop animation */
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.animate-check-pop {
+  animation: checkPop 0.3s ease-out forwards;
+}
+
 /* Show/hide elements based on input device type */
 /* pointer: fine = mouse/trackpad (desktop), pointer: coarse = touch (phone/tablet) */
 .pointer-fine { display: none; }

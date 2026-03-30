@@ -4,6 +4,38 @@ import { useAuthStore } from '../stores/authStore'
 import { useLanguages } from '../hooks/useLanguages'
 import { onboardingApi, importExportApi } from '../services/api'
 
+// Step indicator shown at the top of every screen.
+// `current` is 0-indexed, `total` is the number of steps.
+// Each dot fills in as you progress, connected by a thin line.
+function StepIndicator({ current, total }) {
+  return (
+    <div className="flex items-center justify-center gap-0 mb-10 animate-fade-up">
+      {Array.from({ length: total }).map((_, i) => (
+        <div key={i} className="flex items-center">
+          {/* Dot */}
+          <div
+            className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${
+              i <= current
+                ? 'bg-accent scale-100'
+                : 'bg-border scale-75'
+            }`}
+          />
+          {/* Connecting line between dots */}
+          {i < total - 1 && (
+            <div className="w-10 h-0.5 mx-1">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  i < current ? 'bg-accent' : 'bg-border'
+                }`}
+              />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function Onboarding() {
   const { user, settings, loading, createSettings } = useAuthStore()
   const { languages, loading: loadingLanguages } = useLanguages()
@@ -50,6 +82,9 @@ export default function Onboarding() {
 
   // Filter target languages: exclude the selected native language
   const targetLanguages = languages.filter(l => l.name !== motherTongue)
+
+  // Map screen names to step indices for the progress indicator
+  const stepMap = { languages: 0, paths: 1, wordPicker: 2, import: 2 }
 
   // Screen 1 → Screen 2: save settings, then show path choices
   const handleLanguagesContinue = async () => {
@@ -170,7 +205,7 @@ export default function Onboarding() {
     </svg>
   )
 
-  // Shared select dropdown style (the custom chevron SVG)
+  // Custom chevron for <select> elements
   const selectStyle = {
     backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
     backgroundRepeat: 'no-repeat',
@@ -178,17 +213,83 @@ export default function Onboarding() {
     backgroundSize: '20px',
   }
 
-  return (
-    <div className="min-h-screen bg-bg flex items-center justify-center p-6">
-      {/* Decorative blurs */}
-      <div className="fixed top-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2" />
-      <div className="fixed bottom-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl translate-y-1/2 translate-x-1/2" />
+  // Path card data for Screen 2 — keeps JSX clean
+  const pathCards = [
+    {
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+      ),
+      title: 'Start Fresh',
+      desc: 'Begin with an empty vocabulary and add words as you discover them',
+      onClick: () => seedWelcomeAndNavigate('/vocabulary'),
+      disabled: saving,
+      color: 'text-accent',
+      bg: 'bg-accent/8',
+    },
+    {
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+      ),
+      title: 'Pick Unknown Words',
+      desc: 'Select from common words to kickstart your vocabulary list',
+      onClick: enterWordPicker,
+      disabled: loadingWords,
+      color: 'text-success',
+      bg: 'bg-success/8',
+    },
+    {
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+        </svg>
+      ),
+      title: 'Import Vocabulary',
+      desc: 'Already have a word list? Upload a CSV or JSON file',
+      onClick: () => setScreen('import'),
+      disabled: false,
+      color: 'text-warning',
+      bg: 'bg-warning/8',
+    },
+    {
+      icon: (
+        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />
+        </svg>
+      ),
+      title: 'Start with Podcasts',
+      desc: 'Listen to podcasts and collect unknown words as you go',
+      onClick: () => seedWelcomeAndNavigate('/podcast'),
+      disabled: saving,
+      color: 'text-[#7C3AED]',
+      bg: 'bg-[#7C3AED]/8',
+    },
+  ]
 
-      <div className={`w-full relative ${screen === 'wordPicker' ? 'max-w-2xl' : 'max-w-md'}`}>
-        {/* Logo */}
-        <div className="flex justify-center mb-8 animate-fade-up">
-          <div className="flex items-center gap-1">
-            <img src="/zoom_logo.png" alt="InfiniLing" className="w-12 h-12 rounded-xl" />
+  return (
+    <div className="min-h-screen bg-bg flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Background texture — subtle dot grid pattern */}
+      <div
+        className="fixed inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: 'radial-gradient(circle, #1A1A18 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
+
+      {/* Decorative blurs — positioned differently per screen for subtle variety */}
+      <div className="fixed top-[-8rem] left-[-6rem] w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
+      <div className="fixed bottom-[-8rem] right-[-6rem] w-[28rem] h-[28rem] bg-accent/4 rounded-full blur-3xl" />
+
+      <div className={`w-full relative z-10 ${screen === 'wordPicker' ? 'max-w-2xl' : 'max-w-md'}`}>
+
+        {/* Logo — consistent across all screens */}
+        <div className="flex justify-center mb-2 animate-fade-up">
+          <div className="flex items-center gap-1.5">
+            <img src="/zoom_logo.png" alt="InfiniLing" className="w-11 h-11 rounded-xl" />
             <span className="text-2xl tracking-tight">
               <span className="font-semibold text-text">Infini</span>
               <span className="font-light text-muted">Ling</span>
@@ -196,206 +297,273 @@ export default function Onboarding() {
           </div>
         </div>
 
-        {/* ── Screen 1: Language Setup ── */}
+        {/* Step progress indicator */}
+        <StepIndicator current={stepMap[screen]} total={3} />
+
+
+        {/* ── Screen 1: Language Setup ────────────────────────── */}
         {screen === 'languages' && (
-          <div className="bg-surface rounded-2xl p-8 shadow-medium border border-border animate-fade-up delay-2">
-            <h1 className="text-2xl font-semibold text-center text-text mb-8">Select your languages</h1>
+          <div className="animate-fade-up delay-2">
+            {/* Heading outside the card for a more editorial feel */}
+            <div className="text-center mb-6">
+              <h1 className="font-display text-4xl text-text mb-2 italic">
+                Welcome aboard
+              </h1>
+              <p className="text-muted text-sm">
+                Let's set up your languages to get started
+              </p>
+            </div>
 
-            {/* Native language */}
-            <label className="block text-sm font-medium text-muted mb-2">I speak</label>
-            <select
-              value={motherTongue}
-              onChange={(e) => {
-                setMotherTongue(e.target.value)
-                if (e.target.value === targetLanguage) setTargetLanguage('')
-              }}
-              className="w-full px-4 py-3.5 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer mb-6"
-              style={selectStyle}
-            >
-              <option value="">Select your native language</option>
-              {languages.map(lang => (
-                <option key={lang.code} value={lang.name}>{lang.name}</option>
-              ))}
-            </select>
+            <div className="bg-surface rounded-2xl p-8 shadow-medium border border-border">
+              {/* Native language */}
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2">
+                I speak
+              </label>
+              <select
+                value={motherTongue}
+                onChange={(e) => {
+                  setMotherTongue(e.target.value)
+                  if (e.target.value === targetLanguage) setTargetLanguage('')
+                }}
+                className="w-full px-4 py-3.5 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer mb-6 transition-all hover:border-muted/40"
+                style={selectStyle}
+              >
+                <option value="">Select your native language</option>
+                {languages.map(lang => (
+                  <option key={lang.code} value={lang.name}>{lang.name}</option>
+                ))}
+              </select>
 
-            {/* Target language */}
-            <label className="block text-sm font-medium text-muted mb-2">I want to learn</label>
-            <select
-              value={targetLanguage}
-              onChange={(e) => setTargetLanguage(e.target.value)}
-              className="w-full px-4 py-3.5 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer mb-4"
-              style={selectStyle}
-            >
-              <option value="">Select the language you're learning</option>
-              {targetLanguages.map(lang => (
-                <option key={lang.code} value={lang.name}>{lang.name}</option>
-              ))}
-            </select>
+              {/* Decorative divider with arrow */}
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex-1 h-px bg-border" />
+                <svg className="w-4 h-4 text-muted/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+                <div className="flex-1 h-px bg-border" />
+              </div>
 
-            <p className="text-xs text-muted/70 text-center mb-6">You can add more languages later</p>
+              {/* Target language */}
+              <label className="block text-xs font-semibold uppercase tracking-wider text-muted mb-2">
+                I want to learn
+              </label>
+              <select
+                value={targetLanguage}
+                onChange={(e) => setTargetLanguage(e.target.value)}
+                className="w-full px-4 py-3.5 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer mb-2 transition-all hover:border-muted/40"
+                style={selectStyle}
+              >
+                <option value="">Select the language you're learning</option>
+                {targetLanguages.map(lang => (
+                  <option key={lang.code} value={lang.name}>{lang.name}</option>
+                ))}
+              </select>
 
-            <button
-              onClick={handleLanguagesContinue}
-              disabled={!motherTongue || !targetLanguage || saving}
-              className="w-full py-3.5 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
-            >
-              {saving ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Setting up...
-                </span>
-              ) : 'Continue'}
-            </button>
+              <p className="text-xs text-muted/60 text-center mb-6">You can add more languages later</p>
+
+              <button
+                onClick={handleLanguagesContinue}
+                disabled={!motherTongue || !targetLanguage || saving}
+                className="w-full py-3.5 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0 group"
+              >
+                {saving ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Setting up...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    Continue
+                    <svg className="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </span>
+                )}
+              </button>
+            </div>
           </div>
         )}
 
-        {/* ── Screen 2: Choose Your Path ── */}
+
+        {/* ── Screen 2: Choose Your Path ────────────────────── */}
         {screen === 'paths' && (
-          <div className="bg-surface rounded-2xl p-8 shadow-medium border border-border animate-fade-up">
+          <div className="animate-fade-up">
             <button
               onClick={() => setScreen('languages')}
-              className="text-muted hover:text-text transition-colors mb-4 flex items-center gap-1 text-sm"
+              className="text-muted hover:text-text transition-colors mb-6 flex items-center gap-1.5 text-sm group"
             >
-              <BackArrow /> Back
+              <span className="transition-transform group-hover:-translate-x-0.5"><BackArrow /></span>
+              Back
             </button>
 
-            <p className="text-sm text-muted text-center mb-2">
-              InfiniLing generates stories and flashcards from your personal word list. How would you like to build yours?
-            </p>
-            <h1 className="text-2xl font-semibold text-center text-text mb-6">How would you like to start?</h1>
+            <div className="text-center mb-6">
+              <h1 className="font-display text-4xl text-text mb-2 italic">
+                Choose your path
+              </h1>
+              <p className="text-muted text-sm max-w-xs mx-auto leading-relaxed">
+                InfiniLing creates stories and flashcards from your word list.
+                How would you like to build it?
+              </p>
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <button
-                onClick={() => seedWelcomeAndNavigate('/vocabulary')}
-                disabled={saving}
-                className="p-4 bg-bg border border-border rounded-xl text-left hover:border-accent/50 hover:bg-accent/5 transition-all group"
-              >
-                <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center mb-3">
-                  <span className="text-xl">📝</span>
-                </div>
-                <p className="font-medium text-text mb-1">Start Fresh</p>
-                <p className="text-xs text-muted leading-relaxed">Begin with an empty vocabulary list and add words as you go</p>
-              </button>
-
-              <button
-                onClick={enterWordPicker}
-                disabled={loadingWords}
-                className="p-4 bg-bg border border-border rounded-xl text-left hover:border-accent/50 hover:bg-accent/5 transition-all group"
-              >
-                <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center mb-3">
-                  <span className="text-xl">🔍</span>
-                </div>
-                <p className="font-medium text-text mb-1">Pick Unknown Words</p>
-                <p className="text-xs text-muted leading-relaxed">Select from a list of common words to build your starting vocabulary</p>
-              </button>
-
-              <button
-                onClick={() => setScreen('import')}
-                className="p-4 bg-bg border border-border rounded-xl text-left hover:border-accent/50 hover:bg-accent/5 transition-all group"
-              >
-                <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center mb-3">
-                  <span className="text-xl">📥</span>
-                </div>
-                <p className="font-medium text-text mb-1">Import Vocabulary</p>
-                <p className="text-xs text-muted leading-relaxed">Already have a word list? Import it directly</p>
-              </button>
-
-              <button
-                onClick={() => seedWelcomeAndNavigate('/podcast')}
-                disabled={saving}
-                className="p-4 bg-bg border border-border rounded-xl text-left hover:border-accent/50 hover:bg-accent/5 transition-all group"
-              >
-                <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center mb-3">
-                  <span className="text-xl">🎧</span>
-                </div>
-                <p className="font-medium text-text mb-1">Start with Podcasts</p>
-                <p className="text-xs text-muted leading-relaxed">Listen to podcasts and add unknown words to your list</p>
-              </button>
+              {pathCards.map((card, i) => (
+                <button
+                  key={card.title}
+                  onClick={card.onClick}
+                  disabled={card.disabled}
+                  className="bg-surface border border-border rounded-2xl p-5 text-left
+                    hover:border-accent/30 hover:shadow-medium
+                    transition-all duration-200 group animate-fade-up"
+                  style={{ animationDelay: `${0.1 + i * 0.06}s` }}
+                >
+                  {/* Icon badge with per-card color */}
+                  <div className={`w-11 h-11 ${card.bg} rounded-xl flex items-center justify-center mb-3
+                    transition-transform duration-200 group-hover:scale-110 ${card.color}`}>
+                    {card.icon}
+                  </div>
+                  <p className="font-semibold text-text mb-1 text-[15px]">{card.title}</p>
+                  <p className="text-xs text-muted leading-relaxed">{card.desc}</p>
+                </button>
+              ))}
             </div>
 
             {(saving || loadingWords) && (
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-5">
                 <span className="w-5 h-5 border-2 border-accent border-t-transparent rounded-full animate-spin" />
               </div>
             )}
           </div>
         )}
 
-        {/* ── Screen 3a: Word Picker ── */}
+
+        {/* ── Screen 3a: Word Picker ────────────────────────── */}
         {screen === 'wordPicker' && (
-          <div className="bg-surface rounded-2xl p-6 shadow-medium border border-border animate-fade-up max-w-2xl w-full">
+          <div className="animate-fade-up">
             <button
               onClick={() => { setScreen('paths'); setSelectedIndices(new Set()) }}
-              className="text-muted hover:text-text transition-colors mb-4 flex items-center gap-1 text-sm"
+              className="text-muted hover:text-text transition-colors mb-6 flex items-center gap-1.5 text-sm group"
             >
-              <BackArrow /> Back
+              <span className="transition-transform group-hover:-translate-x-0.5"><BackArrow /></span>
+              Back
             </button>
 
-            <h1 className="text-xl font-semibold text-center text-text mb-1">Pick 10 unknown words</h1>
-            <p className="text-sm text-muted text-center mb-4">
-              {selectedIndices.size} / 10 selected
-            </p>
-
-            <div className="max-h-[60vh] overflow-y-auto space-y-1.5 mb-4 pr-1">
-              {onboardingWords.map((word, index) => {
-                const isSelected = selectedIndices.has(index)
-                const isFull = selectedIndices.size >= 10 && !isSelected
-                return (
-                  <button
-                    key={index}
-                    onClick={() => toggleWord(index)}
-                    disabled={isFull}
-                    className={`w-full px-4 py-2.5 rounded-lg text-left flex justify-between items-center transition-all text-sm ${
-                      isSelected
-                        ? 'bg-accent/10 border border-accent/40 text-text'
-                        : isFull
-                          ? 'bg-bg border border-border text-muted/40 cursor-not-allowed'
-                          : 'bg-bg border border-border text-text hover:border-accent/30'
-                    }`}
-                  >
-                    <span className="font-medium">{word.word}</span>
-                    <span className="text-muted text-xs">{nativeWords[index]?.word}</span>
-                  </button>
-                )
-              })}
+            <div className="text-center mb-6">
+              <h1 className="font-display text-3xl text-text mb-2 italic">
+                Pick 10 unknown words
+              </h1>
+              {/* Progress counter with a fill bar */}
+              <div className="flex items-center justify-center gap-3">
+                <div className="w-32 h-1.5 bg-border rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-accent rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${(selectedIndices.size / 10) * 100}%` }}
+                  />
+                </div>
+                <span className={`text-sm font-medium tabular-nums transition-colors ${
+                  selectedIndices.size === 10 ? 'text-accent' : 'text-muted'
+                }`}>
+                  {selectedIndices.size}/10
+                </span>
+              </div>
             </div>
 
-            <button
-              onClick={submitSelectedWords}
-              disabled={selectedIndices.size !== 10 || saving}
-              className="w-full py-3.5 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
-            >
-              {saving ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Adding words...
-                </span>
-              ) : 'Continue'}
-            </button>
+            <div className="bg-surface rounded-2xl shadow-medium border border-border p-5">
+              <div className="max-h-[55vh] overflow-y-auto space-y-1.5 pr-1 mb-5">
+                {onboardingWords.map((word, index) => {
+                  const isSelected = selectedIndices.has(index)
+                  const isFull = selectedIndices.size >= 10 && !isSelected
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => toggleWord(index)}
+                      disabled={isFull}
+                      className={`w-full px-4 py-3 rounded-xl text-left flex justify-between items-center transition-all text-sm group ${
+                        isSelected
+                          ? 'bg-accent/8 border-2 border-accent/40 text-text'
+                          : isFull
+                            ? 'bg-bg border border-border text-muted/40 cursor-not-allowed'
+                            : 'bg-bg border border-border text-text hover:border-accent/25 hover:bg-accent/3'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {/* Selection indicator — checkbox-like circle */}
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                          isSelected
+                            ? 'border-accent bg-accent'
+                            : 'border-border group-hover:border-muted'
+                        }`}>
+                          {isSelected && (
+                            <svg className="w-3 h-3 text-white animate-check-pop" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                        <span className="font-medium">{word.word}</span>
+                      </div>
+                      <span className="text-muted text-xs">{nativeWords[index]?.word}</span>
+                    </button>
+                  )
+                })}
+              </div>
+
+              <button
+                onClick={submitSelectedWords}
+                disabled={selectedIndices.size !== 10 || saving}
+                className="w-full py-3.5 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
+              >
+                {saving ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Adding words...
+                  </span>
+                ) : 'Continue with these words'}
+              </button>
+            </div>
           </div>
         )}
 
-        {/* ── Screen 3b: Import ── */}
+
+        {/* ── Screen 3b: Import ─────────────────────────────── */}
         {screen === 'import' && (
-          <div className="bg-surface rounded-2xl p-8 shadow-medium border border-border animate-fade-up">
+          <div className="animate-fade-up">
             <button
               onClick={() => { setScreen('paths'); setImportFile(null); setImportResult(null) }}
-              className="text-muted hover:text-text transition-colors mb-4 flex items-center gap-1 text-sm"
+              className="text-muted hover:text-text transition-colors mb-6 flex items-center gap-1.5 text-sm group"
             >
-              <BackArrow /> Back
+              <span className="transition-transform group-hover:-translate-x-0.5"><BackArrow /></span>
+              Back
             </button>
 
-            <h1 className="text-xl font-semibold text-center text-text mb-4">Import your vocabulary</h1>
+            <div className="text-center mb-6">
+              <h1 className="font-display text-3xl text-text mb-2 italic">
+                Import your words
+              </h1>
+              <p className="text-muted text-sm">Upload an existing vocabulary list</p>
+            </div>
 
-            <div className="space-y-4 mb-6">
-              <div className="bg-bg rounded-xl p-4 border border-border text-sm text-muted space-y-2">
-                <p className="font-medium text-text">Accepted formats: CSV or JSON</p>
-                <p>Required columns: <code className="bg-surface px-1 rounded">word</code> + <code className="bg-surface px-1 rounded">translation</code></p>
-                <p>Also accepts: <code className="bg-surface px-1 rounded">source</code>/<code className="bg-surface px-1 rounded">term</code> and <code className="bg-surface px-1 rounded">target</code>/<code className="bg-surface px-1 rounded">meaning</code></p>
-                <p>Optional: <code className="bg-surface px-1 rounded">lemma</code>, <code className="bg-surface px-1 rounded">example_sentence_original</code>, <code className="bg-surface px-1 rounded">example_sentence_translation</code></p>
+            <div className="bg-surface rounded-2xl p-6 shadow-medium border border-border">
+              {/* Format info — compact, scannable */}
+              <div className="bg-bg rounded-xl p-4 border border-border text-sm text-muted space-y-1.5 mb-5">
+                <p className="font-medium text-text text-xs uppercase tracking-wider mb-2">Accepted formats</p>
+                <p>
+                  <span className="inline-block bg-surface border border-border rounded-md px-1.5 py-0.5 text-xs font-mono mr-1">CSV</span>
+                  <span className="inline-block bg-surface border border-border rounded-md px-1.5 py-0.5 text-xs font-mono">JSON</span>
+                </p>
+                <p className="text-xs leading-relaxed">
+                  Required: <code className="bg-surface px-1 rounded text-text">word</code> + <code className="bg-surface px-1 rounded text-text">translation</code>
+                </p>
+                <p className="text-xs leading-relaxed">
+                  Also accepts: <code className="bg-surface px-1 rounded">source</code>/<code className="bg-surface px-1 rounded">term</code> and <code className="bg-surface px-1 rounded">target</code>/<code className="bg-surface px-1 rounded">meaning</code>
+                </p>
               </div>
 
-              <label className="block w-full border-2 border-dashed border-border rounded-xl p-6 text-center cursor-pointer hover:border-accent/40 transition-colors">
+              {/* File upload area */}
+              <label className={`block w-full border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all mb-2 ${
+                importFile
+                  ? 'border-accent/40 bg-accent/3'
+                  : 'border-border hover:border-accent/30 hover:bg-accent/2'
+              }`}>
                 <input
                   type="file"
                   accept=".csv,.json"
@@ -403,35 +571,50 @@ export default function Onboarding() {
                   className="hidden"
                 />
                 {importFile ? (
-                  <p className="text-text font-medium">{importFile.name}</p>
+                  <div>
+                    <div className="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                      </svg>
+                    </div>
+                    <p className="text-text font-medium text-sm">{importFile.name}</p>
+                    <p className="text-muted text-xs mt-1">Click to change file</p>
+                  </div>
                 ) : (
-                  <p className="text-muted">Click to select a CSV or JSON file</p>
+                  <div>
+                    <div className="w-12 h-12 bg-bg rounded-xl flex items-center justify-center mx-auto mb-3 border border-border">
+                      <svg className="w-6 h-6 text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                      </svg>
+                    </div>
+                    <p className="text-muted text-sm">Click to select a CSV or JSON file</p>
+                  </div>
                 )}
               </label>
 
-              <p className="text-xs text-muted/70 text-center">
-                Have a different format? Send me an email and I'll help you convert it.
+              <p className="text-xs text-muted/50 text-center mb-5">
+                Different format? Send me an email and I'll help you convert it.
               </p>
+
+              {importResult && (
+                <div className="bg-success/10 border border-success/20 rounded-xl p-3 mb-4 text-sm text-success text-center font-medium">
+                  Imported {importResult.imported} words! Redirecting...
+                </div>
+              )}
+
+              <button
+                onClick={handleImport}
+                disabled={!importFile || importing}
+                className="w-full py-3.5 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
+              >
+                {importing ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Importing...
+                  </span>
+                ) : 'Import'}
+              </button>
             </div>
-
-            {importResult && (
-              <div className="bg-accent/10 rounded-xl p-3 mb-4 text-sm text-text text-center">
-                Imported {importResult.imported} words! Redirecting...
-              </div>
-            )}
-
-            <button
-              onClick={handleImport}
-              disabled={!importFile || importing}
-              className="w-full py-3.5 bg-accent text-white rounded-xl font-medium hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all hover:-translate-y-0.5 disabled:hover:translate-y-0"
-            >
-              {importing ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Importing...
-                </span>
-              ) : 'Import'}
-            </button>
           </div>
         )}
       </div>
