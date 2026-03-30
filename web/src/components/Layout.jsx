@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Outlet, Navigate, Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 import SettingsModal from './SettingsModal'
+import HelpDrawer from './HelpDrawer'
 
 const navItems = [
   { path: '/vocabulary', label: 'Vocabulary' },
@@ -148,6 +149,9 @@ export default function Layout() {
       </nav>
 
       {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
+
+      {/* Floating help button + contextual guide drawer */}
+      <HelpDrawer />
     </div>
   )
 }
