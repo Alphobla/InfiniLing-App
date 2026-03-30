@@ -37,10 +37,6 @@ export default function Podcast() {
   const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1)
   const transcriptRef = useRef(null)
 
-  // Preview audio (episode list play button)
-  const [previewAudioUrl, setPreviewAudioUrl] = useState(null)
-  const previewAudioRef = useRef(null)
-
   // Word popover (shared hook)
   const { popover, openPopover, closePopover } = useWordPopover()
 
@@ -249,7 +245,7 @@ export default function Podcast() {
       <div>
         {/* Back button */}
         <button
-          onClick={() => { setView('list'); setPreviewAudioUrl(null) }}
+          onClick={() => setView('list')}
           className="text-accent text-sm mb-4 hover:underline"
         >
           ← Back to Podcasts
@@ -269,13 +265,6 @@ export default function Podcast() {
             <p className="text-sm text-muted">{selectedPodcast?.description}</p>
           </div>
         </div>
-
-        {/* Preview audio player */}
-        {previewAudioUrl && (
-          <div className="mb-4 p-3 bg-surface border border-border rounded-lg">
-            <audio ref={previewAudioRef} src={previewAudioUrl} controls className="w-full" />
-          </div>
-        )}
 
         {/* Episode list */}
         {loadingEpisodes ? (
@@ -306,21 +295,13 @@ export default function Podcast() {
                         ▶ Study
                       </button>
                     ) : (
-                      <>
-                        <button
-                          onClick={() => setPreviewAudioUrl(ep.audio_url)}
-                          className="px-3 py-1.5 bg-surface border border-border text-muted text-xs rounded-md hover:text-text"
-                        >
-                          ▶ Play
-                        </button>
-                        <button
-                          onClick={() => handleTranscribe(ep)}
-                          disabled={transcribingGuid === ep.guid}
-                          className="px-3 py-1.5 bg-accent text-white text-xs rounded-md hover:bg-accent/90 disabled:opacity-50"
-                        >
-                          {transcribingGuid === ep.guid ? 'Transcribing...' : 'Save & Transcribe'}
-                        </button>
-                      </>
+                      <button
+                        onClick={() => handleTranscribe(ep)}
+                        disabled={transcribingGuid === ep.guid}
+                        className="px-3 py-1.5 bg-accent text-white text-xs rounded-md hover:bg-accent/90 disabled:opacity-50"
+                      >
+                        {transcribingGuid === ep.guid ? 'Transcribing...' : 'Save & Transcribe'}
+                      </button>
                     )}
                   </div>
                 </div>
