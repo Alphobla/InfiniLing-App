@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef } from 'react'
 import { useAuthStore } from '../stores/authStore'
-import { userApi, importExportApi } from '../services/api'
+import { userApi, importExportApi, onboardingApi } from '../services/api'
 import { useLanguages } from '../hooks/useLanguages'
 
 export default function SettingsModal({ onClose }) {
-  const { settings, updateSettings } = useAuthStore()
-  // Languages from single source of truth
-  const { languages: availableLanguages } = useLanguages()
-  const [motherTongue, setMotherTongue] = useState('')
+  const { user, settings, signOut } = useAuthStore()
+  const { languages } = useLanguages()
   const [apiKey, setApiKey] = useState('')
   const [hasApiKey, setHasApiKey] = useState(false)
   const [usage, setUsage] = useState(null)
@@ -16,9 +14,17 @@ export default function SettingsModal({ onClose }) {
   const [exportLoading, setExportLoading] = useState(false)
   const fileInputRef = useRef(null)
 
+  // Word picker state
+  const [showWordPicker, setShowWordPicker] = useState(false)
+  const [onboardingWords, setOnboardingWords] = useState([])
+  const [nativeWords, setNativeWords] = useState([])
+  const [selectedIndices, setSelectedIndices] = useState(new Set())
+  const [loadingWords, setLoadingWords] = useState(false)
+  const [addingWords, setAddingWords] = useState(false)
+  const [addedMessage, setAddedMessage] = useState('')
+
   useEffect(() => {
     if (settings) {
-      setMotherTongue(settings.mother_tongue || '')
       setHasApiKey(!!settings.has_api_key)
     }
     loadUsage()
@@ -39,18 +45,6 @@ export default function SettingsModal({ onClose }) {
       setUsage(data)
     } catch (err) {
       console.error('Failed to load usage:', err)
-    }
-  }
-
-  const handleSaveSettings = async () => {
-    setSaving(true)
-    try {
-      await updateSettings({ mother_tongue: motherTongue })
-    } catch (err) {
-      console.error('Failed to save settings:', err)
-      alert('Failed to save settings')
-    } finally {
-      setSaving(false)
     }
   }
 
@@ -106,8 +100,8 @@ export default function SettingsModal({ onClose }) {
     try {
       const { data } = await importExportApi.import(
         file,
-        'English',
-        motherTongue || 'English',
+        settings?.last_language || 'en',
+        languages.find(l => l.name === settings?.mother_tongue)?.code || 'en',
         'skip'
       )
       alert(`Imported ${data.imported || 0} words`)
@@ -120,6 +114,80 @@ export default function SettingsModal({ onClose }) {
     }
   }
 
+  // Load the word list for the "add more words" picker
+  const loadWordPicker = async () => {
+    if (showWordPicker) {
+      // Toggle off
+      setShowWordPicker(false)
+      return
+    }
+    setLoadingWords(true)
+    try {
+      const targetCode = settings?.last_language || 'en'
+      const nativeCode = languages.find(l => l.name === settings?.mother_tongue)?.code || 'en'
+      const [targetRes, nativeRes] = await Promise.all([
+        onboardingApi.getWords(targetCode),
+        onboardingApi.getWords(nativeCode),
+      ])
+      setOnboardingWords(targetRes.data.words)
+      setNativeWords(nativeRes.data.words)
+      setSelectedIndices(new Set())
+      setAddedMessage('')
+      setShowWordPicker(true)
+    } catch (err) {
+      alert('Failed to load word list: ' + (err.response?.data?.detail || err.message))
+    } finally {
+      setLoadingWords(false)
+    }
+  }
+
+  const toggleWord = (index) => {
+    setSelectedIndices(prev => {
+      const next = new Set(prev)
+      if (next.has(index)) next.delete(index)
+      else if (next.size < 10) next.add(index)
+      return next
+    })
+  }
+
+  const submitWords = async () => {
+    if (selectedIndices.size === 0) return
+    setAddingWords(true)
+    try {
+      const targetCode = settings?.last_language || 'en'
+      const nativeCode = languages.find(l => l.name === settings?.mother_tongue)?.code || 'en'
+      await onboardingApi.addWords({
+        indices: Array.from(selectedIndices),
+        language_from: targetCode,
+        language_to: nativeCode,
+      })
+      setAddedMessage(`Added ${selectedIndices.size} words!`)
+      setSelectedIndices(new Set())
+    } catch (err) {
+      alert('Failed to add words: ' + (err.response?.data?.detail || err.message))
+    } finally {
+      setAddingWords(false)
+    }
+  }
+
+  // Shared chevron style for selects
+  const selectChevron = {
+    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'right 12px center',
+    backgroundSize: '16px',
+  }
+
+  // Section heading component — keeps markup DRY
+  const SectionHeading = ({ icon, children }) => (
+    <div className="flex items-center gap-2 mb-3">
+      <div className="w-7 h-7 rounded-lg bg-accent/8 text-accent flex items-center justify-center flex-shrink-0">
+        {icon}
+      </div>
+      <h3 className="text-sm font-semibold text-text">{children}</h3>
+    </div>
+  )
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -131,8 +199,8 @@ export default function SettingsModal({ onClose }) {
       {/* Modal */}
       <div className="relative bg-surface rounded-2xl shadow-lift max-w-md w-full max-h-[90dvh] overflow-y-auto border border-border animate-scale-in">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-          <h2 className="text-lg font-semibold text-text">Settings</h2>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-border sticky top-0 bg-surface rounded-t-2xl z-10">
+          <h2 className="font-display text-2xl text-text italic">Settings</h2>
           <button
             onClick={onClose}
             className="p-2 text-muted hover:text-text hover:bg-bg rounded-lg transition-all"
@@ -144,66 +212,202 @@ export default function SettingsModal({ onClose }) {
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Mother Tongue */}
+
+          {/* ── Account ── */}
           <div>
-            <label className="block text-sm font-medium text-text mb-3">
-              Mother Tongue
-            </label>
-            <div className="flex gap-2">
-              <select
-                value={motherTongue}
-                onChange={(e) => setMotherTongue(e.target.value)}
-                className="flex-1 px-4 py-2.5 bg-bg border border-border rounded-xl text-text appearance-none cursor-pointer"
-                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px' }}
-              >
-                <option value="">Select language</option>
-                {availableLanguages.map(lang => (
-                  <option key={lang.code} value={lang.name}>{lang.name}</option>
-                ))}
-              </select>
-              <button
-                onClick={handleSaveSettings}
-                disabled={saving}
-                className="px-5 py-2.5 bg-accent text-white rounded-xl hover:bg-accent-hover disabled:opacity-50 text-sm font-medium transition-colors"
-              >
-                Save
-              </button>
+            <SectionHeading icon={
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+              </svg>
+            }>
+              Account
+            </SectionHeading>
+
+            <div className="bg-bg rounded-xl p-4 border border-border">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-muted mb-0.5">Signed in as</p>
+                  <p className="text-sm font-medium text-text">{user?.email}</p>
+                </div>
+                <button
+                  onClick={() => { signOut(); onClose() }}
+                  className="px-3 py-1.5 text-xs font-medium text-muted hover:text-accent border border-border hover:border-accent/30 rounded-lg transition-all"
+                >
+                  Sign out
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Token Usage */}
+          {/* ── Add More Words ── */}
           <div>
-            <h3 className="text-sm font-medium text-text mb-3">Token Usage</h3>
-            {usage ? (
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted">Used this month</span>
-                  <span className="text-text font-medium">{usage.tokens_used?.toLocaleString() || 0} / {usage.token_limit?.toLocaleString() || '∞'}</span>
+            <SectionHeading icon={
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+            }>
+              Add More Words
+            </SectionHeading>
+
+            <p className="text-xs text-muted mb-3">
+              Pick common words you don't know yet to grow your vocabulary.
+            </p>
+
+            <button
+              onClick={loadWordPicker}
+              disabled={loadingWords}
+              className={`w-full px-4 py-3 border rounded-xl text-sm font-medium transition-all ${
+                showWordPicker
+                  ? 'bg-accent/5 border-accent/30 text-accent'
+                  : 'bg-bg border-border text-text hover:border-accent/30'
+              }`}
+            >
+              {loadingWords ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                  Loading words...
+                </span>
+              ) : showWordPicker ? (
+                'Hide word list'
+              ) : (
+                'Browse word list'
+              )}
+            </button>
+
+            {/* Inline word picker */}
+            {showWordPicker && (
+              <div className="mt-3 animate-fade-up">
+                {addedMessage && (
+                  <div className="mb-3 p-2.5 bg-success/10 border border-success/20 rounded-lg text-sm text-success text-center font-medium">
+                    {addedMessage}
+                  </div>
+                )}
+
+                {/* Selection counter + progress bar */}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex-1 h-1.5 bg-border rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-accent rounded-full transition-all duration-300"
+                      style={{ width: `${(selectedIndices.size / 10) * 100}%` }}
+                    />
+                  </div>
+                  <span className={`text-xs font-medium tabular-nums ${
+                    selectedIndices.size === 10 ? 'text-accent' : 'text-muted'
+                  }`}>
+                    {selectedIndices.size}/10
+                  </span>
                 </div>
-                <div className="h-2 bg-bg rounded-full overflow-hidden">
+
+                <div className="max-h-52 overflow-y-auto space-y-1 mb-3 pr-1">
+                  {onboardingWords.map((word, index) => {
+                    const isSelected = selectedIndices.has(index)
+                    const isFull = selectedIndices.size >= 10 && !isSelected
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => toggleWord(index)}
+                        disabled={isFull}
+                        className={`w-full px-3 py-2 rounded-lg text-left flex justify-between items-center transition-all text-sm ${
+                          isSelected
+                            ? 'bg-accent/8 border border-accent/40 text-text'
+                            : isFull
+                              ? 'bg-bg border border-border text-muted/40 cursor-not-allowed'
+                              : 'bg-bg border border-border text-text hover:border-accent/25'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                            isSelected ? 'border-accent bg-accent' : 'border-border'
+                          }`}>
+                            {isSelected && (
+                              <svg className="w-2.5 h-2.5 text-white animate-check-pop" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                            )}
+                          </div>
+                          <span className="font-medium">{word.word}</span>
+                        </div>
+                        <span className="text-muted text-xs">{nativeWords[index]?.word}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <button
+                  onClick={submitWords}
+                  disabled={selectedIndices.size === 0 || addingWords}
+                  className="w-full py-2.5 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent-hover disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  {addingWords ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Adding...
+                    </span>
+                  ) : (
+                    `Add ${selectedIndices.size} word${selectedIndices.size !== 1 ? 's' : ''}`
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* ── Usage ── */}
+          <div>
+            <SectionHeading icon={
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
+              </svg>
+            }>
+              Token Usage
+            </SectionHeading>
+
+            {usage ? (
+              <div className="bg-bg rounded-xl p-4 border border-border">
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-muted">Used this month</span>
+                  <span className="text-text font-medium tabular-nums">
+                    {usage.tokens_used?.toLocaleString() || 0} / {usage.token_limit?.toLocaleString() || '∞'}
+                  </span>
+                </div>
+                <div className="h-2 bg-surface rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-accent transition-all duration-500"
+                    className="h-full bg-accent rounded-full transition-all duration-500"
                     style={{ width: `${Math.min((usage.tokens_used / (usage.token_limit || 1)) * 100, 100)}%` }}
                   />
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-muted">Loading...</p>
+              <div className="bg-bg rounded-xl p-4 border border-border">
+                <p className="text-sm text-muted">Loading...</p>
+              </div>
             )}
           </div>
 
-          {/* API Key */}
+          {/* ── API Key ── */}
           <div>
-            <h3 className="text-sm font-medium text-text mb-2">OpenAI API Key</h3>
+            <SectionHeading icon={
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
+              </svg>
+            }>
+              API Key
+            </SectionHeading>
+
             <p className="text-xs text-muted mb-3">
-              Use your own key to bypass token limits.
+              Use your own OpenAI key to bypass token limits.
             </p>
+
             {hasApiKey ? (
-              <div className="flex items-center justify-between text-sm p-3 bg-success-light rounded-xl border border-success/20">
-                <span className="text-success font-medium">✓ Configured</span>
+              <div className="flex items-center justify-between text-sm p-3 bg-success/8 rounded-xl border border-success/20">
+                <span className="text-success font-medium flex items-center gap-1.5">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+                  Configured
+                </span>
                 <button
                   onClick={handleRemoveApiKey}
-                  className="text-accent hover:underline underline-offset-2"
+                  className="text-accent text-xs hover:underline underline-offset-2"
                 >
                   Remove
                 </button>
@@ -228,22 +432,29 @@ export default function SettingsModal({ onClose }) {
             )}
           </div>
 
-          {/* Import/Export */}
+          {/* ── Import / Export ── */}
           <div>
-            <h3 className="text-sm font-medium text-text mb-3">Import / Export</h3>
+            <SectionHeading icon={
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+            }>
+              Import / Export
+            </SectionHeading>
+
             <div className="space-y-3">
               <div className="flex gap-2">
                 <button
                   onClick={() => handleExport('csv')}
                   disabled={exportLoading}
-                  className="flex-1 px-4 py-2.5 border border-border rounded-xl hover:bg-bg disabled:opacity-50 text-sm text-muted hover:text-text transition-colors"
+                  className="flex-1 px-4 py-2.5 bg-bg border border-border rounded-xl hover:border-accent/30 disabled:opacity-50 text-sm text-muted hover:text-text transition-all"
                 >
                   Export CSV
                 </button>
                 <button
                   onClick={() => handleExport('json')}
                   disabled={exportLoading}
-                  className="flex-1 px-4 py-2.5 border border-border rounded-xl hover:bg-bg disabled:opacity-50 text-sm text-muted hover:text-text transition-colors"
+                  className="flex-1 px-4 py-2.5 bg-bg border border-border rounded-xl hover:border-accent/30 disabled:opacity-50 text-sm text-muted hover:text-text transition-all"
                 >
                   Export JSON
                 </button>
@@ -259,7 +470,7 @@ export default function SettingsModal({ onClose }) {
             </div>
           </div>
 
-          {/* Feedback */}
+          {/* ── Footer ── */}
           <div className="pt-2 border-t border-border">
             <p className="text-center text-xs text-muted">
               Grateful for any feedback — <a href="mailto:valentinmaissen@gmail.com" className="text-accent hover:underline underline-offset-2">contact me</a>
