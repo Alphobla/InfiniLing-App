@@ -75,6 +75,42 @@ _RULES: dict[str, str] = {
 - Other fixed expressions and set phrases: preserve exactly as given.
     Set is_fixed_expression to true for all multi-word fixed units.""",
 
+    "tr": """LEMMATIZATION RULES FOR TURKISH:
+- Turkish has no articles. Do NOT add any.
+    The word "bir" ("a/one") is the only indefinite marker; do not attach it to the lemma.
+- Nouns: nominative singular, bare (no possessive/case suffix).
+    Turkish is agglutinative: strip suffixes like -lar/-ler (plural), -da/-de (locative),
+    -ı/-i/-u/-ü (accusative), -dan/-den (ablative), -ın/-in/-un/-ün (genitive),
+    -ım/-sı/-mız/-nız (possessive), etc.
+    Example: "evler" -> "ev", "kitabımda" -> "kitap", "arkadaşlarım" -> "arkadaş".
+- Verbs: infinitive form ending in -mek or -mak (following vowel harmony).
+    Example: "gidiyorum" -> "gitmek", "yaptı" -> "yapmak", "seviyor" -> "sevmek".
+    Reflexive/reciprocal suffixes (-(ı)n-, -(ı)ş-) that form distinct lexical verbs are kept.
+- Adjectives: base form, no agreement (Turkish adjectives do not inflect for gender/number).
+    Example: "büyük", "güzel", "kırmızı".
+- Fixed expressions: preserve exactly as given.
+    Examples: "her şeyden önce", "bir an önce", "elbette ki".
+    Set is_fixed_expression to true for these.""",
+
+    "pl": """LEMMATIZATION RULES FOR POLISH:
+- Polish has no articles. Do NOT add any.
+- Nouns: nominative singular.
+    Strip all case endings (genitive, dative, accusative, instrumental, locative, vocative) and plurals.
+    Example: "książki" -> "książka", "domem" -> "dom", "kobiet" -> "kobieta".
+- Verbs: imperfective infinitive as the citation form.
+    If the verb only exists in perfective aspect, use the perfective infinitive.
+    If a common aspectual pair exists, put the perfective partner alone in secondary_translation
+    (e.g. lemma: "pisać", translation: "<target language translation>", secondary_translation: "napisać").
+    Do NOT repeat the imperfective in secondary_translation.
+    Reflexive verbs keep the "się" particle (uczyć się, bać się, śmiać się).
+    Example: "napisałem" -> lemma "pisać", secondary_translation "napisać".
+    Example: "uczę się" -> "uczyć się".
+- Adjectives: masculine nominative singular.
+    Example: "piękna" -> "piękny", "dużego" -> "duży", "nowe" -> "nowy".
+- Fixed expressions: preserve exactly as given.
+    Examples: "na pewno", "w ogóle", "mimo to", "od razu".
+    Set is_fixed_expression to true for these.""",
+
     "default": """LEMMATIZATION RULES:
 - Verbs: infinitive form.
 - Nouns: singular form. Add a definite article only if the language grammatically requires one

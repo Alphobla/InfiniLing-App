@@ -1,0 +1,1002 @@
+[
+  {
+    "word": "evet",
+    "example_sentence": "Evet, biraz kahve istiyorum.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "hayır",
+    "example_sentence": "Hayır, teşekkür ederim, aç değilim.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "iyi",
+    "example_sentence": "Bu çok iyi bir kitap.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "su",
+    "example_sentence": "Her sabah bir bardak su içiyorum.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "gün",
+    "example_sentence": "Bugün güzel bir gün.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "zaman",
+    "example_sentence": "Tren saat kaçta kalkıyor?",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "insan",
+    "example_sentence": "Bu şehirde birçok insan yaşıyor.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "iş",
+    "example_sentence": "İşim şehir merkezindeki bir ofiste.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "para",
+    "example_sentence": "Bir araba almak için yeterince para biriktirdi.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ev",
+    "example_sentence": "Geçen yıl yeni bir ev aldılar.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "büyük",
+    "example_sentence": "Bu çok büyük bir köpek.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "küçük",
+    "example_sentence": "Küçük kedi yatağın altına saklandı.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "yemek",
+    "example_sentence": "Her akşam saat yedide yemek yiyoruz.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "içmek",
+    "example_sentence": "Öğleden sonra çay içmeyi severim.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "uyumak",
+    "example_sentence": "Genellikle sekiz saat uyurum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "yürümek",
+    "example_sentence": "Parka birlikte yürüyelim.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "koşmak",
+    "example_sentence": "Sabahları koşmayı sever.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "konuşmak",
+    "example_sentence": "Üç dil konuşabilir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "arkadaş",
+    "example_sentence": "En iyi arkadaşım yan kapıda oturuyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sevmek",
+    "example_sentence": "Ailemle vakit geçirmeyi seviyorum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "mutlu",
+    "example_sentence": "Çocuklar bugün çok mutlu.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "üzgün",
+    "example_sentence": "Film bittiğinde üzgün hissetti.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "yardım",
+    "example_sentence": "Bu çantaları taşımama yardım eder misin?",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "isim",
+    "example_sentence": "Benim ismim Maria.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "yıl",
+    "example_sentence": "Bu yıl şimdiye kadar harika geçti.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "çocuk",
+    "example_sentence": "Çocuk bahçede mutlu bir şekilde oynadı.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "kadın",
+    "example_sentence": "Kadın gülümseyip bize el salladı.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "adam",
+    "example_sentence": "Adam onun için kapıyı açtı.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "kitap",
+    "example_sentence": "Geçen hafta ilginç bir kitap okudum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "araba",
+    "example_sentence": "Her gün arabasıyla işe gidiyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "okul",
+    "example_sentence": "Çocuklar birlikte okula yürüyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "yiyecek",
+    "example_sentence": "Bu restoranın yiyecekleri lezzetli.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sabah",
+    "example_sentence": "Her sabah kahvemin tadını çıkarırım.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "gece",
+    "example_sentence": "Bu gece yıldızlar parlak.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sıcak",
+    "example_sentence": "Hava bugün sıcak ve güneşli.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "soğuk",
+    "example_sentence": "Kışın dışarısı çok soğuk.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "hızlı",
+    "example_sentence": "Tren çok hızlı.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "açmak",
+    "example_sentence": "Lütfen pencereyi aç.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "kapatmak",
+    "example_sentence": "Lütfen kapıyı kapat.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "almak",
+    "example_sentence": "Yeni bir telefon almak istiyorum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "şehir",
+    "example_sentence": "Paris güzel bir şehir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "aile",
+    "example_sentence": "Ailem her pazar akşam yemeği için buluşur.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "müzik",
+    "example_sentence": "Ders çalışırken müzik dinler.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "cevap",
+    "example_sentence": "Soruya net bir cevap verdi.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "renk",
+    "example_sentence": "Mavi benim en sevdiğim renk.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "öğrenmek",
+    "example_sentence": "Yeni bir dil öğrenmek istiyorum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "öğretmek",
+    "example_sentence": "Üniversitede matematik öğretiyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "yazmak",
+    "example_sentence": "Kısa hikayeler yazmayı sever.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "okumak",
+    "example_sentence": "Her sabah gazete okurum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "oynamak",
+    "example_sentence": "Çocuklar okuldan sonra futbol oynar.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "başlamak",
+    "example_sentence": "Konser saat sekizde başlayacak.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "son",
+    "example_sentence": "Filmin sürpriz bir sonu var.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ülke",
+    "example_sentence": "Japonya büyüleyici bir ülke.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "el",
+    "example_sentence": "Çiçeği elinde tuttu.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "baş",
+    "example_sentence": "Onaylayarak başını salladı.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "göz",
+    "example_sentence": "Güzel yeşil gözleri var.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "kapı",
+    "example_sentence": "Birisi kapıyı çalıyor.",
+    "frequency_level": "Essential"
+  },
+  {
+    "word": "oda",
+    "example_sentence": "Oda aydınlık ve ferah.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "hayvan",
+    "example_sentence": "Köpek sadık bir hayvandır.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ağaç",
+    "example_sentence": "Bahçede uzun bir ağaç büyüyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "yol",
+    "example_sentence": "Yol köye gidiyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "nehir",
+    "example_sentence": "Nehir vadiden akıyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "güçlü",
+    "example_sentence": "Kutuyu kaldıracak kadar güçlü.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "genç",
+    "example_sentence": "O hâlâ çok genç.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "eski",
+    "example_sentence": "Bu on sekizinci yüzyıldan kalma eski bir bina.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "güzel",
+    "example_sentence": "Gün batımı inanılmaz güzeldi.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "önemli",
+    "example_sentence": "Eğitim çok önemlidir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "farklı",
+    "example_sentence": "Bu iki gömlek çok farklı.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "daima",
+    "example_sentence": "Daima zamanında gelir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "asla",
+    "example_sentence": "Asla Avustralya'ya gitmedim.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sık sık",
+    "example_sentence": "Hafta sonları sık sık yürüyüşe çıkarız.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "bazen",
+    "example_sentence": "Bazen evde yemek yapmayı severim.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "bahçe",
+    "example_sentence": "Bahçesinde domates yetiştiriyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "mutfak",
+    "example_sentence": "Mutfakta akşam yemeği pişiriyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "masa",
+    "example_sentence": "Tabaklar zaten masanın üzerinde.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "pencere",
+    "example_sentence": "Taze hava girmesi için pencereyi aç.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "hava",
+    "example_sentence": "Piknik için hava mükemmel.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "yaz",
+    "example_sentence": "Her yaz yüzmeye gideriz.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "kış",
+    "example_sentence": "Kış en sevmediğim mevsim.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "doktor",
+    "example_sentence": "Doktor bana dinlenmemi söyledi.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "deneyim",
+    "example_sentence": "Seyahat sana değerli bir deneyim kazandırır.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "bilgi",
+    "example_sentence": "Bilgi başarının anahtarıdır.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "durum",
+    "example_sentence": "Önce durumu anlamamız gerekiyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "mümkün",
+    "example_sentence": "Biletimi değiştirmek mümkün mü?",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "zor",
+    "example_sentence": "Bu sınav gerçekten zordu.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sorun",
+    "example_sentence": "Soruna bir çözüm bulduk.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "fikir",
+    "example_sentence": "Bu harika bir fikir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "değişmek",
+    "example_sentence": "Mevsimler yılda dört kez değişir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "inanmak",
+    "example_sentence": "Zamanında bitirebileceğimize inanıyorum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "anlamak",
+    "example_sentence": "Talimatları şimdi anlıyorum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "hatırlamak",
+    "example_sentence": "Okuldaki ilk günümü hatırlıyorum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "unutmak",
+    "example_sentence": "Kapıyı kilitlemeyi unutma.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "karar vermek",
+    "example_sentence": "Yarına kadar karar vermen gerekiyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "seçmek",
+    "example_sentence": "İkisi arasında seçim yapmak zor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "seyahat etmek",
+    "example_sentence": "Yeni yerlere seyahat etmeyi seviyorum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "köy",
+    "example_sentence": "Köy dağlarla çevrili.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "dağ",
+    "example_sentence": "Altı saatte dağa tırmandılar.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "okyanus",
+    "example_sentence": "Okyanus kıyıdan sonsuz görünüyor.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "ada",
+    "example_sentence": "Geçen yaz küçük bir adayı ziyaret ettik.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "köprü",
+    "example_sentence": "Eski köprü nehri geçiyor.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "hazırlanmak",
+    "example_sentence": "Toplantıya hazırlanması gerekiyor.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "devam etmek",
+    "example_sentence": "Lütfen bir sonraki bölümü okumaya devam et.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "geliştirmek",
+    "example_sentence": "Yeni bir uygulama geliştirmek istiyoruz.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "iyileştirmek",
+    "example_sentence": "Pratik, becerilerini iyileştirir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "başarmak",
+    "example_sentence": "Sıkı çalışmak hedeflerine ulaşmana yardımcı olur.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "karşılaştırmak",
+    "example_sentence": "İki seçeneği karşılaştıralım.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "sağlamak",
+    "example_sentence": "Otel ücretsiz kahvaltı sağlıyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "gerektirmek",
+    "example_sentence": "Bu iş detaylara dikkat gerektirir.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "artmak",
+    "example_sentence": "Fiyatlar her yıl artıyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "azaltmak",
+    "example_sentence": "Enerji kullanımımızı azaltmalıyız.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "önermek",
+    "example_sentence": "Erken çıkmamızı öneriyorum.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "tanımlamak",
+    "example_sentence": "Ne olduğunu tanımlayabilir misin?",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "dikkat",
+    "example_sentence": "Lütfen öğretmene dikkat edin.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "amaç",
+    "example_sentence": "Bu toplantının amacı önceden plan yapmaktır.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "fırsat",
+    "example_sentence": "Bu, büyümek için harika bir fırsat.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "başarı",
+    "example_sentence": "Başarısı birçok insana ilham verdi.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "hata",
+    "example_sentence": "Herkes bazen hata yapar.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "basit",
+    "example_sentence": "Tarif hızlı ve basit.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "modern",
+    "example_sentence": "Şehrin çok modern bir silueti var.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "antik",
+    "example_sentence": "Antik kalıntıları keşfettiler.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "sonuç",
+    "example_sentence": "Her eylemin bir sonucu vardır.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "müzakere etmek",
+    "example_sentence": "Adil bir fiyat için müzakere etmek zorunda kaldılar.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "etki",
+    "example_sentence": "Müziğin kültür üzerinde güçlü bir etkisi vardır.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "gelenek",
+    "example_sentence": "Bu gelenek yüzyıllardır sürüyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "sorumluluk",
+    "example_sentence": "Eylemlerinin sorumluluğunu almak önemlidir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "çevre",
+    "example_sentence": "Çevreyi korumalıyız.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "teknoloji",
+    "example_sentence": "Teknoloji yaşam şeklimizi değiştiriyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "iletişim kurmak",
+    "example_sentence": "Yüz yüze daha iyi iletişim kuruyoruz.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "kurmak",
+    "example_sentence": "Yeni bir şube kurmayı planlıyorlar.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "takdir etmek",
+    "example_sentence": "Yardımını gerçekten takdir ediyorum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "tanımak",
+    "example_sentence": "İlk başta onu tanıyamadım.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "katkıda bulunmak",
+    "example_sentence": "Herkes projeye katkıda bulunmalı.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "tartışma",
+    "example_sentence": "Öğrenciler canlı bir tartışma yaptı.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "nesil",
+    "example_sentence": "Her nesil yeni fikirler getirir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "bağımsız",
+    "example_sentence": "Genç yaşta bağımsız oldu.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ekonomi",
+    "example_sentence": "Ekonomi istikrarlı bir şekilde büyüyor.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "doğru",
+    "example_sentence": "Rapor doğru olmalıdır.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "avantaj",
+    "example_sentence": "İki dil konuşmak büyük bir avantajdır.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "çatışma",
+    "example_sentence": "Çatışmayı barışçıl bir şekilde çözdüler.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "izin",
+    "example_sentence": "Bu alana girmek için izin almanız gerekir.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "belirgin",
+    "example_sentence": "Belirgin bir iyileşme oldu.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "uygulamak",
+    "example_sentence": "Yeni politikayı uygulamamız gerekiyor.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "strateji",
+    "example_sentence": "İyi bir strateji başarı için gereklidir.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "araştırmak",
+    "example_sentence": "Polis olayı araştıracak.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "özgüvenli",
+    "example_sentence": "Sınavdan önce özgüvenli hissetti.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "ayırt etmek",
+    "example_sentence": "İkizleri ayırt etmek zor.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "değerlendirmek",
+    "example_sentence": "Öğretmen denemeni değerlendirecek.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "garanti etmek",
+    "example_sentence": "Çok çalışmak başarıyı garanti etmez.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "hayal gücü",
+    "example_sentence": "Çocukların harika bir hayal gücü vardır.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "sempati",
+    "example_sentence": "Kaybından dolayı sempatisini dile getirdi.",
+    "frequency_level": "Intermediate"
+  },
+  {
+    "word": "bürokrasi",
+    "example_sentence": "Bürokrasi süreci yavaşlattı.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "ikilem",
+    "example_sentence": "Zor bir ikilemle karşılaştı.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "engel",
+    "example_sentence": "Her engel büyümek için bir fırsattır.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "ertelemek",
+    "example_sentence": "Etkinliği ertelemek zorunda kaldık.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "itibar",
+    "example_sentence": "Dürüstlük konusunda bir itibarı var.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "fedakarlık",
+    "example_sentence": "Başarı genellikle fedakarlık gerektirir.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "hırslı",
+    "example_sentence": "O, hırslı bir genç avukat.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "uzlaşma",
+    "example_sentence": "Her iki taraf da bir uzlaşmaya vardı.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "disiplin",
+    "example_sentence": "Disiplin ilerlemenin anahtarıdır.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "coşku",
+    "example_sentence": "Onun coşkusu bulaşıcıydı.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "nüans",
+    "example_sentence": "Bu konu nüanslara dikkat gerektirir.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "dayanıklılık",
+    "example_sentence": "Dayanıklılığı zorlukların üstesinden gelmesine yardımcı oldu.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "titiz",
+    "example_sentence": "İşinde çok titizdir.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "geçici",
+    "example_sentence": "Şöhret geçici olabilir.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "belagatli",
+    "example_sentence": "Belagatli bir konuşma yaptı.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "pragmatik",
+    "example_sentence": "Pragmatik bir çözüme ihtiyacımız var.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "inceleme",
+    "example_sentence": "Plan yoğun bir incelemeyle karşı karşıya kaldı.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "tefekkür etmek",
+    "example_sentence": "Geleceğini tefekkür etmek için sessizce oturdu.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "azim",
+    "example_sentence": "Azim büyük başarılara yol açar.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "çok yönlü",
+    "example_sentence": "O çok yönlü bir müzisyen.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "derin",
+    "example_sentence": "Kitap üzerimde derin bir etki bıraktı.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "kaçınılmaz",
+    "example_sentence": "Hayatta değişim kaçınılmazdır.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "belirsiz",
+    "example_sentence": "Talimatlar belirsizdi.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "minnettarlık",
+    "example_sentence": "Nezaketiniz için derin bir minnettarlık hissediyorum.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "hipotez",
+    "example_sentence": "Bilim insanı hipotezini test etti.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "isteksiz",
+    "example_sentence": "Teklifi kabul etmekte isteksizdi.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "kayda değer",
+    "example_sentence": "Kayda değer bir bağış yaptılar.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "bozulmak",
+    "example_sentence": "Hava bozulmaya başladı.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "detaylandırmak",
+    "example_sentence": "Fikrinizi detaylandırabilir misiniz?",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "özlü",
+    "example_sentence": "Raporunuzu özlü ve net tutun.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "hayırsever",
+    "example_sentence": "Hayırsever bağışçı birçok aileye yardım etti.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "azimli",
+    "example_sentence": "O, azimli bir pazarlıkçıdır.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "eskimiş",
+    "example_sentence": "Bu teknoloji artık eskimiş.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "telafi etmek",
+    "example_sentence": "Şirket gecikmeyi telafi edecek.",
+    "frequency_level": "Common"
+  },
+  {
+    "word": "olgu",
+    "example_sentence": "Kuzey ışıkları doğal bir olgudur.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "paradoks",
+    "example_sentence": "Bu ifade gerçek bir paradokstur.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "eşsiz",
+    "example_sentence": "Keşif bilimde eşsizdi.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "ihtilaf",
+    "example_sentence": "Karar büyük bir ihtilafa yol açtı.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "yerli",
+    "example_sentence": "Yerli kültürlere saygı göstermeliyiz.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "sofistike",
+    "example_sentence": "Tasarım zarif ve sofistike.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "pekiştirmek",
+    "example_sentence": "Kaynaklarını pekiştirmeyi planlıyorlar.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "zayıflatmak",
+    "example_sentence": "Yalanlar güveni zayıflatabilir.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "enfes",
+    "example_sentence": "Mücevher gerçekten enfes.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "kapsamak",
+    "example_sentence": "Kurs birçok konuyu kapsayacak.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "aydınlatmak",
+    "example_sentence": "Mumlar karanlık odayı aydınlatıyor.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "dalgalanmak",
+    "example_sentence": "Fiyatlar yıl boyunca dalgalanma eğilimindedir.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "çalışkan",
+    "example_sentence": "O çalışkan ve gayretli bir öğrencidir.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "samimi",
+    "example_sentence": "Proje hakkında samimi bir görüş verdi.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "hafifletmek",
+    "example_sentence": "Bu ilaç ağrıyı hafifletecek.",
+    "frequency_level": "Advanced"
+  },
+  {
+    "word": "tipik",
+    "example_sentence": "Bu yemek tipik bir İtalyan yemeğidir.",
+    "frequency_level": "Advanced"
+  }
+]

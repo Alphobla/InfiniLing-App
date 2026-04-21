@@ -49,6 +49,14 @@ STARTER_PODCASTS = {
         {"title": "News in Slow Spanish", "rss_url": "https://newsinslowspanish.libsyn.com/rss"},
         {"title": "Hoy Hablamos", "rss_url": "https://www.hoyhablamos.com/category/podcast/feed/"},
     ],
+    "tr": [
+        {"title": "Turkish Tea Time", "rss_url": "https://feeds.feedburner.com/TurkishTeaTime"},
+        {"title": "Coffee Break Turkish", "rss_url": "https://feeds.acast.com/public/shows/coffee-break-turkish"},
+    ],
+    "pl": [
+        {"title": "Real Polish", "rss_url": "https://realpolish.libsyn.com/rss"},
+        {"title": "Easy Polish Podcast", "rss_url": "https://feeds.buzzsprout.com/1607307.rss"},
+    ],
 }
 
 

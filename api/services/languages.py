@@ -15,6 +15,8 @@ LANGUAGES = {
     'ru': 'Russian',
     'ar': 'Arabic',
     'zh': 'Chinese',
+    'tr': 'Turkish',
+    'pl': 'Polish',
 }
 
 # Words to strip from the beginning of lemmas for frequency/search lookup
@@ -27,6 +29,10 @@ STRIP_PREFIXES = {
     "ru": {"в", "на", "с", "к", "о", "у", "по"},
     "ar": {"ال", "في", "من", "إلى", "على"},
     "zh": {"的", "了", "在", "是", "我", "你", "他"},
+    # Turkish has no articles; "bir" is the indefinite article ("a/one").
+    "tr": {"bir"},
+    # Polish has no articles; common single-letter/short prepositions that often precede nouns.
+    "pl": {"w", "we", "na", "z", "ze", "do", "po", "u", "o", "za"},
 }
 
 # Set of valid codes for quick lookup
