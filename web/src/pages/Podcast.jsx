@@ -94,7 +94,7 @@ export default function Podcast() {
         if (latestQueryRef.current !== q) return
         setSearchResults(data.results || [])
         setShowDropdown(true)
-      } catch (err) {
+      } catch {
         if (latestQueryRef.current !== q) return
         // 503 from backend = iTunes unavailable; anything else = treat the same
         setSearchError('unavailable')
@@ -108,6 +108,62 @@ export default function Podcast() {
     // Cleanup: cancel the pending timer if query changes again before it fires
     return () => clearTimeout(timer)
   }, [searchQuery, language])
+
+  // ── Click a search result → add it to the user's library ──
+  // Optimistic UX: prepend a placeholder card immediately so the click feels instant.
+  // On success, replace the placeholder with the real DB row. On failure, remove it.
+  const handleSelectResult = async (result) => {
+    // De-dupe: if the user already has this podcast, do nothing
+    if (podcasts.some(p => p.rss_url === result.rss_url)) {
+      setShowDropdown(false)
+      return
+    }
+
+    setShowDropdown(false)
+    setSearchQuery('')
+
+    // Temporary client-side id so React can key the placeholder card
+    const placeholderId = `pending-${Date.now()}`
+    const placeholder = {
+      id: placeholderId,
+      title: result.title,
+      image_url: result.image_url,
+      _pending: true,  // marker the grid uses to render a spinner overlay
+    }
+    setPodcasts(prev => [placeholder, ...prev])
+    setAdding(true)
+    setAddError('')
+
+    try {
+      const { data } = await podcastApi.add({
+        rss_url: result.rss_url,
+        language,
+      })
+      setPodcasts(prev => prev.map(p => p.id === placeholderId ? data : p))
+    } catch (err) {
+      setPodcasts(prev => prev.filter(p => p.id !== placeholderId))
+      const detail = err.response?.data?.detail || ''
+      if (err.response?.status === 409 || detail.toLowerCase().includes('duplicate')) {
+        setAddError('Already in your library')
+      } else {
+        setAddError("Couldn't add this podcast — try another")
+      }
+    } finally {
+      setAdding(false)
+    }
+  }
+
+  // Esc clears query and closes dropdown
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setSearchQuery('')
+        setShowDropdown(false)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   // ── Delete podcast ──
   const handleDelete = async (e, podcastId) => {
@@ -207,18 +263,72 @@ export default function Podcast() {
   if (view === 'list') {
     return (
       <div>
-        {/* RSS input */}
-        <form onSubmit={(e) => { e.preventDefault(); handleAddPodcast() }} className="mb-6">
-          <input
-            type="text"
-            value={rssUrl}
-            onChange={(e) => setRssUrl(e.target.value)}
-            placeholder="Add your favourite podcast (RSS link)"
-            className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-text placeholder-muted focus:outline-none focus:border-accent"
-            disabled={adding}
-          />
+        {/* Search input + dropdown */}
+        <div className="relative mb-6">
+          <div className="relative">
+            {/* Magnifying glass icon */}
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => { if (searchResults.length > 0 || searchError) setShowDropdown(true) }}
+              placeholder="Search for a podcast"
+              className="w-full pl-10 pr-10 py-3 bg-surface border border-border rounded-lg text-text placeholder-muted focus:outline-none focus:border-accent"
+              disabled={adding}
+              data-cy="podcast-search-input"
+            />
+            {/* Inline spinner while a request is in flight */}
+            {searchLoading && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+            )}
+          </div>
+
+          {/* Dropdown */}
+          {showDropdown && (
+            <div className="absolute left-0 right-0 mt-1 bg-surface border border-border rounded-lg shadow-lg z-20 max-h-80 overflow-y-auto"
+                 data-cy="podcast-search-dropdown">
+              {searchError === 'unavailable' ? (
+                <div className="px-4 py-3 text-sm text-muted">Search unavailable — try again</div>
+              ) : searchResults.length === 0 ? (
+                <div className="px-4 py-3 text-sm text-muted">No results for "{searchQuery.trim()}"</div>
+              ) : (
+                searchResults.map((r) => {
+                  const alreadyAdded = podcasts.some(p => p.rss_url === r.rss_url)
+                  return (
+                    <button
+                      key={r.rss_url}
+                      onClick={() => handleSelectResult(r)}
+                      disabled={alreadyAdded}
+                      className={`w-full px-3 py-2 flex items-center gap-3 text-left hover:bg-bg transition-colors ${
+                        alreadyAdded ? 'opacity-50 cursor-default' : ''
+                      }`}
+                      data-cy="podcast-search-result"
+                    >
+                      {r.image_url ? (
+                        <img src={r.image_url} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 rounded bg-bg flex items-center justify-center text-lg flex-shrink-0">🎙️</div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm text-text truncate">{r.title}</div>
+                        <div className="text-xs text-muted truncate">{r.artist}</div>
+                      </div>
+                      {alreadyAdded && (
+                        <span className="text-xs text-success font-medium flex-shrink-0">Added</span>
+                      )}
+                    </button>
+                  )
+                })
+              )}
+            </div>
+          )}
           {addError && <p className="text-red-400 text-sm mt-2">{addError}</p>}
-        </form>
+        </div>
 
         {/* Language selector */}
         <select
@@ -249,7 +359,8 @@ export default function Podcast() {
             {podcasts.map((pod) => (
               <button
                 key={pod.id}
-                onClick={() => openPodcast(pod)}
+                onClick={() => !pod._pending && openPodcast(pod)}
+                disabled={pod._pending}
                 className="aspect-square rounded-xl overflow-hidden bg-surface border border-border hover:border-accent transition-colors relative group"
               >
                 {pod.image_url ? (
@@ -259,12 +370,19 @@ export default function Podcast() {
                     🎙️
                   </div>
                 )}
-                <div
-                  onClick={(e) => handleDelete(e, pod.id)}
-                  className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  ✕
-                </div>
+                {pod._pending && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
+                {!pod._pending && (
+                  <div
+                    onClick={(e) => handleDelete(e, pod.id)}
+                    className="absolute top-1 right-1 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    ✕
+                  </div>
+                )}
               </button>
             ))}
           </div>
