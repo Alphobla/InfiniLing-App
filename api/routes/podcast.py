@@ -1,5 +1,6 @@
 """Podcast routes: browse, add, delete podcasts; list episodes; transcribe."""
 
+import requests
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from typing import Optional
@@ -10,6 +11,7 @@ from api.services.podcast_service import (
     parse_rss_feed,
     parse_episodes_from_feed,
     transcribe_audio,
+    search_itunes_podcasts,
 )
 from api.config import get_settings
 
@@ -67,6 +69,26 @@ def list_podcasts(
         query = query.eq("language", language)
     result = query.execute()
     return {"podcasts": result.data}
+
+
+@router.get("/search")
+def search_podcasts(
+    q: str = Query(..., min_length=2),
+    language: str | None = Query(default=None),
+    user_id: str = Depends(get_current_user_id),
+):
+    """
+    Search iTunes for podcasts by name. Returns lightweight result cards
+    so the user can add a podcast by clicking instead of pasting an RSS URL.
+
+    Returns 503 (not 200 with empty results) when iTunes is unreachable so
+    the frontend can distinguish "no matches" from "search broken".
+    """
+    try:
+        results = search_itunes_podcasts(q, language=language)
+    except requests.RequestException:
+        raise HTTPException(status_code=503, detail="Podcast search unavailable")
+    return {"results": results}
 
 
 @router.post("")
