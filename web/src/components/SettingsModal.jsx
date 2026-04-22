@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../stores/authStore'
 import { userApi, importExportApi, onboardingApi } from '../services/api'
 import { useLanguages } from '../hooks/useLanguages'
 
 export default function SettingsModal({ onClose }) {
   const { user, settings, signOut } = useAuthStore()
+  const navigate = useNavigate()
+  const [resetting, setResetting] = useState(false)
   const { languages } = useLanguages()
   const [apiKey, setApiKey] = useState('')
   const [hasApiKey, setHasApiKey] = useState(false)
@@ -150,6 +153,25 @@ export default function SettingsModal({ onClose }) {
     })
   }
 
+  // Dev-only: wipe settings + vocabulary, then re-enter onboarding.
+  // The whole `import.meta.env.DEV` block is stripped from production bundles by Vite.
+  const handleResetOnboarding = async () => {
+    if (!confirm('Reset onboarding?\n\nThis deletes your settings AND all vocabulary words for this account. The auth account itself stays.')) return
+    setResetting(true)
+    try {
+      await userApi.resetOnboarding()
+      // Clear cached settings so the Onboarding guard lets us in.
+      // (Zustand exposes setState on the store function for updates from outside React.)
+      useAuthStore.setState({ settings: null })
+      onClose()
+      navigate('/onboarding')
+    } catch (err) {
+      alert('Reset failed: ' + (err.response?.data?.detail || err.message))
+    } finally {
+      setResetting(false)
+    }
+  }
+
   const submitWords = async () => {
     if (selectedIndices.size === 0) return
     setAddingWords(true)
@@ -200,7 +222,7 @@ export default function SettingsModal({ onClose }) {
       <div className="relative bg-surface rounded-2xl shadow-lift max-w-md w-full max-h-[90dvh] overflow-y-auto border border-border animate-scale-in">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-border sticky top-0 bg-surface rounded-t-2xl z-10">
-          <h2 className="font-display text-2xl text-text italic">Settings</h2>
+          <h2 className="font-display text-2xl text-text">Settings</h2>
           <button
             onClick={onClose}
             className="p-2 text-muted hover:text-text hover:bg-bg rounded-lg transition-all"
@@ -469,6 +491,34 @@ export default function SettingsModal({ onClose }) {
               />
             </div>
           </div>
+
+          {/* ── Developer (dev-only) ──
+              Vite replaces `import.meta.env.DEV` with a literal `true`/`false`
+              at build time, so this whole block is dead-code-eliminated from
+              the production bundle. Safe to ship. */}
+          {import.meta.env.DEV && (
+            <div>
+              <SectionHeading icon={
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" />
+                </svg>
+              }>
+                Developer
+              </SectionHeading>
+
+              <p className="text-xs text-muted mb-3">
+                Wipe settings + vocabulary so you re-enter onboarding. Auth account stays.
+              </p>
+
+              <button
+                onClick={handleResetOnboarding}
+                disabled={resetting}
+                className="w-full px-4 py-2.5 border border-red-300/50 text-red-600 rounded-xl text-sm font-medium hover:bg-red-50 disabled:opacity-50 transition-all"
+              >
+                {resetting ? 'Resetting...' : 'Reset Onboarding'}
+              </button>
+            </div>
+          )}
 
           {/* ── Footer ── */}
           <div className="pt-2 border-t border-border">

@@ -143,6 +143,24 @@ def update_user_settings(
     )
 
 
+@router.delete("/settings")
+def reset_user_data(
+    user_id: str = Depends(get_current_user_id),
+    db: Client = Depends(get_supabase)
+):
+    """
+    Wipe the user's settings + vocabulary so they re-enter the onboarding flow.
+    Intended for testing onboarding changes without creating a fresh account.
+
+    The auth.users row itself is NOT deleted — the user stays signed in.
+    vocabulary_occurrence rows are removed automatically via ON DELETE CASCADE
+    on vocabulary.
+    """
+    db.table("vocabulary").delete().eq("user_id", user_id).execute()
+    db.table("user_settings").delete().eq("user_id", user_id).execute()
+    return {"reset": True}
+
+
 @router.get("/usage", response_model=TokenUsageResponse)
 def get_token_usage(
     user_id: str = Depends(get_current_user_id),
