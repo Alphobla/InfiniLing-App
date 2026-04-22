@@ -1,4 +1,4 @@
-"""Podcast service: RSS parsing, Whisper transcription, starter podcast config."""
+"""Podcast service: RSS parsing, iTunes search, Whisper transcription, and starter podcast config."""
 
 import tempfile
 import os

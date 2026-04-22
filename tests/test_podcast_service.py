@@ -1,9 +1,11 @@
 import pytest
+import requests
 from unittest.mock import patch, MagicMock
 from api.services.podcast_service import (
     STARTER_PODCASTS,
     parse_rss_feed,
     parse_episodes_from_feed,
+    search_itunes_podcasts,
 )
 
 
@@ -62,10 +64,6 @@ def test_transcribe_audio_rejects_large_files():
         with pytest.raises(ValueError, match="too large"):
             from api.services.podcast_service import transcribe_audio
             transcribe_audio("https://example.com/huge.mp3", "fake-key")
-
-
-import requests
-from api.services.podcast_service import search_itunes_podcasts
 
 
 def _make_itunes_response(results):
