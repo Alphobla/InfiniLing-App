@@ -157,6 +157,7 @@ def reset_user_data(
     on vocabulary.
     """
     db.table("vocabulary").delete().eq("user_id", user_id).execute()
+    db.table("podcasts").delete().eq("user_id", user_id).execute()
     db.table("user_settings").delete().eq("user_id", user_id).execute()
     return {"reset": True}
 
