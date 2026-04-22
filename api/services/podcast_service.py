@@ -8,6 +8,7 @@ from calendar import timegm
 import feedparser
 import requests
 from openai import OpenAI
+from api.services.languages import LANGUAGE_TO_ITUNES_COUNTRY
 
 
 STARTER_PODCASTS = {
@@ -58,6 +59,43 @@ STARTER_PODCASTS = {
         {"title": "Easy Polish Podcast", "rss_url": "https://feeds.buzzsprout.com/1607307.rss"},
     ],
 }
+
+
+def search_itunes_podcasts(term: str, language: str | None = None, limit: int = 10) -> list[dict]:
+    """
+    Search Apple's public iTunes Search API for podcasts by name.
+
+    No auth required, no real rate limits — this is the same API most
+    podcast apps use under the hood. Returns lightweight result cards
+    `{title, artist, image_url, rss_url}` suitable for a search dropdown.
+    The rss_url is what we feed into the existing add-podcast flow,
+    so the user never sees a URL.
+
+    Raises requests.RequestException on network/timeout error so the
+    caller can distinguish "iTunes broken" (503) from "iTunes returned
+    nothing" (200 with empty results).
+    """
+    params = {"term": term, "media": "podcast", "limit": str(limit)}
+    country = LANGUAGE_TO_ITUNES_COUNTRY.get((language or "").lower())
+    if country:
+        params["country"] = country
+
+    r = requests.get("https://itunes.apple.com/search", params=params, timeout=8)
+    r.raise_for_status()
+
+    results = []
+    for item in r.json().get("results", []):
+        feed_url = item.get("feedUrl")
+        if not feed_url:
+            continue  # No RSS feed = can't add, skip
+        results.append({
+            "title": item.get("collectionName", ""),
+            "artist": item.get("artistName", ""),
+            # 600x600 is sharper than the 100x100 default thumbnail
+            "image_url": item.get("artworkUrl600") or item.get("artworkUrl100", ""),
+            "rss_url": feed_url,
+        })
+    return results
 
 
 def parse_rss_feed(rss_url: str) -> dict:
