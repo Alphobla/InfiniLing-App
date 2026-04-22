@@ -81,11 +81,13 @@ export default function Podcast() {
       return
     }
 
-    setSearchLoading(true)
     setSearchError('')
     latestQueryRef.current = q
 
     const timer = setTimeout(async () => {
+      // Loading flips on only after the debounce fires, so the spinner
+      // doesn't flicker on every keystroke while the user is mid-word.
+      setSearchLoading(true)
       try {
         const { data } = await podcastApi.search(q, language)
         // Drop stale response if the user has typed more since this request fired
