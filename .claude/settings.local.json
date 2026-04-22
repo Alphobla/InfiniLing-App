@@ -61,7 +61,11 @@
       "WebFetch(domain:rephonic.com)",
       "WebFetch(domain:www.subscribeonandroid.com)",
       "WebFetch(domain:podscan.fm)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git *)",
+      "Bash(uv run *)",
+      "Bash(npx eslint *)",
+      "Bash(npx cypress *)"
     ],
     "deny": []
   }

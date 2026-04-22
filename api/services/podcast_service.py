@@ -51,12 +51,12 @@ STARTER_PODCASTS = {
         {"title": "Hoy Hablamos", "rss_url": "https://www.hoyhablamos.com/category/podcast/feed/"},
     ],
     "tr": [
-        {"title": "Turkish Tea Time", "rss_url": "https://feeds.feedburner.com/TurkishTeaTime"},
-        {"title": "Coffee Break Turkish", "rss_url": "https://feeds.acast.com/public/shows/coffee-break-turkish"},
+        {"title": "Easy Turkish", "rss_url": "https://feeds.fireside.fm/easyturkish/rss"},
+        {"title": "Turkish Podcast with Ebru", "rss_url": "https://anchor.fm/s/f97e1e64/podcast/rss"},
     ],
     "pl": [
-        {"title": "Real Polish", "rss_url": "https://realpolish.libsyn.com/rss"},
-        {"title": "Easy Polish Podcast", "rss_url": "https://feeds.buzzsprout.com/1607307.rss"},
+        {"title": "Polish Stories", "rss_url": "https://feeds.captivate.fm/polishstories/"},
+        {"title": "Polish Learning Accelerator", "rss_url": "https://feeds.captivate.fm/polish-learning-accelerator-en-us-to-pl-pl/"},
     ],
 }
 
