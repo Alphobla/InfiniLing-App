@@ -22,10 +22,20 @@ export default function Podcast() {
   // Podcast list state
   const [podcasts, setPodcasts] = useState([])
   const [loadingPodcasts, setLoadingPodcasts] = useState(true)
-  const [rssUrl, setRssUrl] = useState('')
+
+  // Search state — replaces the old RSS input
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState([])  // [{title, artist, image_url, rss_url}, ...]
+  const [searchLoading, setSearchLoading] = useState(false)
+  const [searchError, setSearchError] = useState('')      // '' | 'unavailable' | 'add-failed'
+  const [showDropdown, setShowDropdown] = useState(false)
   const [addError, setAddError] = useState('')
-  const [adding, setAdding] = useState(false)
+  const [adding, setAdding] = useState(false)             // kept: blocks UI during add
   const [deletingId, setDeletingId] = useState(null)
+
+  // Tracks the latest query that fired a request, so out-of-order responses
+  // (slow network, fast typing) can be discarded instead of overwriting fresh results.
+  const latestQueryRef = useRef('')
 
   // Episode list state
   const [episodes, setEpisodes] = useState([])
@@ -57,24 +67,45 @@ export default function Podcast() {
       .finally(() => setLoadingPodcasts(false))
   }, [language])
 
-  // ── Add podcast from RSS ──
-  const handleAddPodcast = async () => {
-    if (!rssUrl.trim()) return
-    setAdding(true)
-    setAddError('')
-    try {
-      const { data } = await podcastApi.add({
-        rss_url: rssUrl.trim(),
-        language,
-      })
-      setPodcasts(prev => [...prev, data])
-      setRssUrl('')
-    } catch (err) {
-      setAddError(err.response?.data?.detail || 'Could not add podcast')
-    } finally {
-      setAdding(false)
+  // ── Debounced search effect ──
+  // Why 250ms: long enough to skip mid-word noise, short enough that pausing feels instant.
+  // Why the ref check: a slow request fired for "easy" can land AFTER a faster request for
+  // "easy polish" — we drop the stale one to avoid flicker.
+  useEffect(() => {
+    const q = searchQuery.trim()
+    if (q.length < 2) {
+      setSearchResults([])
+      setSearchLoading(false)
+      setSearchError('')
+      setShowDropdown(false)
+      return
     }
-  }
+
+    setSearchLoading(true)
+    setSearchError('')
+    latestQueryRef.current = q
+
+    const timer = setTimeout(async () => {
+      try {
+        const { data } = await podcastApi.search(q, language)
+        // Drop stale response if the user has typed more since this request fired
+        if (latestQueryRef.current !== q) return
+        setSearchResults(data.results || [])
+        setShowDropdown(true)
+      } catch (err) {
+        if (latestQueryRef.current !== q) return
+        // 503 from backend = iTunes unavailable; anything else = treat the same
+        setSearchError('unavailable')
+        setSearchResults([])
+        setShowDropdown(true)
+      } finally {
+        if (latestQueryRef.current === q) setSearchLoading(false)
+      }
+    }, 250)
+
+    // Cleanup: cancel the pending timer if query changes again before it fires
+    return () => clearTimeout(timer)
+  }, [searchQuery, language])
 
   // ── Delete podcast ──
   const handleDelete = async (e, podcastId) => {
@@ -192,8 +223,11 @@ export default function Podcast() {
           value={language}
           onChange={(e) => {
             setLanguage(e.target.value)
-            // Persist the selected language so it's remembered next time
             updateSettings({ last_language: e.target.value })
+            // Clear search — results from another language would be misleading
+            setSearchQuery('')
+            setSearchResults([])
+            setShowDropdown(false)
           }}
           className="mb-6 px-4 py-2.5 bg-surface border border-border rounded-xl text-text text-sm appearance-none cursor-pointer focus:outline-none focus:border-accent"
           style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2378756F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '16px' }}
