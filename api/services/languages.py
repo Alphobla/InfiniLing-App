@@ -35,6 +35,14 @@ STRIP_PREFIXES = {
     "pl": {"w", "we", "na", "z", "ze", "do", "po", "u", "o", "za"},
 }
 
+# Map language code → iTunes Store country code (ISO 3166-1 alpha-2).
+# Used to bias podcast search results toward the country where shows in
+# that language are most prevalent. Search still works without a match.
+LANGUAGE_TO_ITUNES_COUNTRY = {
+    "en": "US", "de": "DE", "fr": "FR", "es": "ES", "it": "IT",
+    "ru": "RU", "ar": "SA", "zh": "CN", "tr": "TR", "pl": "PL",
+}
+
 # Set of valid codes for quick lookup
 VALID_CODES = set(LANGUAGES.keys())
 
