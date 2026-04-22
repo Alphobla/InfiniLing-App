@@ -44,6 +44,8 @@ export const userApi = {
   getUsage: () => api.get('/api/user/usage'),
   setApiKey: (apiKey) => api.put('/api/user/api-key', { api_key: apiKey }),
   removeApiKey: () => api.delete('/api/user/api-key'),
+  // Dev-only: wipes user_settings + vocabulary so onboarding triggers again on next page load.
+  resetOnboarding: () => api.delete('/api/user/settings'),
 }
 
 // Onboarding words
@@ -77,6 +79,7 @@ export const importExportApi = {
 
 // Podcasts
 export const podcastApi = {
+  search: (q, language) => api.get('/api/podcasts/search', { params: { q, language } }),
   list: (language) => api.get('/api/podcasts', { params: { language } }),
   add: (data) => api.post('/api/podcasts', data),
   remove: (id) => api.delete(`/api/podcasts/${id}`),
