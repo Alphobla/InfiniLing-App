@@ -223,7 +223,7 @@ export default function HelpDrawer() {
             {/* Header */}
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h2 className="font-display text-2xl text-text italic">{content.title}</h2>
+                <h2 className="font-display text-2xl text-text">{content.title}</h2>
                 <p className="text-sm text-muted mt-0.5">{content.description}</p>
               </div>
               <button

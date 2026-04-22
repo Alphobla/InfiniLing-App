@@ -230,9 +230,11 @@ input[type="range"] {
   }
 }
 
-/* Display serif font for headings */
+/* Display style for headings — heavier Sora weight + tight tracking
+   for a confident, modern feel. No second font needed. */
 .font-display {
-  font-family: 'Instrument Serif', Georgia, serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 /* Onboarding step progress bar */

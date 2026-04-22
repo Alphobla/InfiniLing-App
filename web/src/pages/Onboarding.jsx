@@ -306,7 +306,7 @@ export default function Onboarding() {
           <div className="animate-fade-up delay-2">
             {/* Heading outside the card for a more editorial feel */}
             <div className="text-center mb-6">
-              <h1 className="font-display text-4xl text-text mb-2 italic">
+              <h1 className="font-display text-4xl text-text mb-2">
                 Welcome aboard
               </h1>
               <p className="text-muted text-sm">
@@ -397,7 +397,7 @@ export default function Onboarding() {
             </button>
 
             <div className="text-center mb-6">
-              <h1 className="font-display text-4xl text-text mb-2 italic">
+              <h1 className="font-display text-4xl text-text mb-2">
                 Choose your path
               </h1>
               <p className="text-muted text-sm max-w-xs mx-auto leading-relaxed">
@@ -449,7 +449,7 @@ export default function Onboarding() {
             </button>
 
             <div className="text-center mb-6">
-              <h1 className="font-display text-3xl text-text mb-2 italic">
+              <h1 className="font-display text-3xl text-text mb-2">
                 Pick 10 unknown words
               </h1>
               {/* Progress counter with a fill bar */}
@@ -536,7 +536,7 @@ export default function Onboarding() {
             </button>
 
             <div className="text-center mb-6">
-              <h1 className="font-display text-3xl text-text mb-2 italic">
+              <h1 className="font-display text-3xl text-text mb-2">
                 Import your words
               </h1>
               <p className="text-muted text-sm">Upload an existing vocabulary list</p>
