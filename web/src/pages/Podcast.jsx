@@ -165,6 +165,20 @@ export default function Podcast() {
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
+  // Click outside the search wrapper closes the dropdown — standard
+  // dropdown UX. Uses mousedown so the close happens before any click
+  // handler inside the dropdown could fire.
+  const searchWrapperRef = useRef(null)
+  useEffect(() => {
+    const onMouseDown = (e) => {
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target)) {
+        setShowDropdown(false)
+      }
+    }
+    document.addEventListener('mousedown', onMouseDown)
+    return () => document.removeEventListener('mousedown', onMouseDown)
+  }, [])
+
   // ── Delete podcast ──
   const handleDelete = async (e, podcastId) => {
     e.stopPropagation()
@@ -264,7 +278,7 @@ export default function Podcast() {
     return (
       <div>
         {/* Search input + dropdown */}
-        <div className="relative mb-6">
+        <div ref={searchWrapperRef} className="relative mb-2">
           <div className="relative">
             {/* Magnifying glass icon */}
             <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none"
@@ -327,8 +341,8 @@ export default function Podcast() {
               )}
             </div>
           )}
-          {addError && <p className="text-red-400 text-sm mt-2">{addError}</p>}
         </div>
+        {addError && <p className="text-red-400 text-sm mb-4">{addError}</p>}
 
         {/* Language selector */}
         <select
