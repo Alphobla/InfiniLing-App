@@ -48,8 +48,8 @@ const helpContent = {
     title: 'Podcast',
     description: 'Study by listening to real content.',
     tips: [
-      { icon: 'add', text: 'Paste an RSS feed URL to add a podcast in your target language.' },
-      { icon: 'transcribe', text: 'Tap "Save & Transcribe" on an episode to generate a transcript you can study.' },
+      { icon: 'search', text: 'Search for any podcast by name — starter podcasts for your language are added automatically.' },
+      { icon: 'transcribe', text: 'Tap "Save & Transcribe" on an episode to generate a transcript using Whisper AI.' },
       { icon: 'tap', text: 'In study mode, click any word in the transcript for its translation.' },
       { icon: 'audio', text: 'The transcript highlights in sync as audio plays, so you can follow along.' },
     ],
