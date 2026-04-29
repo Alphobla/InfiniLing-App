@@ -25,6 +25,7 @@ export default function SettingsModal({ onClose }) {
   const [loadingWords, setLoadingWords] = useState(false)
   const [addingWords, setAddingWords] = useState(false)
   const [addedMessage, setAddedMessage] = useState('')
+  const [pickerLanguage, setPickerLanguage] = useState(settings?.last_language || 'en')
 
   useEffect(() => {
     if (settings) {
@@ -117,17 +118,11 @@ export default function SettingsModal({ onClose }) {
     }
   }
 
-  // Load the word list for the "add more words" picker
-  const loadWordPicker = async () => {
-    if (showWordPicker) {
-      // Toggle off
-      setShowWordPicker(false)
-      return
-    }
+  const nativeCode = languages.find(l => l.name === settings?.mother_tongue)?.code || 'en'
+
+  const fetchWordsForLanguage = async (targetCode) => {
     setLoadingWords(true)
     try {
-      const targetCode = settings?.last_language || 'en'
-      const nativeCode = languages.find(l => l.name === settings?.mother_tongue)?.code || 'en'
       const [targetRes, nativeRes] = await Promise.all([
         onboardingApi.getWords(targetCode),
         onboardingApi.getWords(nativeCode),
@@ -136,11 +131,28 @@ export default function SettingsModal({ onClose }) {
       setNativeWords(nativeRes.data.words)
       setSelectedIndices(new Set())
       setAddedMessage('')
-      setShowWordPicker(true)
     } catch (err) {
       alert('Failed to load word list: ' + (err.response?.data?.detail || err.message))
     } finally {
       setLoadingWords(false)
+    }
+  }
+
+  // Load the word list for the "add more words" picker
+  const loadWordPicker = async () => {
+    if (showWordPicker) {
+      setShowWordPicker(false)
+      return
+    }
+    await fetchWordsForLanguage(pickerLanguage)
+    setShowWordPicker(true)
+  }
+
+  // When the user picks a different language, reload if the picker is already open
+  const handlePickerLanguageChange = async (newCode) => {
+    setPickerLanguage(newCode)
+    if (showWordPicker) {
+      await fetchWordsForLanguage(newCode)
     }
   }
 
@@ -176,11 +188,9 @@ export default function SettingsModal({ onClose }) {
     if (selectedIndices.size === 0) return
     setAddingWords(true)
     try {
-      const targetCode = settings?.last_language || 'en'
-      const nativeCode = languages.find(l => l.name === settings?.mother_tongue)?.code || 'en'
       await onboardingApi.addWords({
         indices: Array.from(selectedIndices),
-        language_from: targetCode,
+        language_from: pickerLanguage,
         language_to: nativeCode,
       })
       setAddedMessage(`Added ${selectedIndices.size} words!`)
@@ -274,6 +284,22 @@ export default function SettingsModal({ onClose }) {
             <p className="text-xs text-muted mb-3">
               Pick common words you don't know yet to grow your vocabulary.
             </p>
+
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-xs text-muted whitespace-nowrap">Language</span>
+              <select
+                value={pickerLanguage}
+                onChange={(e) => handlePickerLanguageChange(e.target.value)}
+                className="flex-1 px-3 py-2 bg-bg border border-border rounded-xl text-sm text-text appearance-none cursor-pointer transition-all hover:border-muted/40"
+                style={selectChevron}
+              >
+                {languages
+                  .filter(l => l.code !== nativeCode)
+                  .map(l => (
+                    <option key={l.code} value={l.code}>{l.name}</option>
+                  ))}
+              </select>
+            </div>
 
             <button
               onClick={loadWordPicker}
