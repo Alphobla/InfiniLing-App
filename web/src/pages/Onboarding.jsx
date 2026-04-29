@@ -240,6 +240,7 @@ export default function Onboarding() {
       disabled: loadingWords,
       color: 'text-success',
       bg: 'bg-success/8',
+      recommended: true,
     },
     {
       icon: (
@@ -412,11 +413,16 @@ export default function Onboarding() {
                   key={card.title}
                   onClick={card.onClick}
                   disabled={card.disabled}
-                  className="bg-surface border border-border rounded-2xl p-5 text-left
+                  className="relative bg-surface border border-border rounded-2xl p-5 text-left
                     hover:border-accent/30 hover:shadow-medium
                     transition-all duration-200 group animate-fade-up"
                   style={{ animationDelay: `${0.1 + i * 0.06}s` }}
                 >
+                  {card.recommended && (
+                    <span className="absolute top-3 right-3 bg-success/10 text-success text-[10px] font-semibold px-2 py-0.5 rounded-full animate-fade-in delay-4">
+                      Recommended
+                    </span>
+                  )}
                   {/* Icon badge with per-card color */}
                   <div className={`w-11 h-11 ${card.bg} rounded-xl flex items-center justify-center mb-3
                     transition-transform duration-200 group-hover:scale-110 ${card.color}`}>
